@@ -6,20 +6,28 @@ const users = [
 
 let currentUser = null;
 
-// Initialize Auth (runs immediately because script is at body bottom)
+// Initialize Auth (runs immediately)
 (function initAuth() {
     const savedUser = localStorage.getItem('stra_admin_user');
     const overlay = document.getElementById('loginOverlay');
-    const emailEl = document.getElementById('topUserEmail');
-    const roleEl = document.getElementById('topUserRole');
 
     if (savedUser) {
         currentUser = JSON.parse(savedUser);
         if(overlay) overlay.classList.add('hidden');
+        
+        // Update user display dynamically
+        const emailEl = document.getElementById('topUserEmail');
+        const roleEl = document.getElementById('topUserRole');
         if(emailEl) emailEl.textContent = currentUser.email;
         if(roleEl) roleEl.textContent = `${currentUser.role} Account`;
     } else {
         if(overlay) overlay.classList.remove('hidden');
+        
+        // Reset user display dynamically
+        const emailEl = document.getElementById('topUserEmail');
+        const roleEl = document.getElementById('topUserRole');
+        if(emailEl) emailEl.textContent = "Not logged in";
+        if(roleEl) roleEl.textContent = "---";
     }
 })();
 
@@ -217,16 +225,16 @@ function updateDashboardAndTable() {
         const tr = document.createElement('tr');
         tr.className = rowClass;
         tr.innerHTML = `
-            <td class="p-3 border-b border-gray-200 dark:border-gray-700">
+            <td class="p-3 border-b border-gray-200 dark:border-gray-700 filter-col-trn">
                 <div class="font-mono text-xs font-bold mb-1 tracking-tight">${data.transactionId || "N/A"}</div>
                 <div class="text-[11px] opacity-80"><i class="fa-regular fa-calendar text-brandTeal"></i> ${reqDate} | ${data.time || ""}</div>
             </td>
-            <td class="p-3 border-b border-gray-200 dark:border-gray-700">
+            <td class="p-3 border-b border-gray-200 dark:border-gray-700 filter-col-patient">
                 <div class="font-bold text-sm text-brandNavy dark:text-white">${data.patientName || "Unknown"} <span class="font-normal opacity-70">(${data.age||'-'} ${data.gender?data.gender.charAt(0):'-'})</span></div>
                 <div class="text-[11px] font-mono font-bold text-brandTeal">${data.phone}</div>
                 <div class="text-xs opacity-80 truncate max-w-[150px] lg:max-w-xs" title="${data.complaint || "N/A"}">${data.complaint || "N/A"}</div>
             </td>
-            <td class="p-3 border-b border-gray-200 dark:border-gray-700">
+            <td class="p-3 border-b border-gray-200 dark:border-gray-700 filter-col-branch">
                 <div class="text-[13px] font-bold text-brandTeal">${(data.branch || "N/A").replace("Theracare ", "").replace("Stracare ", "")}</div>
                 <div class="text-[11px] font-medium opacity-80"><i class="fa-solid fa-user-doctor"></i> ${data.doctor || "Any"}</div>
             </td>
@@ -235,7 +243,7 @@ function updateDashboardAndTable() {
                 <div class="text-green-600 dark:text-green-400">Adv: ₹${data.advanceReceived}</div>
                 <div class="text-red-600 dark:text-red-400 font-bold">Bal: ₹${balance}</div>
             </td>
-            <td class="p-3 border-b border-gray-200 dark:border-gray-700 text-[11px] font-bold uppercase tracking-wide">
+            <td class="p-3 border-b border-gray-200 dark:border-gray-700 text-[11px] font-bold uppercase tracking-wide filter-col-status">
                 <div class="mb-1">SRV: <span class="${data.serviceStatus==='Done'?'text-green-600 dark:text-green-400': isCancelled?'text-red-600 dark:text-red-400':''}">${data.serviceStatus}</span></div>
                 <div>PAY: <span class="${data.paymentStatus==='Fully Paid'?'text-blue-600 dark:text-blue-400':''}">${data.paymentStatus}</span></div>
             </td>
