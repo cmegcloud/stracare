@@ -1,4 +1,4 @@
-// Theme Setup
+// --- Theme & Layout Setup ---
 function toggleTheme() {
     const html = document.documentElement;
     html.classList.toggle('dark');
@@ -23,33 +23,67 @@ if (localStorage.admin_theme === 'dark' || (!('admin_theme' in localStorage) && 
     });
 }
 
+function toggleSidebar() {
+    const sidebar = document.getElementById('sidebar');
+    const overlay = document.getElementById('sidebarOverlay');
+    sidebar.classList.toggle('-translate-x-full');
+    overlay.classList.toggle('hidden');
+}
+
 // Clock
 setInterval(() => {
-    document.getElementById('adminClock').textContent = new Date().toLocaleTimeString('en-US', { hour12: true });
+    const clockEl = document.getElementById('adminClock');
+    if(clockEl) clockEl.textContent = new Date().toLocaleTimeString('en-US', { hour12: true });
 }, 1000);
 
-// Data Variables
-let appointmentsData = [];
+
+// --- Data & Firebase Logic ---
+let allAppointments = [];
+let selectedBranchFilter = "All";
+
+// Listen to Filter Change
+document.getElementById('branchFilter').addEventListener('change', (e) => {
+    selectedBranchFilter = e.target.value;
+    updateDashboardAndTable();
+});
 
 // Real-time Firestore Listener
 db.collection('appointments').orderBy('createdAt', 'desc').onSnapshot((snapshot) => {
-    appointmentsData = [];
-    let totalSlots = 0, pendingSlots = 0, doneSlots = 0, totalReceivables = 0;
+    allAppointments = [];
 
     snapshot.forEach(doc => {
         let data = doc.data();
         data.id = doc.id;
         
-        // Setup defaults if admin hasn't edited yet
+        // Data Normalization (Handle legacy/missing fields)
         data.serviceStatus = data.serviceStatus || "Pending";
         data.paymentStatus = data.paymentStatus || "Pending";
-        data.actualFee = data.actualFee !== undefined ? data.actualFee : Number(data.amount);
-        data.advanceReceived = data.advanceReceived !== undefined ? data.advanceReceived : 0;
+        data.actualFee = data.actualFee !== undefined ? Number(data.actualFee) : Number(data.amount);
+        data.advanceReceived = data.advanceReceived !== undefined ? Number(data.advanceReceived) : 0;
         data.upiRef = data.upiRef || "";
         
-        let balance = Number(data.actualFee) - Number(data.advanceReceived);
-        
-        // Calculate Dashboards (Exclude "Not Come" from active calculations)
+        allAppointments.push(data);
+    });
+
+    updateDashboardAndTable();
+});
+
+// Core Function to Filter and Render
+function updateDashboardAndTable() {
+    const tbody = document.getElementById('tableBody');
+    tbody.innerHTML = '';
+    
+    let totalSlots = 0, pendingSlots = 0, doneSlots = 0, totalReceivables = 0;
+
+    allAppointments.forEach(data => {
+        // Apply Branch Filter
+        if(selectedBranchFilter !== "All" && data.branch !== selectedBranchFilter) {
+            return; // Skip if it doesn't match the selected branch
+        }
+
+        let balance = data.actualFee - data.advanceReceived;
+
+        // Calculate Dashboards for the filtered view (Exclude "Not Come")
         totalSlots++;
         if(data.serviceStatus === "Pending") pendingSlots++;
         if(data.serviceStatus === "Done") doneSlots++;
@@ -57,28 +91,10 @@ db.collection('appointments').orderBy('createdAt', 'desc').onSnapshot((snapshot)
             totalReceivables += balance > 0 ? balance : 0;
         }
 
-        appointmentsData.push(data);
-    });
-
-    // Update Dash
-    document.getElementById('dashTotal').textContent = totalSlots;
-    document.getElementById('dashPending').textContent = pendingSlots;
-    document.getElementById('dashDone').textContent = doneSlots;
-    document.getElementById('dashReceivables').textContent = "₹" + totalReceivables;
-
-    renderTable();
-});
-
-// Render Table Rows with Row Color Logic
-function renderTable() {
-    const tbody = document.getElementById('tableBody');
-    tbody.innerHTML = '';
-
-    appointmentsData.forEach(data => {
-        // Logic for Row Background Color
+        // --- Row Color Logic ---
         let rowClass = "hover:bg-gray-100 dark:hover:bg-gray-700 transition"; // Default
         
-        const isPaid = data.paymentStatus === "Fully Paid" || Number(data.advanceReceived) >= Number(data.actualFee);
+        const isPaid = data.paymentStatus === "Fully Paid" || data.advanceReceived >= data.actualFee;
         const isDone = data.serviceStatus === "Done";
         const isNotCome = data.serviceStatus === "Not Come";
 
@@ -94,25 +110,27 @@ function renderTable() {
             rowClass = "bg-white dark:bg-gray-800 " + rowClass;
         }
 
-        let balance = Number(data.actualFee) - Number(data.advanceReceived);
-        
-        // Format Date
-        let reqDate = new Date(data.date).toLocaleDateString('en-GB');
+        // Format Date safely
+        let reqDate = "N/A";
+        if(data.date) {
+            reqDate = new Date(data.date).toLocaleDateString('en-GB');
+        }
 
+        // Build Row
         const tr = document.createElement('tr');
         tr.className = rowClass;
         tr.innerHTML = `
             <td class="p-4 border-b border-gray-200 dark:border-gray-700">
-                <div class="font-mono text-xs font-bold mb-1">${data.transactionId}</div>
-                <div class="text-xs text-gray-500 dark:text-gray-400"><i class="fa-regular fa-calendar text-brandTeal"></i> ${reqDate} | ${data.time}</div>
+                <div class="font-mono text-xs font-bold mb-1 tracking-tight">${data.transactionId || "N/A"}</div>
+                <div class="text-xs opacity-80"><i class="fa-regular fa-calendar text-brandTeal"></i> ${reqDate} | ${data.time || "N/A"}</div>
             </td>
             <td class="p-4 border-b border-gray-200 dark:border-gray-700">
-                <div class="font-bold text-sm">${data.patientName} (${data.age}${data.gender.charAt(0)})</div>
-                <div class="text-xs text-gray-500 dark:text-gray-400 truncate max-w-[150px]" title="${data.complaint}">Comp: ${data.complaint}</div>
+                <div class="font-bold text-sm">${data.patientName || "Unknown"} <span class="font-normal opacity-70">(${data.age||'-'} ${data.gender?data.gender.charAt(0):'-'})</span></div>
+                <div class="text-xs opacity-80 truncate max-w-[150px] lg:max-w-xs" title="${data.complaint || "N/A"}">Comp: ${data.complaint || "N/A"}</div>
             </td>
             <td class="p-4 border-b border-gray-200 dark:border-gray-700">
-                <div class="text-sm font-semibold">${data.branch.replace("Theracare ", "").replace("Stracare ", "")}</div>
-                <div class="text-xs">${data.doctor}</div>
+                <div class="text-sm font-bold text-brandTeal">${(data.branch || "N/A").replace("Theracare ", "").replace("Stracare ", "")}</div>
+                <div class="text-xs font-medium opacity-80"><i class="fa-solid fa-user-doctor"></i> ${data.doctor || "Any"}</div>
             </td>
             <td class="p-4 border-b border-gray-200 dark:border-gray-700 font-mono text-xs">
                 <div>Fee: ₹${data.actualFee}</div>
@@ -125,28 +143,36 @@ function renderTable() {
             </td>
             <td class="p-4 border-b border-gray-200 dark:border-gray-700 text-center">
                 <div class="flex items-center justify-center gap-2">
-                    <a href="tel:+91${data.phone}" class="bg-brandNavy text-white w-8 h-8 rounded-full flex items-center justify-center hover:bg-gray-700 transition shadow" title="Call Patient">
-                        <i class="fa-solid fa-phone"></i>
+                    <a href="tel:+91${data.phone}" class="bg-brandNavy dark:bg-gray-600 text-white w-8 h-8 rounded-full flex items-center justify-center hover:scale-110 transition shadow" title="Call Patient">
+                        <i class="fa-solid fa-phone text-xs"></i>
                     </a>
-                    <button onclick="openModal('${data.id}')" class="bg-brandTeal text-white w-8 h-8 rounded-full flex items-center justify-center hover:bg-teal-600 transition shadow" title="Edit Status">
-                        <i class="fa-solid fa-pen-to-square"></i>
+                    <button onclick="openModal('${data.id}')" class="bg-brandTeal text-white w-8 h-8 rounded-full flex items-center justify-center hover:scale-110 transition shadow" title="Edit Status">
+                        <i class="fa-solid fa-pen-to-square text-xs"></i>
                     </button>
                 </div>
             </td>
         `;
         tbody.appendChild(tr);
     });
+
+    // Update Dashboard Metrics
+    document.getElementById('dashTotal').textContent = totalSlots;
+    document.getElementById('dashPending').textContent = pendingSlots;
+    document.getElementById('dashDone').textContent = doneSlots;
+    document.getElementById('dashReceivables').textContent = "₹" + totalReceivables;
 }
 
-// Modal Functions
+// --- Modal Functions ---
 const modal = document.getElementById('editModal');
 const modalInner = modal.querySelector('div');
 
 function openModal(id) {
-    const data = appointmentsData.find(d => d.id === id);
+    const data = allAppointments.find(d => d.id === id);
     if(!data) return;
 
     document.getElementById('editDocId').value = id;
+    document.getElementById('displayPatientName').textContent = `${data.patientName} (${data.transactionId})`;
+    
     document.getElementById('editServiceStatus').value = data.serviceStatus;
     document.getElementById('editPaymentStatus').value = data.paymentStatus;
     document.getElementById('editActualFee').value = data.actualFee;
