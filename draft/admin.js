@@ -1,373 +1,370 @@
-<!doctype html>
-<html lang="en" class="h-full w-full">
-<head>
-  <meta charset="UTF-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
-  <title>STRA CARE | Admin ERP</title>
-  
-  <meta name="theme-color" content="#5453EC">
-  <meta name="apple-mobile-web-app-capable" content="yes">
-  <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
-  <link rel="icon" type="image/png" href="https://stracares.in/assets/logo-app.png">
+// --- Authentication Setup ---
+const users = [
+    { email: "shanicm@gmail.com", pass: "CM02", role: "Owner" },
+    { email: "nibashanid@gmail.com", pass: "CM2026", role: "Staff" }
+];
 
-  <script src="https://cdn.tailwindcss.com/3.4.17"></script>
-  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
-  <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@300;400;500;600;700;800&display=swap" rel="stylesheet">
-  
-  <script>
-    tailwind.config = {
-      darkMode: 'class', 
-      theme: {
-        extend: { 
-            fontFamily: { jakarta: ['Plus Jakarta Sans', 'sans-serif'], },
-            colors: { brandTeal: '#009B95', brandNavy: '#1E3A5F' }
-        }
-      }
+let currentUser = null;
+
+// Initialize Auth (runs immediately)
+(function initAuth() {
+    const savedUser = localStorage.getItem('stra_admin_user');
+    const overlay = document.getElementById('loginOverlay');
+
+    if (savedUser) {
+        currentUser = JSON.parse(savedUser);
+        if(overlay) overlay.classList.add('hidden');
+        
+        const emailEl = document.getElementById('topUserEmail');
+        const roleEl = document.getElementById('topUserRole');
+        if(emailEl) emailEl.textContent = currentUser.email;
+        if(roleEl) roleEl.textContent = `${currentUser.role} Account`;
+    } else {
+        if(overlay) overlay.classList.remove('hidden');
+        const emailEl = document.getElementById('topUserEmail');
+        const roleEl = document.getElementById('topUserRole');
+        if(emailEl) emailEl.textContent = "Not logged in";
+        if(roleEl) roleEl.textContent = "---";
     }
-  </script>
-  <style>
-    * { font-family: 'Plus Jakarta Sans', sans-serif; -webkit-tap-highlight-color: transparent; }
-    html, body { max-width: 100vw; overflow-x: hidden; }
-    
-    .sidebar-transition { transition: transform 0.3s ease-in-out; }
-    .card-hover { transition: all 0.3s ease; }
-    .card-hover:hover { transform: translateY(-4px); box-shadow: 0 20px 40px rgba(0, 0, 0, 0.1); }
-    
-    .fade-in { animation: fadeIn 0.4s ease forwards; }
-    @keyframes fadeIn { from { opacity: 0; transform: translateY(10px); } to { opacity: 1; transform: translateY(0); } }
+})();
 
-    ::-webkit-scrollbar { width: 4px; height: 4px; }
-    ::-webkit-scrollbar-track { background: transparent; }
-    ::-webkit-scrollbar-thumb { background: #cbd5e1; border-radius: 4px; }
+// Handle Login Submission
+document.getElementById('loginForm').addEventListener('submit', (e) => {
+    e.preventDefault();
+    const email = document.getElementById('loginEmail').value;
+    const pass = document.getElementById('loginPassword').value;
+    const errorEl = document.getElementById('loginError');
 
-    input:focus, select:focus, textarea:focus { border-color: #009B95 !important; outline: none; box-shadow: 0 0 0 2px rgba(0, 155, 149, 0.2); }
-  </style>
+    const validUser = users.find(u => u.email === email && u.pass === pass);
 
-  <!-- Firebase SDKs -->
-  <script src="https://www.gstatic.com/firebasejs/10.8.1/firebase-app-compat.js"></script>
-  <script src="https://www.gstatic.com/firebasejs/10.8.1/firebase-firestore-compat.js"></script>
-  <script>
-      const firebaseConfig = {
-          apiKey: "AIzaSyDwfmoDPvslFmTn3GjO56VAxhODRlem5bg",
-          authDomain: "stra-care.firebaseapp.com",
-          projectId: "stra-care",
-          storageBucket: "stra-care.firebasestorage.app",
-          messagingSenderId: "329966100049",
-          appId: "1:329966100049:web:ca8acc0fccdebac5da6270"
-      };
-      firebase.initializeApp(firebaseConfig);
-      const db = firebase.firestore();
-  </script>
-</head>
-<body class="h-full bg-slate-50 dark:bg-slate-900 overflow-hidden w-full relative transition-colors duration-300">
-
-  <!-- Login Overlay (Themed) -->
-  <div id="loginOverlay" class="fixed inset-0 bg-slate-900/90 backdrop-blur-md flex items-center justify-center z-[100000] fade-in hidden">
-      <div class="bg-white dark:bg-slate-800 p-8 rounded-2xl shadow-2xl w-full max-w-sm text-center border border-slate-200 dark:border-slate-700">
-          <img src="https://stracares.in/assets/logo-header.png" alt="STRA CARE" class="h-12 object-contain mx-auto mb-6 bg-slate-50 dark:bg-white px-3 py-1 rounded-xl shadow-sm">
-          <h2 class="text-xl font-bold text-slate-800 dark:text-white mb-6">Secure ERP Login</h2>
-          <form id="loginForm" class="space-y-4">
-              <input type="email" id="loginEmail" required placeholder="Email Address" class="w-full px-4 py-3 rounded-xl border border-slate-200 dark:border-slate-600 bg-slate-50 dark:bg-slate-700 dark:text-white outline-none">
-              <input type="password" id="loginPassword" required placeholder="Password" class="w-full px-4 py-3 rounded-xl border border-slate-200 dark:border-slate-600 bg-slate-50 dark:bg-slate-700 dark:text-white outline-none">
-              <button type="submit" class="w-full py-3 rounded-xl font-bold text-white shadow-lg transition-transform active:scale-95" style="background: linear-gradient(135deg, #009B95, #007A75);">Login to Dashboard</button>
-              <p id="loginError" class="text-red-500 text-sm hidden font-bold mt-2">Invalid Credentials</p>
-          </form>
-      </div>
-  </div>
-
-  <div id="app" class="h-full flex w-full relative overflow-hidden">
-    
-    <!-- Mobile Sidebar Overlay -->
-    <div id="sidebar-overlay" class="fixed inset-0 bg-slate-900/50 backdrop-blur-sm z-40 hidden lg:hidden opacity-0 transition-opacity" onclick="toggleSidebar()"></div>
-
-    <!-- Sidebar -->
-    <aside id="sidebar" class="sidebar-transition bg-slate-900 h-full w-72 flex flex-col shadow-2xl fixed lg:relative z-50 transform -translate-x-full lg:translate-x-0 shrink-0">
-      
-      <!-- Sidebar Header -->
-      <div class="p-6 border-b border-slate-700/50 flex items-center justify-between shrink-0">
-        <a href="https://www.cmfiling.com" target="_blank" class="hover:opacity-80 transition block bg-black/20 border border-yellow-500/50 px-4 py-2 rounded-lg shadow-inner">
-            <img src="https://stracares.in/assets/logo-footer-cmf.png" alt="CMFilings" class="h-5 object-contain">
-        </a>
-        <button onclick="toggleSidebar()" class="lg:hidden text-slate-400 hover:text-white text-xl"><i class="fa-solid fa-xmark"></i></button>
-      </div>
-      
-      <!-- Logged In User Info -->
-      <div class="p-4 mx-4 mt-4 bg-slate-800/50 rounded-xl border border-slate-700/50 shrink-0">
-        <div class="flex items-center gap-3">
-          <div class="w-10 h-10 rounded-lg flex items-center justify-center shadow-lg" style="background: linear-gradient(135deg, #009B95, #F7CB51);">
-            <i class="fa-solid fa-user-shield text-white"></i>
-          </div>
-          <div class="flex-1 min-w-0">
-            <p id="topUserRole" class="text-[10px] text-slate-400 uppercase tracking-wider font-bold">---</p>
-            <p id="topUserEmail" class="text-sm font-bold text-white truncate">Not logged in</p>
-          </div>
-        </div>
-      </div>
-
-      <!-- Navigation Menu -->
-      <nav class="flex-1 px-4 py-6 overflow-y-auto w-full">
-        <ul class="space-y-2 w-full">
-          <li>
-            <button onclick="setGlobalView('All')" class="w-full flex items-center gap-3 px-4 py-3 rounded-xl text-white mb-4 shadow-lg transition-transform active:scale-95" style="background: linear-gradient(135deg, #009B95, #007A75);">
-              <i class="fa-solid fa-chart-line w-5"></i>
-              <span class="font-bold text-sm tracking-wide">Overview</span>
-            </button>
-          </li>
-          
-          <div class="text-[10px] text-slate-500 font-extrabold uppercase tracking-widest px-2 mb-2 mt-4">Filing Views</div>
-          
-          <li>
-            <button onclick="setGlobalView('Pending')" class="w-full flex items-center gap-3 px-4 py-2.5 rounded-xl text-slate-400 hover:text-white hover:bg-slate-800/50 transition-all group">
-              <i class="fa-regular fa-clock w-5 text-yellow-400 group-hover:scale-110 transition-transform"></i>
-              <span class="font-medium text-sm">Pending Slots</span>
-            </button>
-          </li>
-          <li>
-            <button onclick="setGlobalView('Completed')" class="w-full flex items-center gap-3 px-4 py-2.5 rounded-xl text-slate-400 hover:text-white hover:bg-slate-800/50 transition-all group">
-              <i class="fa-solid fa-check-double w-5 text-green-400 group-hover:scale-110 transition-transform"></i>
-              <span class="font-medium text-sm">Completed Slots</span>
-            </button>
-          </li>
-          <li>
-            <button onclick="setGlobalView('Cancelled')" class="w-full flex items-center gap-3 px-4 py-2.5 rounded-xl text-slate-400 hover:text-white hover:bg-slate-800/50 transition-all group">
-              <i class="fa-solid fa-ban w-5 text-red-400 group-hover:scale-110 transition-transform"></i>
-              <span class="font-medium text-sm">Cancelled / Not Come</span>
-            </button>
-          </li>
-        </ul>
-      </nav>
-      
-      <!-- Sidebar Footer -->
-      <div class="p-4 border-t border-slate-700/50 shrink-0 bg-slate-900">
-        <div class="text-[10px] font-bold text-brandTeal mb-2 tracking-widest uppercase px-2">App Version 1.0</div>
-        <button onclick="handleLogout()" class="w-full flex items-center gap-3 px-4 py-2 text-red-400 hover:text-red-300 hover:bg-red-900/20 rounded-xl transition-colors font-bold text-sm mb-2">
-            <i class="fa-solid fa-arrow-right-from-bracket"></i> Logout
-        </button>
-        <a href="https://wa.me/919946151111?text=Hello%20Developer,%20I%20need%20support%20for%20Stra%20Care%20Admin" target="_blank" class="w-full flex items-center gap-3 px-4 py-2 text-slate-300 hover:text-white hover:bg-slate-800/50 rounded-xl transition-colors text-sm">
-            <i class="fa-brands fa-whatsapp text-green-500 text-lg"></i> Developer Support
-        </a>
-      </div>
-    </aside>
-
-    <!-- Main Content -->
-    <main class="flex-1 h-full flex flex-col relative min-w-0 transition-colors duration-300">
-      
-      <!-- Top Header -->
-      <header class="bg-white dark:bg-slate-800 shadow-sm border-b border-slate-200 dark:border-slate-700 px-4 py-4 flex items-center justify-between z-10 shrink-0 transition-colors duration-300">
+    if (validUser) {
+        currentUser = validUser;
+        localStorage.setItem('stra_admin_user', JSON.stringify(validUser));
+        document.getElementById('loginOverlay').classList.add('hidden');
         
-        <div class="flex items-center gap-3 flex-1">
-          <button onclick="toggleSidebar()" class="p-2 rounded-xl hover:bg-slate-100 dark:hover:bg-slate-700 text-slate-600 dark:text-slate-300 transition-colors lg:hidden">
-            <i class="fa-solid fa-bars text-lg"></i>
-          </button>
-          
-          <!-- Master Search -->
-          <div class="relative w-full max-w-[200px] sm:max-w-xs">
-              <div class="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none">
-                  <i class="fa-solid fa-magnifying-glass text-slate-400 text-sm"></i>
-              </div>
-              <input type="text" id="masterSearch" onkeyup="masterSearchTable()" placeholder="Search records..." class="w-full pl-9 pr-3 py-2 text-sm bg-slate-100 dark:bg-slate-700 border border-slate-200 dark:border-slate-600 rounded-xl focus:border-brandTeal outline-none transition dark:text-white">
-          </div>
-        </div>
+        const emailEl = document.getElementById('topUserEmail');
+        const roleEl = document.getElementById('topUserRole');
+        if(emailEl) emailEl.textContent = currentUser.email;
+        if(roleEl) roleEl.textContent = `${currentUser.role} Account`;
+
+        errorEl.classList.add('hidden');
+    } else {
+        errorEl.classList.remove('hidden');
+    }
+});
+
+function handleLogout() {
+    localStorage.removeItem('stra_admin_user');
+    currentUser = null;
+    document.getElementById('loginEmail').value = '';
+    document.getElementById('loginPassword').value = '';
+    
+    const emailEl = document.getElementById('topUserEmail');
+    const roleEl = document.getElementById('topUserRole');
+    if(emailEl) emailEl.textContent = "Not logged in";
+    if(roleEl) roleEl.textContent = "---";
+
+    document.getElementById('loginOverlay').classList.remove('hidden');
+    
+    const sidebar = document.getElementById('sidebar');
+    if(!sidebar.classList.contains('-translate-x-full')) toggleSidebar();
+}
+
+
+// --- Theme & Layout Setup ---
+function toggleTheme() {
+    const html = document.documentElement;
+    html.classList.toggle('dark');
+    const isDark = html.classList.contains('dark');
+    localStorage.setItem('admin_theme', isDark ? 'dark' : 'light');
+    
+    const icon = document.getElementById('themeIcon');
+    if(isDark) {
+        icon.className = "fa-solid fa-sun";
+        icon.parentElement.classList.add('text-yellow-400');
+    } else {
+        icon.className = "fa-solid fa-moon";
+        icon.parentElement.classList.remove('text-yellow-400');
+    }
+}
+
+if (localStorage.admin_theme === 'dark' || (!('admin_theme' in localStorage) && window.matchMedia('(prefers-color-scheme: dark)').matches)) {
+    document.documentElement.classList.add('dark');
+    const icon = document.getElementById('themeIcon');
+    if(icon) {
+        icon.className = "fa-solid fa-sun";
+        icon.parentElement.classList.add('text-yellow-400');
+    }
+}
+
+function toggleSidebar() {
+    const sidebar = document.getElementById('sidebar');
+    const overlay = document.getElementById('sidebar-overlay');
+    sidebar.classList.toggle('-translate-x-full');
+    
+    if(sidebar.classList.contains('-translate-x-full')) {
+        overlay.classList.add('opacity-0'); 
+        setTimeout(() => overlay.classList.add('hidden'), 300);
+    } else {
+        overlay.classList.remove('hidden'); 
+        setTimeout(() => overlay.classList.remove('opacity-0'), 10);
+    }
+}
+
+// Running Clock (Date & Time)
+setInterval(() => {
+    const clockEl = document.getElementById('adminClock');
+    if(clockEl) {
+        const now = new Date();
+        const dateOpts = { month: 'short', day: 'numeric', year: 'numeric' };
+        const timeOpts = { hour: '2-digit', minute: '2-digit', second: '2-digit', hour12: true };
+        clockEl.innerHTML = `${now.toLocaleDateString('en-US', dateOpts)} &nbsp;|&nbsp; ${now.toLocaleTimeString('en-US', timeOpts)}`;
+    }
+}, 1000);
+
+
+// --- Data & Firebase Logic ---
+let allAppointments = [];
+let selectedBranchFilter = "All";
+let globalViewMode = "All"; 
+
+function setGlobalView(mode) {
+    globalViewMode = mode;
+    document.getElementById('viewTitle').textContent = mode === "All" ? "Dashboard Overview" : `${mode} Slots`;
+    if(window.innerWidth < 1024) toggleSidebar(); 
+    updateDashboardAndTable();
+}
+
+document.getElementById('branchFilterMain').addEventListener('change', (e) => {
+    selectedBranchFilter = e.target.value;
+    updateDashboardAndTable();
+});
+
+function customSort(a, b) {
+    if (a.serviceStatus === "Pending" && b.serviceStatus === "Pending") return new Date(b.date) - new Date(a.date);
+    if (a.serviceStatus === "Pending") return -1;
+    if (b.serviceStatus === "Pending") return 1;
+    return new Date(b.date) - new Date(a.date);
+}
+
+db.collection('appointments').onSnapshot((snapshot) => {
+    allAppointments = [];
+
+    snapshot.forEach(doc => {
+        let data = doc.data();
+        data.id = doc.id;
         
-        <div class="hidden md:flex flex-col items-center justify-center flex-[2] text-center">
-            <img src="https://stracares.in/assets/logo-header.png" alt="STRA CARE" class="h-8 lg:h-10 object-contain mb-1 dark:bg-white dark:px-2 dark:rounded">
-            <span class="text-[9px] font-bold text-brandTeal tracking-[0.2em] uppercase">Administration & Tracking</span>
-        </div>
-
-        <div class="flex items-center justify-end gap-3 flex-1">
-          <div class="hidden lg:flex items-center gap-2 px-4 py-2 bg-slate-50 dark:bg-slate-700/50 rounded-xl border border-slate-200 dark:border-slate-600">
-            <i class="fa-regular fa-clock text-brandTeal"></i>
-            <span class="text-sm font-semibold text-slate-600 dark:text-slate-300 font-mono" id="adminClock">--:--:--</span>
-          </div>
-          <button onclick="toggleTheme()" class="p-2.5 rounded-xl bg-indigo-50 dark:bg-slate-700 text-indigo-600 dark:text-yellow-400 hover:bg-indigo-100 dark:hover:bg-slate-600 transition-colors shadow-sm border border-indigo-100 dark:border-slate-600">
-            <i id="themeIcon" class="fa-solid fa-moon"></i>
-          </button>
-        </div>
-      </header>
-
-      <!-- Scrollable Workspace -->
-      <div class="flex-1 overflow-y-auto p-4 sm:p-6 w-full relative pb-24">
+        data.serviceStatus = data.serviceStatus || "Pending";
+        data.paymentStatus = data.paymentStatus || "Pending";
+        data.actualFee = data.actualFee !== undefined ? Number(data.actualFee) : Number(data.amount);
+        data.advanceReceived = data.advanceReceived !== undefined ? Number(data.advanceReceived) : 0;
+        data.upiRef = data.upiRef || "";
         
-        <div class="fade-in w-full">
-            
-          <!-- Controls Header -->
-          <div class="flex flex-col md:flex-row justify-between items-start md:items-center gap-4 mb-6 bg-white dark:bg-slate-800 p-5 rounded-2xl shadow-sm border border-slate-100 dark:border-slate-700 transition-colors">
-              <div>
-                  <h1 class="text-xl sm:text-2xl font-bold text-slate-800 dark:text-white tracking-tight" id="viewTitle">Overview</h1>
-                  <p class="text-xs text-slate-500 dark:text-slate-400 mt-1">Pending slots automatically rank at the top.</p>
-              </div>
-              <div class="w-full md:w-auto">
-                  <select id="branchFilterMain" class="w-full md:w-64 border-2 border-slate-200 dark:border-slate-600 rounded-xl p-2.5 bg-slate-50 dark:bg-slate-700 dark:text-white text-sm font-bold shadow-sm cursor-pointer outline-none transition focus:border-brandTeal">
-                      <option value="All">Global - All Branches</option>
-                      <option value="Stracare Kottayampoyil (Main)">Stracare Kottayampoyil (Main)</option>
-                      <option value="Stracare Arayakool">Stracare Arayakool</option>
-                      <option value="Theracare Pallikkuni">Theracare Pallikkuni</option>
-                      <option value="Theracare Azhiyur">Theracare Azhiyur</option>
-                  </select>
-              </div>
-          </div>
+        allAppointments.push(data);
+    });
 
-          <!-- Dashboard Metric Cards -->
-          <div class="grid grid-cols-2 lg:grid-cols-4 gap-4 mb-6">
-            <div class="card-hover bg-white dark:bg-slate-800 rounded-2xl p-4 sm:p-6 shadow-sm border border-slate-100 dark:border-slate-700 transition-colors relative overflow-hidden">
-              <div class="absolute top-0 right-0 p-4 opacity-10"><i class="fa-solid fa-calendar-check text-5xl text-[#5453EC]"></i></div>
-              <div class="flex items-center justify-between mb-4 relative z-10">
-                <div class="w-10 h-10 rounded-xl flex items-center justify-center text-white shadow-md" style="background: linear-gradient(135deg, #5453EC, #6B63FF);">
-                  <i class="fa-solid fa-users text-lg"></i>
+    allAppointments.sort(customSort);
+    updateDashboardAndTable();
+});
+
+function updateDashboardAndTable() {
+    const tbody = document.getElementById('tableBody');
+    tbody.innerHTML = '';
+    
+    let totalSlots = 0, pendingSlots = 0, doneSlots = 0, totalReceivables = 0;
+
+    allAppointments.forEach(data => {
+        if(selectedBranchFilter !== "All" && data.branch !== selectedBranchFilter) return;
+
+        if(globalViewMode === "Pending" && data.serviceStatus !== "Pending") return;
+        if(globalViewMode === "Completed" && (data.serviceStatus === "Pending" || data.serviceStatus === "Not Come" || data.serviceStatus === "Cancelled")) return;
+        if(globalViewMode === "Cancelled" && (data.serviceStatus !== "Not Come" && data.serviceStatus !== "Cancelled")) return;
+
+        let balance = data.actualFee - data.advanceReceived;
+
+        totalSlots++;
+        if(data.serviceStatus === "Pending") pendingSlots++;
+        if(data.serviceStatus === "Done") doneSlots++;
+        if(data.serviceStatus !== "Not Come" && data.serviceStatus !== "Cancelled") {
+            totalReceivables += balance > 0 ? balance : 0;
+        }
+
+        // Row Colors matching ERP premium feel (subtle backgrounds)
+        let rowClass = "border-b border-slate-50 dark:border-slate-700/50 hover:bg-slate-100 dark:hover:bg-slate-800 transition-colors text-sm text-slate-700 dark:text-slate-300 data-row "; 
+        let bgClass = "bg-white dark:bg-transparent";
+
+        const isPaid = data.paymentStatus === "Fully Paid" || data.advanceReceived >= data.actualFee;
+        const isDone = data.serviceStatus === "Done";
+        const isCancelled = data.serviceStatus === "Not Come" || data.serviceStatus === "Cancelled";
+
+        if (isCancelled) {
+            bgClass = "bg-red-50/50 dark:bg-red-900/10";
+        } else if (isDone && isPaid) {
+            bgClass = "bg-emerald-50/50 dark:bg-emerald-900/10";
+        } else if (isPaid && !isDone) {
+            bgClass = "bg-blue-50/50 dark:bg-blue-900/10";
+        } else if (isDone && !isPaid) {
+            bgClass = "bg-purple-50/50 dark:bg-purple-900/10";
+        }
+
+        rowClass += bgClass;
+        let reqDate = data.date ? new Date(data.date).toLocaleDateString('en-GB') : "--";
+
+        // Badges for Status
+        let srvBadge = data.serviceStatus === 'Done' ? 'bg-emerald-100 text-emerald-700 dark:bg-emerald-900/30 dark:text-emerald-400' : isCancelled ? 'bg-red-100 text-red-700 dark:bg-red-900/30 dark:text-red-400' : 'bg-slate-100 text-slate-600 dark:bg-slate-700 dark:text-slate-300';
+        let payBadge = data.paymentStatus === 'Fully Paid' ? 'bg-blue-100 text-blue-700 dark:bg-blue-900/30 dark:text-blue-400' : 'bg-slate-100 text-slate-600 dark:bg-slate-700 dark:text-slate-300';
+
+        const tr = document.createElement('tr');
+        tr.className = rowClass;
+        tr.innerHTML = `
+            <td class="p-4 whitespace-nowrap">
+                <div class="font-bold text-[#5453EC] dark:text-indigo-400 mb-1 text-xs tracking-tight">${data.transactionId || "--"}</div>
+                <div class="text-[11px] text-slate-500 font-medium"><i class="fa-regular fa-calendar mr-1"></i> ${reqDate} | ${data.time || ""}</div>
+            </td>
+            <td class="p-4 whitespace-nowrap">
+                <div class="font-bold text-slate-800 dark:text-white text-sm">${data.patientName || "Unknown"} <span class="text-xs font-normal text-slate-400">(${data.age||'-'} ${data.gender?data.gender.charAt(0):'-'})</span></div>
+                <div class="text-[11px] font-mono font-bold text-brandTeal my-0.5"><i class="fa-solid fa-phone mr-1"></i>${data.phone}</div>
+                <div class="text-[11px] text-slate-500 truncate max-w-[150px] lg:max-w-xs" title="${data.complaint || "--"}">${data.complaint || "--"}</div>
+            </td>
+            <td class="p-4 whitespace-nowrap">
+                <div class="text-xs font-bold text-slate-700 dark:text-slate-300">${(data.branch || "--").replace("Theracare ", "").replace("Stracare ", "")}</div>
+                <div class="text-[11px] font-medium text-slate-500 mt-1"><i class="fa-solid fa-user-doctor mr-1"></i> ${data.doctor || "Any"}</div>
+            </td>
+            <td class="p-4 whitespace-nowrap font-mono text-xs">
+                <div class="text-slate-600 dark:text-slate-400">Fee: ₹${data.actualFee}</div>
+                <div class="text-emerald-600 dark:text-emerald-400">Adv: ₹${data.advanceReceived}</div>
+                <div class="text-red-600 dark:text-red-400 font-bold">Bal: ₹${balance}</div>
+            </td>
+            <td class="p-4 whitespace-nowrap">
+                <div class="mb-1.5"><span class="px-2 py-0.5 rounded text-[10px] font-bold uppercase tracking-wider ${srvBadge}">S: ${data.serviceStatus}</span></div>
+                <div><span class="px-2 py-0.5 rounded text-[10px] font-bold uppercase tracking-wider ${payBadge}">P: ${data.paymentStatus}</span></div>
+            </td>
+            <td class="p-4 whitespace-nowrap text-center">
+                <div class="flex items-center justify-center gap-2">
+                    <a href="tel:+91${data.phone}" class="text-brandTeal hover:text-teal-700 bg-teal-50 dark:bg-teal-900/30 dark:hover:text-teal-300 px-3 py-1.5 rounded-lg transition-colors shadow-sm text-xs font-bold flex items-center gap-1">
+                        <i class="fa-solid fa-phone"></i> Call
+                    </a>
+                    <button onclick="openModal('${data.id}')" class="text-[#5453EC] hover:text-indigo-800 bg-indigo-50 dark:bg-indigo-900/30 dark:hover:text-indigo-300 px-3 py-1.5 rounded-lg transition-colors shadow-sm text-xs font-bold flex items-center gap-1">
+                        <i class="fa-solid fa-pen"></i> Edit
+                    </button>
                 </div>
-              </div>
-              <h3 class="text-2xl sm:text-3xl font-bold text-slate-800 dark:text-white relative z-10" id="dashTotal">0</h3>
-              <p class="text-[10px] sm:text-xs font-bold uppercase tracking-wider text-slate-500 dark:text-slate-400 mt-1 relative z-10">Total Bookings</p>
-            </div>
-            
-            <div class="card-hover bg-white dark:bg-slate-800 rounded-2xl p-4 sm:p-6 shadow-sm border border-slate-100 dark:border-slate-700 transition-colors relative overflow-hidden">
-              <div class="absolute top-0 right-0 p-4 opacity-10"><i class="fa-solid fa-clock text-5xl text-yellow-500"></i></div>
-              <div class="flex items-center justify-between mb-4 relative z-10">
-                <div class="w-10 h-10 rounded-xl flex items-center justify-center text-white shadow-md" style="background: linear-gradient(135deg, #F7CB51, #FCD34D);">
-                  <i class="fa-solid fa-hourglass-half text-lg"></i>
-                </div>
-              </div>
-              <h3 class="text-2xl sm:text-3xl font-bold text-slate-800 dark:text-white relative z-10" id="dashPending">0</h3>
-              <p class="text-[10px] sm:text-xs font-bold uppercase tracking-wider text-slate-500 dark:text-slate-400 mt-1 relative z-10">Service Pending</p>
-            </div>
+            </td>
+        `;
+        tbody.appendChild(tr);
+    });
 
-            <div class="card-hover bg-white dark:bg-slate-800 rounded-2xl p-4 sm:p-6 shadow-sm border border-slate-100 dark:border-slate-700 transition-colors relative overflow-hidden">
-              <div class="absolute top-0 right-0 p-4 opacity-10"><i class="fa-solid fa-check-double text-5xl text-emerald-500"></i></div>
-              <div class="flex items-center justify-between mb-4 relative z-10">
-                <div class="w-10 h-10 rounded-xl flex items-center justify-center text-white shadow-md" style="background: linear-gradient(135deg, #10b981, #34d399);">
-                  <i class="fa-solid fa-clipboard-check text-lg"></i>
-                </div>
-              </div>
-              <h3 class="text-2xl sm:text-3xl font-bold text-slate-800 dark:text-white relative z-10" id="dashDone">0</h3>
-              <p class="text-[10px] sm:text-xs font-bold uppercase tracking-wider text-slate-500 dark:text-slate-400 mt-1 relative z-10">Service Done</p>
-            </div>
+    document.getElementById('dashTotal').textContent = totalSlots;
+    document.getElementById('dashPending').textContent = pendingSlots;
+    document.getElementById('dashDone').textContent = doneSlots;
+    document.getElementById('dashReceivables').textContent = "₹" + totalReceivables.toLocaleString('en-IN');
+    
+    masterSearchTable();
+}
 
-            <div class="card-hover bg-white dark:bg-slate-800 rounded-2xl p-4 sm:p-6 shadow-sm border border-slate-100 dark:border-slate-700 transition-colors relative overflow-hidden">
-              <div class="absolute top-0 right-0 p-4 opacity-10"><i class="fa-solid fa-wallet text-5xl text-red-500"></i></div>
-              <div class="flex items-center justify-between mb-4 relative z-10">
-                <div class="w-10 h-10 rounded-xl flex items-center justify-center text-white shadow-md" style="background: linear-gradient(135deg, #EF4444, #F87171);">
-                  <i class="fa-solid fa-indian-rupee-sign text-lg"></i>
-                </div>
-              </div>
-              <h3 class="text-2xl sm:text-3xl font-bold text-red-600 dark:text-red-400 relative z-10" id="dashReceivables">₹0</h3>
-              <p class="text-[10px] sm:text-xs font-bold uppercase tracking-wider text-slate-500 dark:text-slate-400 mt-1 relative z-10">Receivables</p>
-            </div>
-          </div>
+// --- Master Search Logic ---
+function masterSearchTable() {
+    const input = document.getElementById("masterSearch").value.toUpperCase();
+    const rows = document.querySelectorAll("tr.data-row");
 
-          <!-- Color Legend -->
-          <div class="flex flex-wrap gap-4 mb-4 text-[11px] sm:text-xs font-bold bg-white dark:bg-slate-800 p-4 rounded-xl shadow-sm border border-slate-100 dark:border-slate-700 items-center">
-              <span class="text-slate-400 uppercase tracking-widest text-[10px] mr-2"><i class="fa-solid fa-circle-info mr-1"></i> Legend:</span>
-              <span class="flex items-center gap-1.5"><div class="w-3 h-3 rounded bg-slate-100 dark:bg-slate-700 border border-slate-300 dark:border-slate-500"></div> Pending</span>
-              <span class="flex items-center gap-1.5 text-blue-700 dark:text-blue-300"><div class="w-3 h-3 rounded bg-blue-100 dark:bg-blue-900/50 border border-blue-300 dark:border-blue-500"></div> Payment Done</span>
-              <span class="flex items-center gap-1.5 text-purple-700 dark:text-purple-300"><div class="w-3 h-3 rounded bg-purple-100 dark:bg-purple-900/50 border border-purple-300 dark:border-purple-500"></div> Service Done</span>
-              <span class="flex items-center gap-1.5 text-emerald-700 dark:text-emerald-300"><div class="w-3 h-3 rounded bg-emerald-100 dark:bg-emerald-900/50 border border-emerald-300 dark:border-emerald-500"></div> Fully Complete</span>
-              <span class="flex items-center gap-1.5 text-red-700 dark:text-red-300"><div class="w-3 h-3 rounded bg-red-100 dark:bg-red-900/50 border border-red-300 dark:border-red-500"></div> Cancelled</span>
-          </div>
+    rows.forEach(row => {
+        const textContent = row.textContent.toUpperCase();
+        if (textContent.indexOf(input) > -1) {
+            row.style.display = "";
+        } else {
+            row.style.display = "none";
+        }
+    });
+}
 
-          <!-- Data Table -->
-          <div class="bg-white dark:bg-slate-800 rounded-2xl shadow-sm border border-slate-100 dark:border-slate-700 transition-colors overflow-hidden">
-            <div class="overflow-x-auto pb-4">
-              <table class="w-full min-w-[800px] text-left border-collapse">
-                <thead>
-                  <tr class="bg-slate-50 dark:bg-slate-700/50 text-slate-500 dark:text-slate-300 text-xs uppercase tracking-wider border-b border-slate-200 dark:border-slate-700">
-                    <th class="p-4 font-semibold whitespace-nowrap">Trn ID / Date</th>
-                    <th class="p-4 font-semibold whitespace-nowrap">Patient Details</th>
-                    <th class="p-4 font-semibold whitespace-nowrap">Branch / Doctor</th>
-                    <th class="p-4 font-semibold whitespace-nowrap">Financials (₹)</th>
-                    <th class="p-4 font-semibold whitespace-nowrap">Status</th>
-                    <th class="p-4 font-semibold whitespace-nowrap text-center">Action</th>
-                  </tr>
-                </thead>
-                <tbody id="tableBody" class="divide-y divide-slate-100 dark:divide-slate-700 text-slate-700 dark:text-slate-300">
-                    <tr><td colspan="6" class="p-10 text-center text-slate-400 font-medium animate-pulse">Syncing Secure Data...</td></tr>
-                </tbody>
-              </table>
-            </div>
-          </div>
+// --- Modal Functions ---
+const modal = document.getElementById('editModal');
+const modalInner = document.getElementById('modalInner');
 
-        </div>
-      </div>
-    </main>
-  </div>
+function openModal(id) {
+    const data = allAppointments.find(d => d.id === id);
+    if(!data) return;
 
-  <!-- Edit Modal (ERP Themed) -->
-  <div id="editModal" class="fixed inset-0 bg-slate-900/60 backdrop-blur-sm hidden flex items-center justify-center p-4 z-[99999] opacity-0 transition-opacity duration-300">
-      <div class="bg-white dark:bg-slate-800 rounded-2xl shadow-2xl p-0 w-full max-w-lg transform scale-95 transition-transform duration-300 overflow-hidden flex flex-col border border-slate-200 dark:border-slate-700" id="modalInner">
-          
-          <div class="p-5 border-b border-slate-200 dark:border-slate-700 flex justify-between items-center bg-slate-50 dark:bg-slate-900/50 shrink-0">
-              <div class="flex items-center gap-3">
-                  <div class="w-8 h-8 rounded-lg bg-brandTeal/20 text-brandTeal flex items-center justify-center"><i class="fa-solid fa-pen"></i></div>
-                  <h3 class="font-bold text-slate-800 dark:text-white text-lg">Manage Record</h3>
-              </div>
-              <button onclick="closeModal()" class="text-slate-400 hover:text-red-500 text-xl transition-colors"><i class="fa-solid fa-xmark"></i></button>
-          </div>
-          
-          <div class="p-6 space-y-5 overflow-y-auto max-h-[75vh]">
-              <input type="hidden" id="editDocId">
-              
-              <div class="bg-indigo-50 dark:bg-indigo-900/10 p-4 rounded-xl border border-indigo-100 dark:border-indigo-800/30 flex justify-between items-start">
-                  <div>
-                      <p class="text-[10px] text-[#5453EC] dark:text-indigo-400 uppercase tracking-widest font-bold mb-1" id="displayPatientMobile">Mobile: Loading...</p>
-                      <p class="font-bold text-slate-800 dark:text-white text-lg" id="displayPatientName">Loading...</p>
-                  </div>
-                  <div class="text-right">
-                      <p class="text-[10px] text-slate-400 uppercase tracking-widest font-bold mb-1">Last Edited</p>
-                      <p class="text-xs text-slate-600 dark:text-slate-300 font-mono font-bold" id="displayLastEdited">Never</p>
-                  </div>
-              </div>
+    document.getElementById('editDocId').value = id;
+    document.getElementById('displayPatientName').textContent = `${data.patientName} (${data.transactionId})`;
+    document.getElementById('displayPatientMobile').textContent = `Mobile: ${data.phone}`;
+    
+    let lastEdited = "Never";
+    if (data.updatedAt) {
+        let dateObj = data.updatedAt.toDate ? data.updatedAt.toDate() : new Date(data.updatedAt);
+        lastEdited = dateObj.toLocaleString('en-GB', { day:'2-digit', month:'short', hour:'2-digit', minute:'2-digit' });
+    }
+    document.getElementById('displayLastEdited').textContent = lastEdited;
 
-              <div class="grid grid-cols-2 gap-5">
-                  <div>
-                      <label class="block text-xs font-bold text-slate-600 dark:text-slate-400 mb-1.5 uppercase">Service Status</label>
-                      <select id="editServiceStatus" class="w-full px-4 py-2.5 rounded-xl border border-slate-200 dark:border-slate-600 dark:bg-slate-700 dark:text-white text-sm outline-none transition-shadow">
-                          <option value="Pending">Pending</option>
-                          <option value="Done">Done</option>
-                          <option value="Not Come">Not Come</option>
-                          <option value="Cancelled">Cancelled</option>
-                      </select>
-                  </div>
-                  <div>
-                      <label class="block text-xs font-bold text-slate-600 dark:text-slate-400 mb-1.5 uppercase">Payment Status</label>
-                      <select id="editPaymentStatus" class="w-full px-4 py-2.5 rounded-xl border border-slate-200 dark:border-slate-600 dark:bg-slate-700 dark:text-white text-sm outline-none transition-shadow">
-                          <option value="Pending">Pending</option>
-                          <option value="Advance">Advance</option>
-                          <option value="Fully Paid">Fully Paid</option>
-                          <option value="Refunded">Refunded</option>
-                      </select>
-                  </div>
-              </div>
+    document.getElementById('editServiceStatus').value = data.serviceStatus;
+    document.getElementById('editPaymentStatus').value = data.paymentStatus;
+    document.getElementById('editActualFee').value = data.actualFee;
+    document.getElementById('editAdvance').value = data.advanceReceived;
+    document.getElementById('editUpi').value = data.upiRef;
 
-              <div class="grid grid-cols-2 gap-5">
-                  <div>
-                      <label class="block text-xs font-bold text-slate-600 dark:text-slate-400 mb-1.5 uppercase">Actual Fee (₹)</label>
-                      <input type="number" id="editActualFee" class="w-full px-4 py-2.5 rounded-xl border border-slate-200 dark:border-slate-600 dark:bg-slate-700 dark:text-white text-sm outline-none transition-shadow font-mono font-bold">
-                  </div>
-                  <div>
-                      <label class="block text-xs font-bold text-slate-600 dark:text-slate-400 mb-1.5 uppercase">Advance Rcvd (₹)</label>
-                      <input type="number" id="editAdvance" class="w-full px-4 py-2.5 rounded-xl border border-slate-200 dark:border-slate-600 dark:bg-slate-700 dark:text-white text-sm outline-none transition-shadow font-mono font-bold text-emerald-600 dark:text-emerald-400">
-                  </div>
-              </div>
+    if(currentUser && currentUser.role === "Owner") {
+        document.getElementById('deleteBtn').classList.remove('hidden');
+    } else {
+        document.getElementById('deleteBtn').classList.add('hidden');
+    }
 
-              <div>
-                  <label class="block text-xs font-bold text-slate-600 dark:text-slate-400 mb-1.5 uppercase">UPI Transaction No.</label>
-                  <input type="text" id="editUpi" placeholder="e.g. 31234567890" class="w-full px-4 py-2.5 rounded-xl border border-slate-200 dark:border-slate-600 dark:bg-slate-700 dark:text-white text-sm font-mono outline-none transition-shadow">
-              </div>
-              
-              <div class="mt-2 pt-4 border-t border-slate-200 dark:border-slate-700 flex justify-end">
-                  <button onclick="deleteRecord()" id="deleteBtn" class="text-xs text-red-600 hover:text-white font-bold hidden bg-red-50 hover:bg-red-500 dark:bg-red-900/20 dark:hover:bg-red-600 px-4 py-2 rounded-lg transition-colors border border-red-200 dark:border-red-800"><i class="fa-solid fa-trash mr-1"></i> Delete Permanent</button>
-              </div>
-          </div>
+    modal.classList.remove('hidden');
+    setTimeout(() => {
+        modal.classList.remove('opacity-0');
+        modalInner.classList.remove('scale-95');
+    }, 10);
+}
 
-          <div class="p-5 border-t border-slate-200 dark:border-slate-700 flex justify-end gap-3 bg-slate-50 dark:bg-slate-900/50 shrink-0">
-              <button onclick="closeModal()" class="px-5 py-2.5 text-sm font-bold text-slate-500 dark:text-slate-400 hover:bg-slate-200 dark:hover:bg-slate-700 rounded-xl transition-colors">Cancel</button>
-              <button onclick="saveUpdate()" class="px-6 py-2.5 text-sm font-bold text-white rounded-xl shadow-lg transition-transform active:scale-95 flex items-center gap-2" style="background: linear-gradient(135deg, #009B95, #007A75);">
-                  <i class="fa-solid fa-floppy-disk"></i> Update Data
-              </button>
-          </div>
-      </div>
-  </div>
+function closeModal() {
+    modal.classList.add('opacity-0');
+    modalInner.classList.add('scale-95');
+    setTimeout(() => {
+        modal.classList.add('hidden');
+    }, 300);
+}
 
-  <!-- Main Application Script -->
-  <script src="./admin.js"></script>
-</body>
-</html>
+// Save Update to Firebase
+async function saveUpdate() {
+    const id = document.getElementById('editDocId').value;
+    const service = document.getElementById('editServiceStatus').value;
+    const payment = document.getElementById('editPaymentStatus').value;
+    const actual = Number(document.getElementById('editActualFee').value);
+    const advance = Number(document.getElementById('editAdvance').value);
+    const upi = document.getElementById('editUpi').value.trim();
+
+    const btn = event.currentTarget;
+    const origHTML = btn.innerHTML;
+    btn.innerHTML = '<i class="fa-solid fa-spinner fa-spin"></i> Saving...';
+    btn.disabled = true;
+
+    try {
+        await db.collection("appointments").doc(id).update({
+            serviceStatus: service,
+            paymentStatus: payment,
+            actualFee: actual,
+            advanceReceived: advance,
+            upiRef: upi,
+            updatedAt: firebase.firestore.FieldValue.serverTimestamp()
+        });
+        closeModal();
+    } catch (error) {
+        console.error("Error updating document: ", error);
+        alert("Failed to update status. Check permissions or network.");
+    } finally {
+        btn.innerHTML = origHTML;
+        btn.disabled = false;
+    }
+}
+
+// Delete Record
+async function deleteRecord() {
+    const id = document.getElementById('editDocId').value;
+    if(confirm("Are you sure you want to PERMANENTLY DELETE this record? This cannot be undone.")) {
+        try {
+            await db.collection("appointments").doc(id).delete();
+            closeModal();
+        } catch(error) {
+            console.error("Error deleting document: ", error);
+            alert("Failed to delete record.");
+        }
+    }
+}
