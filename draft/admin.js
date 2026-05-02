@@ -6,17 +6,22 @@ const users = [
 
 let currentUser = null;
 
-// Check Login on Load
-window.addEventListener('DOMContentLoaded', () => {
+// Initialize Auth (runs immediately because script is at body bottom)
+(function initAuth() {
     const savedUser = localStorage.getItem('stra_admin_user');
+    const overlay = document.getElementById('loginOverlay');
+    const emailEl = document.getElementById('topUserEmail');
+    const roleEl = document.getElementById('topUserRole');
+
     if (savedUser) {
         currentUser = JSON.parse(savedUser);
-        document.getElementById('loginOverlay').classList.add('hidden');
-        document.getElementById('userRoleDisplay').textContent = `${currentUser.role} Account`;
+        if(overlay) overlay.classList.add('hidden');
+        if(emailEl) emailEl.textContent = currentUser.email;
+        if(roleEl) roleEl.textContent = `${currentUser.role} Account`;
     } else {
-        document.getElementById('loginOverlay').classList.remove('hidden');
+        if(overlay) overlay.classList.remove('hidden');
     }
-});
+})();
 
 // Handle Login Submission
 document.getElementById('loginForm').addEventListener('submit', (e) => {
@@ -31,7 +36,14 @@ document.getElementById('loginForm').addEventListener('submit', (e) => {
         currentUser = validUser;
         localStorage.setItem('stra_admin_user', JSON.stringify(validUser));
         document.getElementById('loginOverlay').classList.add('hidden');
-        document.getElementById('userRoleDisplay').textContent = `${currentUser.role} Account`;
+        
+        // Update user display dynamically
+        const emailEl = document.getElementById('topUserEmail');
+        const roleEl = document.getElementById('topUserRole');
+        
+        if(emailEl) emailEl.textContent = currentUser.email;
+        if(roleEl) roleEl.textContent = `${currentUser.role} Account`;
+
         errorEl.classList.add('hidden');
     } else {
         errorEl.classList.remove('hidden');
@@ -43,8 +55,20 @@ function handleLogout() {
     currentUser = null;
     document.getElementById('loginEmail').value = '';
     document.getElementById('loginPassword').value = '';
+    
+    // Reset User display
+    const emailEl = document.getElementById('topUserEmail');
+    const roleEl = document.getElementById('topUserRole');
+    if(emailEl) emailEl.textContent = "Not logged in";
+    if(roleEl) roleEl.textContent = "---";
+
     document.getElementById('loginOverlay').classList.remove('hidden');
-    toggleSidebar(); // close sidebar if open
+    
+    // Close sidebar if open
+    const sidebar = document.getElementById('sidebar');
+    if(!sidebar.classList.contains('-translate-x-full')) {
+        toggleSidebar();
+    }
 }
 
 
@@ -65,12 +89,14 @@ function toggleTheme() {
     }
 }
 
+// Initial Theme Check
 if (localStorage.admin_theme === 'dark' || (!('admin_theme' in localStorage) && window.matchMedia('(prefers-color-scheme: dark)').matches)) {
     document.documentElement.classList.add('dark');
-    window.addEventListener('DOMContentLoaded', () => {
-        document.getElementById('themeIcon').className = "fa-solid fa-sun";
-        document.getElementById('themeIcon').parentElement.classList.add('text-yellow-400');
-    });
+    const icon = document.getElementById('themeIcon');
+    if(icon) {
+        icon.className = "fa-solid fa-sun";
+        icon.parentElement.classList.add('text-yellow-400');
+    }
 }
 
 function toggleSidebar() {
@@ -80,22 +106,27 @@ function toggleSidebar() {
     overlay.classList.toggle('hidden');
 }
 
-// Clock
+// Running Clock (Date & Time)
 setInterval(() => {
     const clockEl = document.getElementById('adminClock');
-    if(clockEl) clockEl.textContent = new Date().toLocaleTimeString('en-US', { hour12: true });
+    if(clockEl) {
+        const now = new Date();
+        const dateOpts = { weekday: 'short', month: 'short', day: 'numeric' };
+        const timeOpts = { hour: '2-digit', minute: '2-digit', second: '2-digit', hour12: true };
+        clockEl.innerHTML = `${now.toLocaleDateString('en-US', dateOpts)} <br/> ${now.toLocaleTimeString('en-US', timeOpts)}`;
+    }
 }, 1000);
 
 
 // --- Data & Firebase Logic ---
 let allAppointments = [];
 let selectedBranchFilter = "All";
-let globalViewMode = "All"; // All, Pending, Completed, Cancelled
+let globalViewMode = "All"; 
 
 function setGlobalView(mode) {
     globalViewMode = mode;
     document.getElementById('viewTitle').textContent = mode === "All" ? "DASHBOARD OVERVIEW" : `${mode.toUpperCase()} SLOTS`;
-    toggleSidebar();
+    if(window.innerWidth < 1024) toggleSidebar(); 
     updateDashboardAndTable();
 }
 
@@ -105,21 +136,13 @@ document.getElementById('branchFilterMain').addEventListener('change', (e) => {
     updateDashboardAndTable();
 });
 
-// Custom Sort function: Pending first, then date descending
+// Custom Sort: Pending top, then date descending
 function customSort(a, b) {
-    // Both pending
-    if (a.serviceStatus === "Pending" && b.serviceStatus === "Pending") {
-        return new Date(b.date) - new Date(a.date);
-    }
-    // Only A is pending
+    if (a.serviceStatus === "Pending" && b.serviceStatus === "Pending") return new Date(b.date) - new Date(a.date);
     if (a.serviceStatus === "Pending") return -1;
-    // Only B is pending
     if (b.serviceStatus === "Pending") return 1;
-    
-    // Neither are pending, sort by date desc
     return new Date(b.date) - new Date(a.date);
 }
-
 
 // Real-time Firestore Listener
 db.collection('appointments').onSnapshot((snapshot) => {
@@ -143,7 +166,7 @@ db.collection('appointments').onSnapshot((snapshot) => {
     updateDashboardAndTable();
 });
 
-// Render function
+// Render Function
 function updateDashboardAndTable() {
     const tbody = document.getElementById('tableBody');
     tbody.innerHTML = '';
@@ -161,7 +184,7 @@ function updateDashboardAndTable() {
 
         let balance = data.actualFee - data.advanceReceived;
 
-        // Dashboard Calcs (Only visible views)
+        // Dashboard Calcs
         totalSlots++;
         if(data.serviceStatus === "Pending") pendingSlots++;
         if(data.serviceStatus === "Done") doneSlots++;
@@ -170,55 +193,55 @@ function updateDashboardAndTable() {
         }
 
         // --- Row Color Logic ---
-        let rowClass = "hover:bg-gray-100 dark:hover:bg-gray-700 transition data-row"; // Added data-row for filtering
+        let rowClass = "hover:bg-gray-100 dark:hover:bg-gray-700/50 transition data-row"; 
         
         const isPaid = data.paymentStatus === "Fully Paid" || data.advanceReceived >= data.actualFee;
         const isDone = data.serviceStatus === "Done";
         const isCancelled = data.serviceStatus === "Not Come" || data.serviceStatus === "Cancelled";
 
         if (isCancelled) {
-            rowClass = "bg-red-100 dark:bg-red-900/40 text-red-900 dark:text-red-100 data-row";
+            rowClass = "bg-red-50 dark:bg-red-900/20 text-red-900 dark:text-red-100 data-row";
         } else if (isDone && isPaid) {
-            rowClass = "bg-green-100 dark:bg-green-900/40 text-green-900 dark:text-green-100 data-row";
+            rowClass = "bg-green-50 dark:bg-green-900/20 text-green-900 dark:text-green-100 data-row";
         } else if (isPaid && !isDone) {
-            rowClass = "bg-blue-100 dark:bg-blue-900/40 text-blue-900 dark:text-blue-100 data-row";
+            rowClass = "bg-blue-50 dark:bg-blue-900/20 text-blue-900 dark:text-blue-100 data-row";
         } else if (isDone && !isPaid) {
-            rowClass = "bg-purple-100 dark:bg-purple-900/40 text-purple-900 dark:text-purple-100 data-row";
+            rowClass = "bg-purple-50 dark:bg-purple-900/20 text-purple-900 dark:text-purple-100 data-row";
         } else {
             rowClass = "bg-white dark:bg-gray-800 " + rowClass;
         }
 
         let reqDate = data.date ? new Date(data.date).toLocaleDateString('en-GB') : "N/A";
 
-        // Build Row (Adding text data for multi-filter indexing)
+        // Build Row
         const tr = document.createElement('tr');
         tr.className = rowClass;
         tr.innerHTML = `
-            <td class="p-3 border-b border-gray-200 dark:border-gray-700 filter-col-trn">
+            <td class="p-3 border-b border-gray-200 dark:border-gray-700">
                 <div class="font-mono text-xs font-bold mb-1 tracking-tight">${data.transactionId || "N/A"}</div>
                 <div class="text-[11px] opacity-80"><i class="fa-regular fa-calendar text-brandTeal"></i> ${reqDate} | ${data.time || ""}</div>
             </td>
-            <td class="p-3 border-b border-gray-200 dark:border-gray-700 filter-col-patient">
-                <div class="font-bold text-sm">${data.patientName || "Unknown"} <span class="font-normal opacity-70">(${data.age||'-'} ${data.gender?data.gender.charAt(0):'-'})</span></div>
+            <td class="p-3 border-b border-gray-200 dark:border-gray-700">
+                <div class="font-bold text-sm text-brandNavy dark:text-white">${data.patientName || "Unknown"} <span class="font-normal opacity-70">(${data.age||'-'} ${data.gender?data.gender.charAt(0):'-'})</span></div>
                 <div class="text-[11px] font-mono font-bold text-brandTeal">${data.phone}</div>
                 <div class="text-xs opacity-80 truncate max-w-[150px] lg:max-w-xs" title="${data.complaint || "N/A"}">${data.complaint || "N/A"}</div>
             </td>
-            <td class="p-3 border-b border-gray-200 dark:border-gray-700 filter-col-branch">
-                <div class="text-sm font-bold text-brandTeal">${(data.branch || "N/A").replace("Theracare ", "").replace("Stracare ", "")}</div>
-                <div class="text-xs font-medium opacity-80"><i class="fa-solid fa-user-doctor"></i> ${data.doctor || "Any"}</div>
+            <td class="p-3 border-b border-gray-200 dark:border-gray-700">
+                <div class="text-[13px] font-bold text-brandTeal">${(data.branch || "N/A").replace("Theracare ", "").replace("Stracare ", "")}</div>
+                <div class="text-[11px] font-medium opacity-80"><i class="fa-solid fa-user-doctor"></i> ${data.doctor || "Any"}</div>
             </td>
             <td class="p-3 border-b border-gray-200 dark:border-gray-700 font-mono text-xs">
                 <div>Fee: ₹${data.actualFee}</div>
                 <div class="text-green-600 dark:text-green-400">Adv: ₹${data.advanceReceived}</div>
                 <div class="text-red-600 dark:text-red-400 font-bold">Bal: ₹${balance}</div>
             </td>
-            <td class="p-3 border-b border-gray-200 dark:border-gray-700 text-[11px] font-bold uppercase tracking-wide filter-col-status">
+            <td class="p-3 border-b border-gray-200 dark:border-gray-700 text-[11px] font-bold uppercase tracking-wide">
                 <div class="mb-1">SRV: <span class="${data.serviceStatus==='Done'?'text-green-600 dark:text-green-400': isCancelled?'text-red-600 dark:text-red-400':''}">${data.serviceStatus}</span></div>
                 <div>PAY: <span class="${data.paymentStatus==='Fully Paid'?'text-blue-600 dark:text-blue-400':''}">${data.paymentStatus}</span></div>
             </td>
             <td class="p-3 border-b border-gray-200 dark:border-gray-700 text-center align-middle">
                 <div class="flex items-center justify-center gap-2">
-                    <a href="tel:+91${data.phone}" class="bg-brandNavy dark:bg-gray-600 text-white w-8 h-8 rounded-full flex items-center justify-center hover:scale-110 transition shadow" title="Call Patient">
+                    <a href="tel:+91${data.phone}" class="bg-gray-200 dark:bg-gray-700 text-brandNavy dark:text-white w-8 h-8 rounded-full flex items-center justify-center hover:scale-110 transition shadow" title="Call Patient">
                         <i class="fa-solid fa-phone text-xs"></i>
                     </a>
                     <button onclick="openModal('${data.id}')" class="bg-brandTeal text-white w-8 h-8 rounded-full flex items-center justify-center hover:scale-110 transition shadow" title="Edit Status">
@@ -236,31 +259,19 @@ function updateDashboardAndTable() {
     document.getElementById('dashDone').textContent = doneSlots;
     document.getElementById('dashReceivables').textContent = "₹" + totalReceivables;
     
-    // Re-run filter just in case
-    filterTable();
+    // Maintain Master Search Filter
+    masterSearchTable();
 }
 
-// --- Multi-Column Filtering Logic ---
-function filterTable() {
-    const inputTrn = document.getElementById("filterTrn").value.toUpperCase();
-    const inputPatient = document.getElementById("filterPatient").value.toUpperCase();
-    const inputBranch = document.getElementById("filterBranch").value.toUpperCase();
-    const inputStatus = document.getElementById("filterStatus").value.toUpperCase();
-    
+// --- Master Search Logic ---
+function masterSearchTable() {
+    const input = document.getElementById("masterSearch").value.toUpperCase();
     const rows = document.querySelectorAll("tr.data-row");
 
     rows.forEach(row => {
-        let textTrn = row.querySelector(".filter-col-trn").textContent.toUpperCase();
-        let textPatient = row.querySelector(".filter-col-patient").textContent.toUpperCase();
-        let textBranch = row.querySelector(".filter-col-branch").textContent.toUpperCase();
-        let textStatus = row.querySelector(".filter-col-status").textContent.toUpperCase();
-
-        if (
-            textTrn.indexOf(inputTrn) > -1 &&
-            textPatient.indexOf(inputPatient) > -1 &&
-            textBranch.indexOf(inputBranch) > -1 &&
-            textStatus.indexOf(inputStatus) > -1
-        ) {
+        // Grab all text content inside the row to check for matches
+        const textContent = row.textContent.toUpperCase();
+        if (textContent.indexOf(input) > -1) {
             row.style.display = "";
         } else {
             row.style.display = "none";
@@ -270,7 +281,7 @@ function filterTable() {
 
 // --- Modal Functions ---
 const modal = document.getElementById('editModal');
-const modalInner = modal.querySelector('div');
+const modalInner = modal.querySelector('div').firstElementChild.parentElement;
 
 function openModal(id) {
     const data = allAppointments.find(d => d.id === id);
@@ -283,7 +294,6 @@ function openModal(id) {
     // Handle Timestamp display
     let lastEdited = "Never";
     if (data.updatedAt) {
-        // Handle Firebase Timestamp object
         let dateObj = data.updatedAt.toDate ? data.updatedAt.toDate() : new Date(data.updatedAt);
         lastEdited = dateObj.toLocaleString('en-GB', { day:'2-digit', month:'short', hour:'2-digit', minute:'2-digit' });
     }
@@ -340,7 +350,7 @@ async function saveUpdate() {
             actualFee: actual,
             advanceReceived: advance,
             upiRef: upi,
-            updatedAt: firebase.firestore.FieldValue.serverTimestamp() // Sets the last edited timestamp
+            updatedAt: firebase.firestore.FieldValue.serverTimestamp()
         });
         closeModal();
     } catch (error) {
