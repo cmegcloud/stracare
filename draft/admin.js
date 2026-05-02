@@ -6,30 +6,37 @@ const users = [
 
 let currentUser = null;
 
-// Initialize Auth (runs immediately)
-(function initAuth() {
+// Handle Auth UI Update
+function updateAuthUI(user) {
+    const emailEl = document.getElementById('topUserEmail');
+    const roleEl = document.getElementById('topUserRole');
+    const sidebarRole = document.getElementById('sidebarUserRole');
+
+    if (user) {
+        if(emailEl) emailEl.textContent = user.email;
+        if(roleEl) roleEl.textContent = `${user.role} Account`;
+        if(sidebarRole) sidebarRole.textContent = `App Ver 1.0 • ${user.role}`;
+    } else {
+        if(emailEl) emailEl.textContent = "Not logged in";
+        if(roleEl) roleEl.textContent = "---";
+        if(sidebarRole) sidebarRole.textContent = `App Ver 1.0`;
+    }
+}
+
+// Check Login on DOM Load
+document.addEventListener('DOMContentLoaded', () => {
     const savedUser = localStorage.getItem('stra_admin_user');
     const overlay = document.getElementById('loginOverlay');
 
     if (savedUser) {
         currentUser = JSON.parse(savedUser);
         if(overlay) overlay.classList.add('hidden');
-        
-        // Update user display dynamically
-        const emailEl = document.getElementById('topUserEmail');
-        const roleEl = document.getElementById('topUserRole');
-        if(emailEl) emailEl.textContent = currentUser.email;
-        if(roleEl) roleEl.textContent = `${currentUser.role} Account`;
+        updateAuthUI(currentUser);
     } else {
         if(overlay) overlay.classList.remove('hidden');
-        
-        // Reset user display dynamically
-        const emailEl = document.getElementById('topUserEmail');
-        const roleEl = document.getElementById('topUserRole');
-        if(emailEl) emailEl.textContent = "Not logged in";
-        if(roleEl) roleEl.textContent = "---";
+        updateAuthUI(null);
     }
-})();
+});
 
 // Handle Login Submission
 document.getElementById('loginForm').addEventListener('submit', (e) => {
@@ -44,35 +51,23 @@ document.getElementById('loginForm').addEventListener('submit', (e) => {
         currentUser = validUser;
         localStorage.setItem('stra_admin_user', JSON.stringify(validUser));
         document.getElementById('loginOverlay').classList.add('hidden');
-        
-        // Update user display dynamically
-        const emailEl = document.getElementById('topUserEmail');
-        const roleEl = document.getElementById('topUserRole');
-        
-        if(emailEl) emailEl.textContent = currentUser.email;
-        if(roleEl) roleEl.textContent = `${currentUser.role} Account`;
-
+        updateAuthUI(currentUser);
         errorEl.classList.add('hidden');
     } else {
         errorEl.classList.remove('hidden');
     }
 });
 
+// Logout
 function handleLogout() {
     localStorage.removeItem('stra_admin_user');
     currentUser = null;
     document.getElementById('loginEmail').value = '';
     document.getElementById('loginPassword').value = '';
     
-    // Reset User display
-    const emailEl = document.getElementById('topUserEmail');
-    const roleEl = document.getElementById('topUserRole');
-    if(emailEl) emailEl.textContent = "Not logged in";
-    if(roleEl) roleEl.textContent = "---";
-
+    updateAuthUI(null);
     document.getElementById('loginOverlay').classList.remove('hidden');
     
-    // Close sidebar if open
     const sidebar = document.getElementById('sidebar');
     if(!sidebar.classList.contains('-translate-x-full')) {
         toggleSidebar();
@@ -225,16 +220,16 @@ function updateDashboardAndTable() {
         const tr = document.createElement('tr');
         tr.className = rowClass;
         tr.innerHTML = `
-            <td class="p-3 border-b border-gray-200 dark:border-gray-700 filter-col-trn">
+            <td class="p-3 border-b border-gray-200 dark:border-gray-700">
                 <div class="font-mono text-xs font-bold mb-1 tracking-tight">${data.transactionId || "N/A"}</div>
                 <div class="text-[11px] opacity-80"><i class="fa-regular fa-calendar text-brandTeal"></i> ${reqDate} | ${data.time || ""}</div>
             </td>
-            <td class="p-3 border-b border-gray-200 dark:border-gray-700 filter-col-patient">
+            <td class="p-3 border-b border-gray-200 dark:border-gray-700">
                 <div class="font-bold text-sm text-brandNavy dark:text-white">${data.patientName || "Unknown"} <span class="font-normal opacity-70">(${data.age||'-'} ${data.gender?data.gender.charAt(0):'-'})</span></div>
                 <div class="text-[11px] font-mono font-bold text-brandTeal">${data.phone}</div>
                 <div class="text-xs opacity-80 truncate max-w-[150px] lg:max-w-xs" title="${data.complaint || "N/A"}">${data.complaint || "N/A"}</div>
             </td>
-            <td class="p-3 border-b border-gray-200 dark:border-gray-700 filter-col-branch">
+            <td class="p-3 border-b border-gray-200 dark:border-gray-700">
                 <div class="text-[13px] font-bold text-brandTeal">${(data.branch || "N/A").replace("Theracare ", "").replace("Stracare ", "")}</div>
                 <div class="text-[11px] font-medium opacity-80"><i class="fa-solid fa-user-doctor"></i> ${data.doctor || "Any"}</div>
             </td>
@@ -243,7 +238,7 @@ function updateDashboardAndTable() {
                 <div class="text-green-600 dark:text-green-400">Adv: ₹${data.advanceReceived}</div>
                 <div class="text-red-600 dark:text-red-400 font-bold">Bal: ₹${balance}</div>
             </td>
-            <td class="p-3 border-b border-gray-200 dark:border-gray-700 text-[11px] font-bold uppercase tracking-wide filter-col-status">
+            <td class="p-3 border-b border-gray-200 dark:border-gray-700 text-[11px] font-bold uppercase tracking-wide">
                 <div class="mb-1">SRV: <span class="${data.serviceStatus==='Done'?'text-green-600 dark:text-green-400': isCancelled?'text-red-600 dark:text-red-400':''}">${data.serviceStatus}</span></div>
                 <div>PAY: <span class="${data.paymentStatus==='Fully Paid'?'text-blue-600 dark:text-blue-400':''}">${data.paymentStatus}</span></div>
             </td>
@@ -267,19 +262,21 @@ function updateDashboardAndTable() {
     document.getElementById('dashDone').textContent = doneSlots;
     document.getElementById('dashReceivables').textContent = "₹" + totalReceivables;
     
-    // Maintain Master Search Filter
+    // Ensure the master search maintains filtering during real-time updates
     masterSearchTable();
 }
 
-// --- Master Search Logic ---
+// --- Master Search Logic (Single Input Search) ---
 function masterSearchTable() {
-    const input = document.getElementById("masterSearch").value.toUpperCase();
+    const inputEl = document.getElementById("masterSearch");
+    if (!inputEl) return;
+    
+    const filterText = inputEl.value.toUpperCase();
     const rows = document.querySelectorAll("tr.data-row");
 
     rows.forEach(row => {
-        // Grab all text content inside the row to check for matches
         const textContent = row.textContent.toUpperCase();
-        if (textContent.indexOf(input) > -1) {
+        if (textContent.indexOf(filterText) > -1) {
             row.style.display = "";
         } else {
             row.style.display = "none";
