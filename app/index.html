@@ -1,0 +1,202 @@
+<!DOCTYPE html>
+<html lang="en" class="scroll-smooth">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>STRA CARE | Booking App</title>
+    
+    <!-- PWA Manifest -->
+    <link rel="manifest" href="./manifest-app.json">
+    <link rel="icon" type="image/png" href="https://stracares.in/assets/logo-app.png">
+    <link rel="apple-touch-icon" href="https://stracares.in/assets/logo-app.png">
+    <meta name="theme-color" content="#009B95">
+
+    <!-- Styles -->
+    <link rel="stylesheet" href="./style.css">
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+
+    <!-- Tailwind Config -->
+    <script>
+        tailwind.config = { 
+            darkMode: 'class',
+            theme: { 
+                extend: { 
+                    colors: { 
+                        brandTeal: '#009B95', 
+                        brandNavy: '#1E3A5F', 
+                        brandLight: '#F0F8F8',
+                        brandDark: '#0f172a'
+                    } 
+                } 
+            } 
+        }
+    </script>
+
+    <!-- Firebase SDKs -->
+    <script src="https://www.gstatic.com/firebasejs/10.8.1/firebase-app-compat.js"></script>
+    <script src="https://www.gstatic.com/firebasejs/10.8.1/firebase-firestore-compat.js"></script>
+</head>
+<body class="bg-gray-50 dark:bg-gray-900 text-gray-800 dark:text-gray-200 font-sans antialiased pb-20 md:pb-0 relative transition-colors duration-300">
+
+    <!-- Splash Screen -->
+    <div id="splash-screen" class="fixed inset-0 bg-white dark:bg-brandDark z-[100000] flex justify-center items-center transition-opacity duration-500">
+        <img src="https://stracares.in/assets/logo-app.png" alt="STRA CARE Loading" class="w-[60%] max-w-[200px] animate-[pulse_1.5s_infinite_alternate]">
+    </div>
+
+    <!-- Navigation -->
+    <nav class="bg-white/80 dark:bg-gray-900/80 backdrop-blur-md shadow-md sticky top-0 z-40 transition-colors duration-300">
+        <div class="max-w-[95%] 2xl:max-w-[1600px] mx-auto px-4 sm:px-6 lg:px-8">
+            <div class="flex justify-between items-center h-20">
+                <div class="flex items-center gap-3">
+                    <button onclick="toggleMobileMenu()" class="md:hidden text-brandNavy dark:text-white text-2xl focus:outline-none"><i class="fa-solid fa-bars"></i></button>
+                    <img id="navLogo" src="https://stracares.in/assets/logo-header.png" alt="STRA CARE" class="h-10 md:h-12 w-auto object-contain">
+                </div>
+                
+                <div class="hidden md:flex items-center space-x-6 text-sm">
+                    <a href="#home" class="text-gray-600 dark:text-gray-300 hover:text-brandTeal font-medium">Home</a>
+                    <a href="#book" class="bg-brandTeal text-white px-5 py-2 rounded-full font-bold hover:bg-teal-700 transition shadow-md">Book Now</a>
+                    <a href="#about" class="text-gray-600 dark:text-gray-300 hover:text-brandTeal font-medium">About Us</a>
+                    <a href="#branches" class="text-gray-600 dark:text-gray-300 hover:text-brandTeal font-medium">Branches</a>
+                    
+                    <button onclick="toggleTheme()" class="ml-4 p-2 rounded-full bg-gray-100 dark:bg-gray-800 text-gray-600 dark:text-yellow-400 shadow-inner">
+                        <i id="themeIcon" class="fa-solid fa-moon"></i>
+                    </button>
+                </div>
+                
+                <button onclick="toggleTheme()" class="md:hidden p-2 rounded-full bg-gray-100 dark:bg-gray-800 text-gray-600 dark:text-yellow-400 shadow-inner">
+                    <i id="themeIconMobile" class="fa-solid fa-moon"></i>
+                </button>
+            </div>
+        </div>
+    </nav>
+
+    <!-- Mobile Drawer -->
+    <div id="mobileMenuOverlay" class="fixed inset-0 bg-black/60 hidden opacity-0 transition-opacity duration-300 z-[99990]" onclick="toggleMobileMenu()"></div>
+    <div id="mobileDrawer" class="fixed top-0 left-0 w-[80%] max-w-sm h-[100dvh] bg-white dark:bg-gray-900 transform -translate-x-full transition-transform duration-300 flex flex-col shadow-2xl z-[99999]">
+        <div class="p-4 bg-white dark:bg-gray-900 flex justify-between items-center border-b border-gray-200 dark:border-gray-800">
+            <h2 class="font-bold text-brandTeal text-xl tracking-wider">MENU</h2>
+            <button onclick="toggleMobileMenu()" class="text-gray-500 dark:text-gray-300 hover:text-brandTeal text-3xl px-2"><i class="fa-solid fa-xmark"></i></button>
+        </div>
+        <div class="flex flex-col p-3 space-y-2 font-semibold text-gray-600 dark:text-gray-300 overflow-y-auto flex-grow">
+            <a href="#home" onclick="toggleMobileMenu()" class="hover:bg-gray-50 dark:hover:bg-gray-800 p-3 rounded-lg flex items-center"><i class="fa-solid fa-house w-8 text-center text-brandTeal"></i> Home</a>
+            <a href="#book" onclick="toggleMobileMenu()" class="bg-brandLight dark:bg-gray-800 p-3 rounded-lg flex items-center text-brandTeal"><i class="fa-solid fa-calendar-plus w-8 text-center"></i> Booking</a>
+            <a href="#about" onclick="toggleMobileMenu()" class="hover:bg-gray-50 dark:hover:bg-gray-800 p-3 rounded-lg flex items-center"><i class="fa-solid fa-info-circle w-8 text-center text-brandTeal"></i> About Us</a>
+            <a href="#leadership" onclick="toggleMobileMenu()" class="hover:bg-gray-50 dark:hover:bg-gray-800 p-3 rounded-lg flex items-center"><i class="fa-solid fa-user-tie w-8 text-center text-brandTeal"></i> Founders</a>
+            <a href="#branches" onclick="toggleMobileMenu()" class="hover:bg-gray-50 dark:hover:bg-gray-800 p-3 rounded-lg flex items-center"><i class="fa-solid fa-location-dot w-8 text-center text-brandTeal"></i> Branches</a>
+            <a href="#reviews" onclick="toggleMobileMenu()" class="hover:bg-gray-50 dark:hover:bg-gray-800 p-3 rounded-lg flex items-center"><i class="fa-solid fa-star w-8 text-center text-brandTeal"></i> Reviews</a>
+            
+            <hr class="border-gray-200 dark:border-gray-700 my-2">
+            <button onclick="shareApp(); toggleMobileMenu()" class="hover:bg-gray-50 dark:hover:bg-gray-800 p-3 rounded-lg flex items-center text-left w-full"><i class="fa-solid fa-share-nodes w-8 text-center text-brandTeal"></i> Share App</button>
+        </div>
+        
+        <div class="border-t border-gray-800 text-xs w-full flex flex-col items-center p-6 bg-gray-900 text-gray-300">
+            <span class="text-brandTeal font-bold tracking-widest mb-3">APP VERSION 1.0</span>
+            <p class="mb-3">© <span id="currentYearMenu"></span> Stra Care.</p>
+        </div>
+    </div>
+
+    <!-- Bottom Navigation (Mobile App Feel) -->
+    <div class="md:hidden fixed bottom-0 w-full bg-white/80 dark:bg-gray-900/80 backdrop-blur-md border-t border-gray-200 dark:border-gray-800 flex h-16 z-40 shadow-[0_-5px_15px_rgba(0,0,0,0.05)] text-center text-gray-600 dark:text-gray-300">
+        <a href="#home" class="flex flex-col items-center justify-center flex-grow flex-shrink-0 w-1/3 h-full hover:text-brandTeal pt-1 border-r border-gray-200 dark:border-gray-800">
+            <i class="fa-solid fa-house text-xl mb-1"></i>
+            <span class="text-[10px] font-semibold">Home</span>
+        </a>
+        <a href="#book" class="flex flex-col items-center justify-center flex-grow flex-shrink-0 w-1/3 h-full text-brandTeal pt-1 border-r border-gray-200 dark:border-gray-800 bg-brandLight dark:bg-gray-800/50">
+            <i class="fa-solid fa-calendar-plus text-xl mb-1"></i>
+            <span class="text-[10px] font-semibold">Book</span>
+        </a>
+        <a href="https://wa.me/919744902555?text=Hello%20Stra%20Care%2C%20Need%20Help%20with%20Booking" target="_blank" class="flex flex-col items-center justify-center flex-grow flex-shrink-0 w-1/3 h-full hover:text-[#25d366] pt-1">
+            <i class="fa-brands fa-whatsapp text-xl mb-1 text-[#25d366]"></i>
+            <span class="text-[10px] font-semibold">Help</span>
+        </a>
+    </div>
+
+    <!-- Booking App Core Section -->
+    <section id="book" class="pt-10 pb-24 md:py-20 bg-brandNavy dark:bg-black text-white min-h-[90dvh]">
+        <div class="max-w-3xl mx-auto px-4">
+            <div class="bg-white dark:bg-gray-900 rounded-[32px] shadow-2xl overflow-hidden flex flex-col text-gray-800 dark:text-gray-200">
+                <div class="p-6 md:p-10 bg-brandLight dark:bg-gray-800">
+                    <h3 class="text-2xl md:text-3xl font-bold text-brandNavy dark:text-white mb-2">Schedule Consultation</h3>
+                    <p class="text-sm text-gray-500 dark:text-gray-400 mb-6">Fill the details below to confirm your slot securely.</p>
+                    
+                    <form id="bookingForm" class="space-y-4">
+                        <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
+                            <div class="md:col-span-2">
+                                <label class="block text-xs font-bold text-gray-500 dark:text-gray-400 mb-1 uppercase">Select Branch</label>
+                                <select id="branchSelect" class="w-full rounded-xl border-gray-300 dark:border-gray-600 border p-4 bg-white dark:bg-gray-700 outline-none text-sm font-medium focus:border-brandTeal focus:ring-1 focus:ring-brandTeal transition">
+                                    <option>Stracare Kottayampoyil (Main)</option>
+                                    <option>Stracare Arayakool</option>
+                                    <option>Theracare Pallikkuni</option>
+                                    <option>Theracare Azhiyur</option>
+                                </select>
+                            </div>
+                            
+                            <div class="md:col-span-2">
+                                <label class="block text-xs font-bold text-gray-500 dark:text-gray-400 mb-1 uppercase">Select Doctor</label>
+                                <select id="doctorSelect" class="w-full rounded-xl border-gray-300 dark:border-gray-600 border p-4 bg-white dark:bg-gray-700 outline-none text-sm font-medium focus:border-brandTeal focus:ring-1 focus:ring-brandTeal transition">
+                                    <option>Any Available Doctor</option>
+                                    <option>Dr. Arun Kumar</option>
+                                    <option>Dr. Meera Nair</option>
+                                </select>
+                            </div>
+
+                            <div>
+                                <label class="block text-xs font-bold text-gray-500 dark:text-gray-400 mb-1 uppercase">Date</label>
+                                <input type="date" id="appointDate" required class="w-full rounded-xl border-gray-300 dark:border-gray-600 border p-4 outline-none bg-white dark:bg-gray-700 text-sm font-medium focus:border-brandTeal focus:ring-1 focus:ring-brandTeal transition">
+                            </div>
+                            <div>
+                                <label class="block text-xs font-bold text-gray-500 dark:text-gray-400 mb-1 uppercase">Time</label>
+                                <select id="appointTime" class="w-full rounded-xl border-gray-300 dark:border-gray-600 border p-4 bg-white dark:bg-gray-700 outline-none text-sm font-medium focus:border-brandTeal focus:ring-1 focus:ring-brandTeal transition">
+                                    <option>09:00 AM</option>
+                                    <option>11:00 AM</option>
+                                    <option>04:00 PM</option>
+                                </select>
+                            </div>
+                        </div>
+
+                        <hr class="border-gray-300 dark:border-gray-600 my-6">
+
+                        <div class="space-y-4">
+                            <input type="text" id="patientName" required placeholder="Patient Full Name" class="w-full rounded-xl border-gray-300 dark:border-gray-600 border p-4 outline-none bg-white dark:bg-gray-700 text-sm font-medium focus:border-brandTeal focus:ring-1 focus:ring-brandTeal transition">
+                            <input type="tel" id="patientPhone" required placeholder="Phone Number (+91)" class="w-full rounded-xl border-gray-300 dark:border-gray-600 border p-4 outline-none bg-white dark:bg-gray-700 text-sm font-medium focus:border-brandTeal focus:ring-1 focus:ring-brandTeal transition">
+                            
+                            <div class="grid grid-cols-2 gap-4">
+                                <input type="number" id="patientAge" required placeholder="Age" class="w-full rounded-xl border-gray-300 dark:border-gray-600 border p-4 outline-none bg-white dark:bg-gray-700 text-sm font-medium focus:border-brandTeal focus:ring-1 focus:ring-brandTeal transition">
+                                <select id="patientGender" class="w-full rounded-xl border-gray-300 dark:border-gray-600 border p-4 bg-white dark:bg-gray-700 outline-none text-sm font-medium focus:border-brandTeal focus:ring-1 focus:ring-brandTeal transition">
+                                    <option value="" disabled selected>Gender</option>
+                                    <option>Male</option>
+                                    <option>Female</option>
+                                </select>
+                            </div>
+                            
+                            <input type="text" id="patientComplaint" required placeholder="Primary Complaint (e.g. Back Pain)" class="w-full rounded-xl border-gray-300 dark:border-gray-600 border p-4 outline-none bg-white dark:bg-gray-700 text-sm font-medium focus:border-brandTeal focus:ring-1 focus:ring-brandTeal transition">
+                            <textarea id="patientPrevTreatment" rows="2" placeholder="Previous Treatment (Optional)" class="w-full rounded-xl border-gray-300 dark:border-gray-600 border p-4 outline-none bg-white dark:bg-gray-700 text-sm font-medium focus:border-brandTeal focus:ring-1 focus:ring-brandTeal transition"></textarea>
+                        </div>
+                        
+                        <div class="mt-6 p-4 bg-brandLight dark:bg-gray-900 border border-brandTeal/30 rounded-xl">
+                            <label class="block text-xs font-bold text-gray-500 dark:text-gray-400 mb-1 uppercase">Consultation Fee (₹)</label>
+                            <input type="number" id="paymentAmount" required placeholder="Amount" class="w-full rounded-lg bg-transparent border-none p-0 outline-none text-2xl font-extrabold text-brandTeal" value="500" readonly>
+                        </div>
+
+                        <button type="button" onclick="initiatePayment()" id="payBtn" class="w-full bg-brandTeal text-white font-bold py-5 rounded-2xl shadow-[0_8px_20px_rgba(0,155,149,0.3)] flex justify-center items-center gap-2 text-lg hover:bg-teal-700 hover:-translate-y-1 transition-all mt-4">
+                            <i class="fa-solid fa-qrcode"></i> Proceed to Pay via UPI
+                        </button>
+                    </form>
+                    <p id="statusMsg" class="mt-4 text-sm font-bold text-center hidden"></p>
+                </div>
+                
+                <div class="p-8 flex flex-col justify-center items-center bg-gray-50 dark:bg-gray-900 text-center border-t border-gray-200 dark:border-gray-700">
+                    <div class="bg-white dark:bg-gray-800 border-2 border-dashed border-gray-300 dark:border-gray-600 p-4 rounded-2xl flex flex-col items-center w-full max-w-[250px]">
+                        <span class="block text-xs text-gray-400 font-sans mb-3 uppercase tracking-wider font-bold">Manual Scan & Pay</span>
+                        <img src="https://stracares.in/assets/photo-qr.png" alt="UPI QR Code" class="w-32 h-32 rounded-xl border border-gray-100 p-1 object-contain bg-white">
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Connect external JS -->
+    <script src="./app.js" defer></script>
+</body>
+</html>
