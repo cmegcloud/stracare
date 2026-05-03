@@ -1,5 +1,5 @@
 <!DOCTYPE html>
-<html lang="en" class="scroll-smooth h-full">
+<html lang="en" class="scroll-smooth">
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
@@ -56,18 +56,18 @@
 </head>
 <body class="bg-gray-50 dark:bg-slate-900 text-gray-800 dark:text-gray-200 antialiased pb-20 md:pb-0 relative transition-colors duration-300">
 
-    <div id="splash-screen" class="fixed inset-0 bg-brandNavy z- flex flex-col justify-center items-center transition-opacity duration-700">
+    <div id="splash-screen" class="fixed inset-0 bg-brandNavy flex flex-col justify-center items-center transition-opacity duration-700" style="z-index: 100000;">
         <img src="https://stracares.in/assets/logo-footer.png" alt="STRA CARE" class="h-16 md:h-20 object-contain splash-logo">
         <div class="splash-text-container">
             <span class="splash-text text-brandTeal tracking-[0.3em] text-sm md:text-base font-bold">PREMIUM PHYSIOTHERAPY</span>
         </div>
     </div>
 
-    <nav class="bg-white/90 dark:bg-slate-900/90 backdrop-blur-md shadow-sm sticky top-0 z-40 transition-colors duration-300 border-b border-gray-100 dark:border-slate-800">
+    <nav class="bg-white/90 dark:bg-slate-900/90 backdrop-blur-md shadow-sm sticky top-0 transition-colors duration-300 border-b border-gray-100 dark:border-slate-800" style="z-index: 99990;">
         <div class="max-w-[95%] 2xl:max-w-[1600px] mx-auto px-4 sm:px-6 lg:px-8">
             <div class="flex justify-between items-center h-20">
                 <div class="flex items-center gap-3">
-                    <button onclick="toggleMobileMenu()" class="lg:hidden text-brandNavy dark:text-white text-2xl focus:outline-none"><i data-lucide="menu"></i></button>
+                    <button onclick="toggleMobileMenu()" class="md:hidden text-brandNavy dark:text-white text-2xl focus:outline-none"><i data-lucide="menu"></i></button>
                     <img id="navLogo" src="https://stracares.in/assets/logo-header.png" alt="STRA CARE" class="h-10 md:h-12 w-auto object-contain">
                 </div>
                 
@@ -101,8 +101,9 @@
         </div>
     </nav>
 
-    <div id="mobileMenuOverlay" class="fixed inset-0 bg-brandNavy/80 hidden opacity-0 transition-opacity duration-300 z-" onclick="toggleMobileMenu()"></div>
-    <div id="mobileDrawer" class="fixed top-0 left-0 w-[80%] max-w-sm h-[100dvh] bg-white dark:bg-slate-900 transform -translate-x-full transition-transform duration-300 flex flex-col shadow-2xl z-">
+    <div id="mobileMenuOverlay" class="fixed inset-0 bg-brandNavy/80 hidden opacity-0 transition-opacity duration-300" style="z-index: 99998;" onclick="toggleMobileMenu()"></div>
+    
+    <div id="mobileDrawer" class="fixed top-0 left-0 w-[80%] max-w-sm h-[100dvh] bg-white dark:bg-slate-900 transform -translate-x-full transition-transform duration-300 flex flex-col shadow-2xl" style="z-index: 99999;">
         <div class="p-6 bg-white dark:bg-slate-900 flex justify-between items-center border-b border-gray-100 dark:border-slate-800">
             <h2 class="font-extrabold text-brandNavy dark:text-white text-xl tracking-wider">STRA CARE</h2>
             <button onclick="toggleMobileMenu()" class="text-gray-400 hover:text-brandTeal text-2xl"><i data-lucide="x"></i></button>
@@ -132,7 +133,7 @@
         </div>
     </div>
 
-    <div class="md:hidden fixed bottom-0 w-full bg-white/95 dark:bg-slate-900/95 backdrop-blur-md border-t border-gray-200 dark:border-slate-800 flex h-16 z-40 shadow-[0_-5px_15px_rgba(0,0,0,0.05)] text-center text-gray-600 dark:text-gray-400">
+    <div class="md:hidden fixed bottom-0 w-full bg-white/95 dark:bg-slate-900/95 backdrop-blur-md border-t border-gray-200 dark:border-slate-800 flex h-16 shadow-[0_-5px_15px_rgba(0,0,0,0.05)] text-center text-gray-600 dark:text-gray-400" style="z-index: 99980;">
         <a href="#home" class="flex flex-col items-center justify-center flex-grow flex-shrink-0 w-1/4 h-full hover:text-brandNavy dark:hover:text-white pt-1 border-r border-gray-100 dark:border-slate-800">
             <i data-lucide="home" class="w-5 h-5 mb-1"></i>
             <span class="text-[10px] font-bold">Home</span>
@@ -151,7 +152,7 @@
         </a>
     </div>
 
-    <div class="hidden md:flex flex-col gap-4 fixed bottom-10 right-10 z-">
+    <div class="hidden md:flex flex-col gap-4 fixed bottom-10 right-10" style="z-index: 99985;">
         <a href="tel:+919744902555" class="w-[60px] h-[60px] bg-blue-500 text-white rounded-full flex items-center justify-center shadow-xl hover:scale-110 transition-transform relative group">
             <i data-lucide="phone" class="w-6 h-6"></i>
             <span class="absolute right-[75px] bg-brandNavy text-white text-xs px-3 py-2 rounded-lg opacity-0 group-hover:opacity-100 transition-opacity whitespace-nowrap font-bold">Call Us</span>
@@ -162,7 +163,7 @@
         </a>
     </div>
 
-    <section id="home" class="py-20 md:py-0 flex flex-col justify-center text-white min-h-[85dvh] bg-cover bg-center relative" style="background-image: linear-gradient(rgba(10, 38, 71, 0.85), rgba(20, 66, 114, 0.85)), url('https://images.unsplash.com/photo-1579684385127-1ef15d508118?auto=format&fit=crop&w=1920&q=80');">
+    <section id="home" class="py-20 md:py-0 flex flex-col justify-center text-white min-h-[85vh] bg-cover bg-center relative" style="background-image: linear-gradient(rgba(10, 38, 71, 0.85), rgba(20, 66, 114, 0.85)), url('https://images.unsplash.com/photo-1579684385127-1ef15d508118?auto=format&fit=crop&w=1920&q=80');">
         <div class="max-w-[95%] 2xl:max-w-[1600px] mx-auto px-4 text-center md:text-left w-full">
             <h2 class="text-4xl md:text-6xl lg:text-7xl font-extrabold mb-6 leading-tight" style="animation: fadeIn 0.8s ease-out forwards;">
                 Recovery Driven by <br> <span class="text-brandTeal">Science.</span>
@@ -457,10 +458,10 @@
     </footer>
 
     <script>
-        // 1. Initialize Icons immediately
+        // Initialize Icons immediately
         lucide.createIcons();
 
-        // 2. Day/Night Toggle System
+        // Day/Night Toggle System
         function toggleTheme() {
             const html = document.documentElement;
             html.classList.toggle('dark');
@@ -478,7 +479,6 @@
             }
         }
         
-        // Ensure icon is correct on load
         window.addEventListener('DOMContentLoaded', () => {
             if (document.documentElement.classList.contains('dark')) {
                 const iconD = document.getElementById('themeIcon');
@@ -488,7 +488,7 @@
             }
         });
 
-        // 3. Live Clock System (DD-MM-YYYY HH:MM:SS format)
+        // Live Clock System (DD-MM-YYYY HH:MM:SS format)
         function updateDateTime() {
             const now = new Date();
             const day = String(now.getDate()).padStart(2, '0');
@@ -516,9 +516,9 @@
             if (mt) mt.textContent = formattedTime;
         }
         setInterval(updateDateTime, 1000);
-        updateDateTime(); // Run once immediately
+        updateDateTime();
 
-        // 4. Mobile Menu System
+        // Mobile Menu System (BUG FIXED)
         function toggleMobileMenu() {
             const overlay = document.getElementById('mobileMenuOverlay');
             const drawer = document.getElementById('mobileDrawer');
@@ -539,7 +539,7 @@
             }
         }
 
-        // 5. Share App (Points to /app)
+        // Share App
         function shareApp() {
             if (navigator.share) {
                 navigator.share({
@@ -552,7 +552,7 @@
             }
         }
 
-        // 6. Splash Screen & Year Setup
+        // Splash Screen & Year Setup
         window.addEventListener('load', () => {
             const year = new Date().getFullYear();
             if(document.getElementById('currentYearFooter')) document.getElementById('currentYearFooter').textContent = year;
