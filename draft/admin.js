@@ -1,6 +1,6 @@
 // --- Authentication Setup ---
 const users = [
-    { email: "Admin@gmail.com", pass: "CM01", role: "Owner" },
+    { email: "admin@gmail.com", pass: "CM01", role: "Owner" },
     { email: "staff@gmail.com", pass: "CM02", role: "Staff" }
 ];
 
