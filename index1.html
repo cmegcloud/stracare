@@ -1,0 +1,531 @@
+<!doctype html>
+<html lang="en" class="scroll-smooth">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Stra Care Physiotherapy | Modern Care</title>
+  
+  <script src="https://cdn.tailwindcss.com/3.4.17"></script>
+  
+  <script src="https://cdn.jsdelivr.net/npm/lucide@0.263.0/dist/umd/lucide.min.js"></script>
+  
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600&family=Plus+Jakarta+Sans:wght@500;600;700;800&display=swap" rel="stylesheet">
+  
+  <script>
+    tailwind.config = {
+      theme: {
+        extend: {
+          fontFamily: {
+            sans: ['Inter', 'sans-serif'],
+            display: ['Plus Jakarta Sans', 'sans-serif'],
+          },
+          colors: {
+            primary: '#0f766e', // Modern Teal
+            primaryDark: '#115e59',
+            accent: '#06b6d4', // Vibrant Cyan
+            surface: '#ffffff',
+            surfaceLight: '#f8fafc',
+            textMain: '#334155',
+            textDark: '#0f172a',
+            textMuted: '#64748b'
+          },
+          boxShadow: {
+            'soft': '0 20px 40px -15px rgba(0,0,0,0.05)',
+            'glow': '0 0 20px rgba(6, 182, 212, 0.3)',
+          }
+        }
+      }
+    }
+  </script>
+
+  <script type="module">
+    import { initializeApp } from "https://www.gstatic.com/firebasejs/10.8.0/firebase-app.js";
+    import { getFirestore, collection, addDoc, serverTimestamp } from "https://www.gstatic.com/firebasejs/10.8.0/firebase-firestore.js";
+    import { getAnalytics } from "https://www.gstatic.com/firebasejs/10.8.0/firebase-analytics.js";
+
+    // Your actual Firebase configuration
+    const firebaseConfig = {
+      apiKey: "AIzaSyDwfmoDPvslFmTn3GjO56VAxhODRlem5bg",
+      authDomain: "stra-care.firebaseapp.com",
+      projectId: "stra-care",
+      storageBucket: "stra-care.firebasestorage.app",
+      messagingSenderId: "329966100049",
+      appId: "1:329966100049:web:d4b4dc7033f0ed12da6270",
+      measurementId: "G-TQ7YK3RVSR"
+    };
+
+    // Initialize Firebase
+    let app, db, analytics;
+    try {
+      app = initializeApp(firebaseConfig);
+      analytics = getAnalytics(app);
+      db = getFirestore(app);
+      console.log("Firebase & Analytics initialized successfully.");
+      
+      // Export to window so our standard script can access the database
+      window.firebaseDb = db;
+      window.firebaseCollection = collection;
+      window.firebaseAddDoc = addDoc;
+      window.firebaseServerTimestamp = serverTimestamp;
+    } catch (error) {
+      console.error("Firebase initialization error:", error);
+    }
+  </script>
+
+  <style>
+    body { font-family: 'Inter', sans-serif; background-color: #f8fafc; }
+    h1, h2, h3, h4, h5, h6 { font-family: 'Plus Jakarta Sans', sans-serif; }
+    
+    .nav-link { position: relative; color: #475569; font-weight: 500; transition: color 0.3s; }
+    .nav-link:hover { color: #0f766e; }
+    .nav-link::after { content:''; position:absolute; bottom:-4px; left:50%; width:0; height:2px; background:#0f766e; transition:all 0.3s ease; transform: translateX(-50%); border-radius: 2px;}
+    .nav-link:hover::after { width:100%; }
+    
+    .glass-nav { background: rgba(255, 255, 255, 0.85); backdrop-filter: blur(12px); border: 1px solid rgba(255,255,255,0.5); }
+    .gradient-text { background: linear-gradient(135deg, #0f766e, #06b6d4); -webkit-background-clip: text; -webkit-text-fill-color: transparent; }
+    
+    @keyframes fadeUp { from { opacity:0; transform:translateY(30px); } to { opacity:1; transform:translateY(0); } }
+    .animate-fade-up { animation: fadeUp 0.8s cubic-bezier(0.16, 1, 0.3, 1) forwards; }
+  </style>
+</head>
+<body class="min-h-screen text-textMain selection:bg-accent selection:text-white">
+
+  <div class="fixed top-0 left-0 w-full z-50 p-4 md:p-6 pointer-events-none">
+    <header class="max-w-7xl mx-auto glass-nav rounded-full shadow-sm pointer-events-auto transition-all duration-300">
+      <div class="px-6 py-3 flex items-center justify-between">
+        <div class="flex items-center gap-3">
+          <div class="w-10 h-10 rounded-full bg-gradient-to-br from-primary to-accent flex items-center justify-center text-white font-display font-bold text-xl shadow-glow">
+            S
+          </div>
+          <div>
+            <h1 class="font-display font-bold text-xl leading-tight text-textDark tracking-tight">Stra Care</h1>
+          </div>
+        </div>
+        
+        <nav class="hidden md:flex items-center gap-8">
+          <a href="#home" class="nav-link text-sm">Home</a>
+          <a href="#about" class="nav-link text-sm">About Us</a>
+          <a href="#services" class="nav-link text-sm">Services</a>
+          <a href="#branches" class="nav-link text-sm">Branches</a>
+          <a href="#reviews" class="nav-link text-sm">Reviews</a>
+        </nav>
+        
+        <div class="flex items-center gap-4">
+          <a href="#booking" class="hidden md:inline-flex px-6 py-2.5 bg-textDark text-white rounded-full text-sm font-semibold transition-transform hover:scale-105 shadow-md hover:shadow-lg">Book Now</a>
+          <button id="mobile-menu-btn" class="md:hidden p-2 text-textMain hover:bg-slate-100 rounded-full transition" aria-label="Menu">
+            <i data-lucide="menu" class="w-6 h-6"></i>
+          </button>
+        </div>
+      </div>
+    </header>
+
+    <div id="mobile-menu" class="hidden md:hidden absolute top-20 left-4 right-4 glass-nav rounded-3xl px-6 py-6 space-y-4 shadow-xl pointer-events-auto border border-white">
+      <a href="#home" class="block text-base font-medium text-textMain">Home</a>
+      <a href="#about" class="block text-base font-medium text-textMain">About Us</a>
+      <a href="#services" class="block text-base font-medium text-textMain">Services</a>
+      <a href="#branches" class="block text-base font-medium text-textMain">Branches</a>
+      <a href="#reviews" class="block text-base font-medium text-textMain">Reviews</a>
+      <hr class="border-slate-200">
+      <a href="#booking" class="block text-base font-bold text-primary">Book Appointment</a>
+    </div>
+  </div>
+
+  <section id="home" class="relative pt-32 pb-20 lg:pt-48 lg:pb-32 overflow-hidden flex items-center min-h-[90vh]">
+    <div class="absolute top-0 right-0 -z-10 w-[800px] h-[800px] bg-accent/10 rounded-full blur-3xl translate-x-1/3 -translate-y-1/4"></div>
+    <div class="absolute bottom-0 left-0 -z-10 w-[600px] h-[600px] bg-primary/10 rounded-full blur-3xl -translate-x-1/4 translate-y-1/4"></div>
+    
+    <div class="max-w-7xl mx-auto px-6 grid lg:grid-cols-2 gap-12 items-center w-full">
+      <div class="animate-fade-up z-10">
+        <div class="inline-flex items-center gap-2 px-4 py-2 rounded-full bg-white shadow-sm border border-slate-100 mb-6">
+          <span class="w-2 h-2 rounded-full bg-accent animate-pulse"></span>
+          <span class="text-sm font-semibold text-textMain">Advanced Physiotherapy Center</span>
+        </div>
+        <h2 class="text-5xl lg:text-7xl font-display font-extrabold text-textDark mb-6 leading-[1.1] tracking-tight">
+          Move Better.<br> <span class="gradient-text">Live Better.</span>
+        </h2>
+        <p class="text-lg text-textMuted mb-8 leading-relaxed max-w-lg">
+          We blend state-of-the-art clinical practices with compassionate care to accelerate your recovery and restore your natural movement.
+        </p>
+        <div class="flex flex-wrap gap-4">
+          <a href="#booking" class="inline-flex items-center justify-center px-8 py-4 bg-primary text-white rounded-full font-semibold transition-all hover:bg-primaryDark shadow-lg shadow-primary/30 hover:-translate-y-1">
+            Start Your Journey <i data-lucide="arrow-right" class="w-4 h-4 ml-2"></i>
+          </a>
+        </div>
+      </div>
+      
+      <div class="relative z-10 hidden lg:block animate-fade-up" style="animation-delay: 0.2s;">
+        <div class="relative rounded-[2.5rem] overflow-hidden shadow-2xl border-8 border-white">
+          <img src="https://images.unsplash.com/photo-1576091160550-2173dba999ef?auto=format&fit=crop&w=1000&q=80" alt="Physiotherapy Session" class="w-full h-[600px] object-cover">
+          <div class="absolute inset-0 bg-gradient-to-t from-black/40 to-transparent"></div>
+        </div>
+        
+        <div class="absolute -bottom-6 -left-6 bg-white p-6 rounded-3xl shadow-soft border border-slate-100 flex items-center gap-4">
+          <div class="w-12 h-12 rounded-full bg-green-100 flex items-center justify-center text-green-600">
+            <i data-lucide="users" class="w-6 h-6"></i>
+          </div>
+          <div>
+            <p class="text-2xl font-display font-bold text-textDark">10k+</p>
+            <p class="text-sm text-textMuted font-medium">Happy Patients</p>
+          </div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <section id="about" class="py-24 bg-white relative">
+    <div class="max-w-7xl mx-auto px-6">
+      <div class="text-center mb-20 max-w-2xl mx-auto">
+        <h2 class="text-sm font-bold tracking-widest text-primary uppercase mb-3">Our Experts</h2>
+        <h3 class="text-3xl md:text-5xl font-display font-bold text-textDark">Meet the Medical Team</h3>
+      </div>
+      
+      <div class="grid md:grid-cols-2 gap-8">
+        <div class="bg-surfaceLight rounded-3xl p-8 border border-slate-100 shadow-soft hover:shadow-lg transition-all duration-300 group">
+          <div class="flex flex-col md:flex-row items-center gap-8">
+            <div class="relative">
+              <div class="w-32 h-32 rounded-2xl overflow-hidden shadow-md group-hover:scale-105 transition-transform duration-500">
+                <img src="https://images.unsplash.com/photo-1612349317150-e413f6a5b16d?auto=format&fit=crop&w=400&q=80" alt="Dr. Sarah Johnson" class="w-full h-full object-cover">
+              </div>
+              <div class="absolute -bottom-3 -right-3 w-10 h-10 bg-primary text-white rounded-full flex items-center justify-center border-4 border-surfaceLight">
+                <i data-lucide="award" class="w-4 h-4"></i>
+              </div>
+            </div>
+            <div class="text-center md:text-left">
+              <h4 class="text-2xl font-display font-bold text-textDark mb-1">Dr. Sarah Johnson</h4>
+              <p class="text-accent font-semibold text-sm mb-4">Clinical Director & Lead PT</p>
+              <p class="text-textMuted text-sm leading-relaxed">Pioneering patient-first methodologies with over 15 years in complex orthopedic rehabilitation and post-surgical recovery.</p>
+            </div>
+          </div>
+        </div>
+        
+        <div class="bg-surfaceLight rounded-3xl p-8 border border-slate-100 shadow-soft hover:shadow-lg transition-all duration-300 group">
+          <div class="flex flex-col md:flex-row items-center gap-8">
+            <div class="relative">
+              <div class="w-32 h-32 rounded-2xl overflow-hidden shadow-md group-hover:scale-105 transition-transform duration-500">
+                <img src="https://images.unsplash.com/photo-1594824406936-39139ee574e4?auto=format&fit=crop&w=400&q=80" alt="Dr. Michael Chen" class="w-full h-full object-cover">
+              </div>
+              <div class="absolute -bottom-3 -right-3 w-10 h-10 bg-primary text-white rounded-full flex items-center justify-center border-4 border-surfaceLight">
+                <i data-lucide="activity" class="w-4 h-4"></i>
+              </div>
+            </div>
+            <div class="text-center md:text-left">
+              <h4 class="text-2xl font-display font-bold text-textDark mb-1">Dr. Michael Chen</h4>
+              <p class="text-accent font-semibold text-sm mb-4">Senior Sports Therapist</p>
+              <p class="text-textMuted text-sm leading-relaxed">Specializing in high-performance sports injuries, helping professional and amateur athletes return to peak performance safely.</p>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <section id="services" class="py-24 bg-surfaceLight">
+    <div class="max-w-7xl mx-auto px-6">
+      <div class="flex flex-col md:flex-row md:items-end justify-between mb-16 gap-6">
+        <div class="max-w-2xl">
+          <h2 class="text-sm font-bold tracking-widest text-primary uppercase mb-3">Therapy Options</h2>
+          <h3 class="text-3xl md:text-5xl font-display font-bold text-textDark">Comprehensive Care</h3>
+        </div>
+      </div>
+      
+      <div class="grid md:grid-cols-2 gap-8">
+        <div class="bg-white rounded-[2rem] overflow-hidden shadow-soft hover:-translate-y-2 transition-all duration-500 group border border-slate-50">
+          <div class="relative h-72 overflow-hidden">
+            <div class="absolute inset-0 bg-textDark/20 group-hover:bg-transparent transition-colors z-10"></div>
+            <img src="https://images.unsplash.com/photo-1579684385127-1ef15d508118?auto=format&fit=crop&w=800&q=80" alt="Clinical Therapy" class="w-full h-full object-cover group-hover:scale-110 transition-transform duration-700">
+            <div class="absolute bottom-6 left-6 z-20">
+              <div class="w-14 h-14 bg-white rounded-2xl flex items-center justify-center shadow-lg text-primary">
+                <i data-lucide="stethoscope" class="w-7 h-7"></i>
+              </div>
+            </div>
+          </div>
+          <div class="p-10">
+            <h4 class="text-3xl font-display font-bold text-textDark mb-4">Clinical Rehabilitation</h4>
+            <p class="text-textMuted leading-relaxed mb-8 text-lg">State-of-the-art facility equipped with advanced modalities for orthopedic care, neuro-rehabilitation, and targeted recovery.</p>
+            <a href="#booking" class="inline-flex items-center font-bold text-primary group-hover:text-accent transition-colors text-lg">
+              Book Clinic Visit <i data-lucide="arrow-right" class="w-5 h-5 ml-2 group-hover:translate-x-1 transition-transform"></i>
+            </a>
+          </div>
+        </div>
+        
+        <div class="bg-white rounded-[2rem] overflow-hidden shadow-soft hover:-translate-y-2 transition-all duration-500 group border border-slate-50">
+          <div class="relative h-72 overflow-hidden">
+            <div class="absolute inset-0 bg-textDark/20 group-hover:bg-transparent transition-colors z-10"></div>
+            <img src="https://images.unsplash.com/photo-1532938911079-1b06ac7ceec7?auto=format&fit=crop&w=800&q=80" alt="Home Care Therapy" class="w-full h-full object-cover group-hover:scale-110 transition-transform duration-700">
+            <div class="absolute bottom-6 left-6 z-20">
+              <div class="w-14 h-14 bg-white rounded-2xl flex items-center justify-center shadow-lg text-primary">
+                <i data-lucide="home" class="w-7 h-7"></i>
+              </div>
+            </div>
+          </div>
+          <div class="p-10">
+            <h4 class="text-3xl font-display font-bold text-textDark mb-4">Home Care Physiotherapy</h4>
+            <p class="text-textMuted leading-relaxed mb-8 text-lg">Professional, compassionate therapy brought directly to your doorstep. Perfect for post-surgery patients or those with mobility challenges.</p>
+            <a href="#booking" class="inline-flex items-center font-bold text-primary group-hover:text-accent transition-colors text-lg">
+              Request Home Visit <i data-lucide="arrow-right" class="w-5 h-5 ml-2 group-hover:translate-x-1 transition-transform"></i>
+            </a>
+          </div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <section id="branches" class="py-24 bg-white">
+    <div class="max-w-7xl mx-auto px-6">
+      <div class="text-center mb-16 max-w-2xl mx-auto">
+        <h2 class="text-sm font-bold tracking-widest text-primary uppercase mb-3">Our Network</h2>
+        <h3 class="text-3xl md:text-5xl font-display font-bold text-textDark">Find a Clinic Near You</h3>
+      </div>
+      
+      <div class="grid sm:grid-cols-2 lg:grid-cols-4 gap-6">
+        <div class="bg-surfaceLight rounded-3xl p-8 border border-slate-100 hover:border-accent/30 hover:shadow-soft transition-all duration-300 text-center group">
+          <div class="w-16 h-16 mx-auto mb-6 rounded-2xl bg-white shadow-sm flex items-center justify-center group-hover:scale-110 transition-transform">
+            <i data-lucide="map-pin" class="w-7 h-7 text-primary"></i>
+          </div>
+          <h4 class="text-xl font-display font-bold text-textDark mb-3">Koothuparamba</h4>
+          <p class="text-textMuted text-sm mb-8 leading-relaxed">Main Road, Near Bus Stand<br>Kerala 670643</p>
+          <a href="tel:+919744902555" class="w-full inline-flex justify-center items-center px-4 py-3 rounded-xl bg-slate-200/50 text-textDark hover:bg-primary hover:text-white transition-colors font-semibold text-sm">
+            <i data-lucide="phone" class="w-4 h-4 mr-2"></i> Contact Clinic
+          </a>
+        </div>
+        
+        <div class="bg-surfaceLight rounded-3xl p-8 border border-slate-100 hover:border-accent/30 hover:shadow-soft transition-all duration-300 text-center group">
+          <div class="w-16 h-16 mx-auto mb-6 rounded-2xl bg-white shadow-sm flex items-center justify-center group-hover:scale-110 transition-transform">
+            <i data-lucide="map-pin" class="w-7 h-7 text-primary"></i>
+          </div>
+          <h4 class="text-xl font-display font-bold text-textDark mb-3">Panoor</h4>
+          <p class="text-textMuted text-sm mb-8 leading-relaxed">Health Center Junction<br>Kerala 670692</p>
+          <a href="tel:+919744902555" class="w-full inline-flex justify-center items-center px-4 py-3 rounded-xl bg-slate-200/50 text-textDark hover:bg-primary hover:text-white transition-colors font-semibold text-sm">
+            <i data-lucide="phone" class="w-4 h-4 mr-2"></i> Contact Clinic
+          </a>
+        </div>
+
+        <div class="bg-surfaceLight rounded-3xl p-8 border border-slate-100 hover:border-accent/30 hover:shadow-soft transition-all duration-300 text-center group">
+          <div class="w-16 h-16 mx-auto mb-6 rounded-2xl bg-white shadow-sm flex items-center justify-center group-hover:scale-110 transition-transform">
+            <i data-lucide="map-pin" class="w-7 h-7 text-primary"></i>
+          </div>
+          <h4 class="text-xl font-display font-bold text-textDark mb-3">Chokli</h4>
+          <p class="text-textMuted text-sm mb-8 leading-relaxed">Medical Square Building<br>Kerala 670672</p>
+          <a href="tel:+919744902555" class="w-full inline-flex justify-center items-center px-4 py-3 rounded-xl bg-slate-200/50 text-textDark hover:bg-primary hover:text-white transition-colors font-semibold text-sm">
+            <i data-lucide="phone" class="w-4 h-4 mr-2"></i> Contact Clinic
+          </a>
+        </div>
+
+        <div class="bg-surfaceLight rounded-3xl p-8 border border-slate-100 hover:border-accent/30 hover:shadow-soft transition-all duration-300 text-center group">
+          <div class="w-16 h-16 mx-auto mb-6 rounded-2xl bg-white shadow-sm flex items-center justify-center group-hover:scale-110 transition-transform">
+            <i data-lucide="map-pin" class="w-7 h-7 text-primary"></i>
+          </div>
+          <h4 class="text-xl font-display font-bold text-textDark mb-3">Azhiyoor</h4>
+          <p class="text-textMuted text-sm mb-8 leading-relaxed">Coastal Highway Road<br>Kerala 673309</p>
+          <a href="tel:+919744902555" class="w-full inline-flex justify-center items-center px-4 py-3 rounded-xl bg-slate-200/50 text-textDark hover:bg-primary hover:text-white transition-colors font-semibold text-sm">
+            <i data-lucide="phone" class="w-4 h-4 mr-2"></i> Contact Clinic
+          </a>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <section id="booking" class="py-24 bg-textDark relative overflow-hidden text-white">
+    <div class="absolute inset-0 opacity-10 bg-[radial-gradient(circle_at_center,_var(--tw-gradient-stops))] from-accent via-textDark to-textDark"></div>
+    
+    <div class="max-w-4xl mx-auto px-6 relative z-10">
+      <div class="text-center mb-12">
+        <h2 class="text-3xl md:text-5xl font-display font-bold mb-4">Request an Appointment</h2>
+        <p class="text-slate-400 text-lg">Secure your slot today. Our care team will contact you to confirm the details.</p>
+      </div>
+      
+      <div class="bg-white/5 backdrop-blur-xl rounded-[2.5rem] p-8 md:p-12 border border-white/10 shadow-2xl">
+        <form id="booking-form" class="space-y-8">
+          <div class="grid md:grid-cols-2 gap-8">
+            <div class="space-y-2">
+              <label for="b-name" class="block text-sm font-semibold text-slate-300 ml-1">Full Name</label>
+              <input id="b-name" type="text" required class="w-full px-5 py-4 rounded-2xl bg-white/10 border border-white/10 text-white placeholder-slate-400 focus:ring-2 focus:ring-accent focus:border-transparent outline-none transition-all" placeholder="E.g. Jane Doe">
+            </div>
+            
+            <div class="space-y-2">
+              <label for="b-phone" class="block text-sm font-semibold text-slate-300 ml-1">Phone Number</label>
+              <div class="flex items-center gap-2">
+                <span class="px-5 py-4 bg-white/5 border border-white/10 rounded-2xl text-slate-300 font-medium">+91</span>
+                <input id="b-phone" type="text" placeholder="9876543210" maxlength="10" pattern="[0-9]{10}" required class="flex-1 px-5 py-4 rounded-2xl bg-white/10 border border-white/10 text-white placeholder-slate-400 focus:ring-2 focus:ring-accent focus:border-transparent outline-none transition-all">
+              </div>
+            </div>
+          </div>
+          
+          <div class="grid md:grid-cols-2 gap-8">
+            <div class="space-y-2">
+              <label for="b-date" class="block text-sm font-semibold text-slate-300 ml-1">Preferred Date</label>
+              <input id="b-date" type="text" placeholder="DD/MM/YYYY" required class="w-full px-5 py-4 rounded-2xl bg-white/10 border border-white/10 text-white placeholder-slate-400 focus:ring-2 focus:ring-accent outline-none transition-all">
+            </div>
+            
+            <div class="space-y-2">
+              <label for="b-time" class="block text-sm font-semibold text-slate-300 ml-1">Preferred Time</label>
+              <input id="b-time" type="time" required class="w-full px-5 py-4 rounded-2xl bg-white/10 border border-white/10 text-white placeholder-slate-400 focus:ring-2 focus:ring-accent outline-none transition-all custom-time-input">
+            </div>
+          </div>
+          
+          <div class="space-y-2">
+            <label for="b-branch" class="block text-sm font-semibold text-slate-300 ml-1">Select Clinic / Service</label>
+            <select id="b-branch" required class="w-full px-5 py-4 rounded-2xl bg-white/10 border border-white/10 text-white focus:ring-2 focus:ring-accent outline-none transition-all appearance-none cursor-pointer">
+              <option value="" class="text-textDark">-- Choose an Option --</option>
+              <option value="Koothuparamba" class="text-textDark">Koothuparamba Clinic</option>
+              <option value="Panoor" class="text-textDark">Panoor Clinic</option>
+              <option value="Chokli" class="text-textDark">Chokli Clinic</option>
+              <option value="Azhiyoor" class="text-textDark">Azhiyoor Clinic</option>
+              <option value="Home Care" class="text-textDark">Home Care Service</option>
+            </select>
+          </div>
+          
+          <div class="space-y-2">
+            <label for="b-notes" class="block text-sm font-semibold text-slate-300 ml-1">Brief Description (Optional)</label>
+            <textarea id="b-notes" rows="3" placeholder="Tell us about your symptoms..." class="w-full px-5 py-4 rounded-2xl bg-white/10 border border-white/10 text-white placeholder-slate-400 focus:ring-2 focus:ring-accent outline-none transition-all resize-none"></textarea>
+          </div>
+          
+          <button type="submit" class="w-full py-5 bg-gradient-to-r from-primary to-accent text-white rounded-2xl font-display font-bold text-lg transition-transform hover:scale-[1.02] shadow-glow flex justify-center items-center gap-2">
+            Submit Request
+          </button>
+          
+          <div id="booking-loading" class="hidden text-center py-4 text-accent font-medium flex justify-center items-center gap-2">
+            <i data-lucide="loader-2" class="w-5 h-5 animate-spin"></i> Processing Request...
+          </div>
+          <div id="booking-error" class="hidden text-center py-4 text-red-400 font-medium">
+            Could not save booking. Check console for details.
+          </div>
+        </form>
+
+        <div id="booking-confirm" class="hidden text-center py-12">
+          <div class="w-24 h-24 mx-auto mb-6 rounded-full bg-accent/20 flex items-center justify-center">
+            <i data-lucide="check-circle" class="w-12 h-12 text-accent"></i>
+          </div>
+          <h3 class="text-3xl font-display font-bold text-white mb-4">Request Sent Successfully!</h3>
+          <p class="text-slate-300 mb-8 text-lg">Thank you. Your appointment request has been securely saved. Our desk will call you shortly to confirm.</p>
+          <button onclick="resetForm()" class="px-8 py-3 bg-white/10 rounded-full font-semibold hover:bg-white/20 transition-colors">Book Another Appointment</button>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <footer class="bg-white pt-16 pb-8 border-t border-slate-100">
+    <div class="max-w-7xl mx-auto px-6">
+      <div class="flex flex-col md:flex-row justify-between items-center gap-6 mb-12">
+        <div class="flex items-center gap-3">
+          <div class="w-10 h-10 rounded-full bg-textDark flex items-center justify-center font-display font-bold text-white">S</div>
+          <h3 class="font-display font-bold text-xl text-textDark">Stra Care</h3>
+        </div>
+        
+        <div class="flex items-center gap-6 text-textMuted font-medium text-sm">
+          <a href="tel:+919744902555" class="hover:text-primary transition-colors flex items-center gap-2"><i data-lucide="phone" class="w-4 h-4"></i> +91 9744 902 555</a>
+          <a href="mailto:care@stracare.com" class="hover:text-primary transition-colors flex items-center gap-2"><i data-lucide="mail" class="w-4 h-4"></i> care@stracare.com</a>
+        </div>
+      </div>
+      
+      <div class="border-t border-slate-100 pt-8 flex flex-col md:flex-row justify-between items-center gap-4 text-sm text-slate-400">
+        <p>&copy; 2026 Stra Care Physiotherapy. All rights reserved.</p>
+        <div class="flex gap-6">
+          <a href="#" class="hover:text-primary transition-colors">Privacy Policy</a>
+          <a href="#" class="hover:text-primary transition-colors">Terms of Service</a>
+        </div>
+      </div>
+    </div>
+  </footer>
+
+  <style>
+    /* Fix for time input icon color on dark background */
+    .custom-time-input::-webkit-calendar-picker-indicator {
+      filter: invert(1);
+      cursor: pointer;
+    }
+  </style>
+
+  <script>
+    // Initialize Icons
+    lucide.createIcons();
+
+    // Mobile menu toggle [cite: 1, 2]
+    const mobileBtn = document.getElementById('mobile-menu-btn');
+    const mobileMenu = document.getElementById('mobile-menu');
+    mobileBtn.addEventListener('click', () => {
+      mobileMenu.classList.toggle('hidden');
+    });
+    document.querySelectorAll('#mobile-menu a').forEach(a => {
+      a.addEventListener('click', () => mobileMenu.classList.add('hidden'));
+    });
+
+    // Date formatting (DD/MM/YYYY) [cite: 3, 4, 5, 6]
+    const dateInput = document.getElementById('b-date');
+    dateInput.addEventListener('input', function(e) {
+      let value = e.target.value.replace(/\D/g, '');
+      if (value.length >= 2) value = value.slice(0, 2) + '/' + value.slice(2);
+      if (value.length >= 5) value = value.slice(0, 5) + '/' + value.slice(5, 9);
+      e.target.value = value;
+    });
+
+    // Phone format (Numbers only) [cite: 7]
+    document.getElementById('b-phone').addEventListener('input', function(e) {
+      e.target.value = e.target.value.replace(/\D/g, '').slice(0, 10);
+    });
+
+    // Firebase Form Submission [cite: 8, 9]
+    const form = document.getElementById('booking-form');
+    const loadingEl = document.getElementById('booking-loading');
+    const errorEl = document.getElementById('booking-error');
+    const confirmEl = document.getElementById('booking-confirm');
+    const submitBtn = form.querySelector('button[type="submit"]');
+
+    form.addEventListener('submit', async (e) => {
+      e.preventDefault();
+      
+      // Ensure Firebase loaded
+      if (!window.firebaseDb) {
+        alert("Firebase is still loading or failed to initialize. Check your console for details.");
+        return;
+      }
+
+      submitBtn.disabled = true;
+      submitBtn.classList.add('opacity-50');
+      loadingEl.classList.remove('hidden');
+      errorEl.classList.add('hidden');
+
+      // Reformat Date for DB to standard ISO if needed [cite: 10]
+      const dateStr = document.getElementById('b-date').value;
+      const dateParts = dateStr.split('/');
+      const isoDate = dateParts.length === 3 ? `${dateParts[2]}-${dateParts[1]}-${dateParts[0]}` : dateStr;
+
+      // Prepare Data Payload [cite: 11, 12]
+      const bookingData = {
+        name: document.getElementById('b-name').value,
+        phone: '+91' + document.getElementById('b-phone').value,
+        date: isoDate,
+        time: document.getElementById('b-time').value,
+        branch: document.getElementById('b-branch').value,
+        notes: document.getElementById('b-notes').value || '',
+        createdAt: window.firebaseServerTimestamp ? window.firebaseServerTimestamp() : new Date()
+      };
+
+      try {
+        // Send to Firebase 'bookings' collection
+        await window.firebaseAddDoc(window.firebaseCollection(window.firebaseDb, "bookings"), bookingData);
+        
+        // Success UI [cite: 13]
+        form.classList.add('hidden');
+        confirmEl.classList.remove('hidden');
+      } catch (error) {
+        console.error("Error adding document: ", error);
+        errorEl.classList.remove('hidden');
+      } finally {
+        submitBtn.disabled = false;
+        submitBtn.classList.remove('opacity-50');
+        loadingEl.classList.add('hidden');
+      }
+    });
+
+    // Function to reset form after success
+    window.resetForm = function() {
+      form.reset();
+      form.classList.remove('hidden');
+      confirmEl.classList.add('hidden');
+    }
+  </script>
+</body>
+</html>
