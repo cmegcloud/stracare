@@ -321,685 +321,313 @@
                 </div>
 
                 <!-- Card 10 -->
-                <div class="modern-card rounded-3xl overflow-        <nav class="bg-white dark:bg-slate-800 shadow-sm z-30 border-b border-slate-200 dark:border-slate-700 flex-shrink-0 transition-colors duration-200">
-            <div class="px-4 sm:px-6 flex justify-between items-center h-20">
-                
-                <div class="flex items-center gap-3 flex-1">
-                    <button onclick="toggleSidebar()" class="text-slate-500 hover:text-emerald-600 dark:text-slate-400 dark:hover:text-emerald-400 focus:outline-none p-1.5 rounded-md hover:bg-slate-100 dark:hover:bg-slate-700 transition lg:hidden">
-                        <i class="fa-solid fa-bars text-xl"></i>
-                    </button>
-                    <div class="relative w-full max-w-[200px] sm:max-w-xs group">
-                        <div class="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none">
-                            <i class="fa-solid fa-magnifying-glass text-slate-400 dark:text-slate-500 group-focus-within:text-emerald-500 transition-colors"></i>
+                <div class="modern-card rounded-3xl overflow-hidden group flex flex-col" data-aos="fade-up" data-aos-delay="500">
+                    <div class="relative h-48 overflow-hidden bg-slate-100">
+                        <img src="photo10.png" alt="Cerebral Palsy" class="w-full h-full object-cover transition-transform duration-700 group-hover:scale-110">
+                        <div class="absolute inset-0 bg-gradient-to-t from-dark/60 to-transparent opacity-0 group-hover:opacity-100 transition-opacity duration-300"></div>
+                    </div>
+                    <div class="p-6 flex-grow flex flex-col">
+                        <div class="w-12 h-12 rounded-xl bg-primaryLight flex items-center justify-center text-primary group-hover:bg-primary group-hover:text-white transition-colors mb-4">
+                            <i data-lucide="baby" class="w-6 h-6"></i>
                         </div>
-                        <input type="text" id="masterSearch" onkeyup="masterSearchTable()" placeholder="Search records..." class="w-full pl-10 pr-3 py-2 text-sm bg-slate-100 dark:bg-slate-700/50 border border-transparent hover:bg-slate-200/50 dark:hover:bg-slate-700 focus:bg-white dark:focus:bg-slate-700 focus:border-emerald-300 dark:focus:border-emerald-600 focus:ring-2 focus:ring-emerald-100 dark:focus:ring-emerald-900 rounded-full outline-none transition-all duration-300 dark:text-white placeholder-slate-400 shadow-sm">
+                        <h3 class="font-bold text-lg text-dark mb-2">Cerebral Palsy</h3>
+                        <p class="text-sm text-slate-500 leading-relaxed">Paediatric therapy ensuring physical development and muscle control.</p>
                     </div>
                 </div>
-                
-                <div class="flex items-center justify-end space-x-3 sm:space-x-4 flex-1">
-                    
-                    <div class="hidden md:flex flex-col">
-                        <label class="text-[9px] text-slate-500 font-bold uppercase tracking-wider mb-0.5">Simulate Login Role:</label>
-                        <select id="roleSimulator" class="text-xs bg-slate-100 dark:bg-slate-700 border border-slate-200 dark:border-slate-600 rounded p-1 text-slate-800 dark:text-slate-200 cursor-pointer outline-none">
-                            <option value="Admin">Admin (Full Access)</option>
-                            <option value="Staff - Home Care">Staff - Home Care</option>
-                            <option value="Staff - Stracare Main">Staff - Stracare Main</option>
-                            <option value="Staff - Arayakool">Staff - Arayakool</option>
-                        </select>
-                    </div>
-                    
-                    <div class="h-6 w-px bg-slate-200 dark:bg-slate-700 hidden sm:block mx-1"></div>
 
-                    <button onclick="toggleTheme()" class="w-10 h-10 rounded-full flex items-center justify-center bg-slate-100 dark:bg-slate-700 text-slate-500 dark:text-slate-400 hover:text-emerald-600 dark:hover:text-emerald-400 shadow-sm hover:bg-slate-200 dark:hover:bg-slate-600 transition outline-none">
-                        <i id="themeIcon" class="fa-solid fa-moon"></i>
-                    </button>
-                    <div class="hidden sm:flex items-center cursor-pointer hover:bg-slate-50 dark:hover:bg-slate-700 p-1 rounded-lg transition">
-                        <img class="h-8 w-8 rounded-full object-cover border-2 border-emerald-100 dark:border-emerald-800" src="https://ui-avatars.com/api/?name=Admin&background=10b981&color=fff" alt="Profile">
+                <!-- Card 11 -->
+                <div class="modern-card rounded-3xl overflow-hidden group flex flex-col" data-aos="fade-up" data-aos-delay="550">
+                    <div class="relative h-48 overflow-hidden bg-slate-100">
+                        <img src="photo11.png" alt="Bell's Palsy" class="w-full h-full object-cover transition-transform duration-700 group-hover:scale-110">
+                        <div class="absolute inset-0 bg-gradient-to-t from-dark/60 to-transparent opacity-0 group-hover:opacity-100 transition-opacity duration-300"></div>
+                    </div>
+                    <div class="p-6 flex-grow flex flex-col">
+                        <div class="w-12 h-12 rounded-xl bg-primaryLight flex items-center justify-center text-primary group-hover:bg-primary group-hover:text-white transition-colors mb-4">
+                            <i data-lucide="smile" class="w-6 h-6"></i>
+                        </div>
+                        <h3 class="font-bold text-lg text-dark mb-2">Bell's Palsy</h3>
+                        <p class="text-sm text-slate-500 leading-relaxed">Facial nerve rehabilitation utilizing specialized stimulation and exercises.</p>
                     </div>
                 </div>
-            </div>
-        </nav>
 
-        <div class="flex-1 overflow-y-auto custom-scroll p-4 sm:p-6 pb-24">
-            
-            <div class="flex flex-col xl:flex-row justify-between items-start xl:items-center gap-4 mb-6 bg-white dark:bg-slate-800 p-5 rounded-2xl shadow-sm border border-slate-200 dark:border-slate-700 transition-colors duration-200">
-                <div>
-                    <h1 class="text-2xl font-extrabold text-slate-900 dark:text-white tracking-tight uppercase">Dashboard Overview</h1>
-                    <p class="text-xs text-slate-500 dark:text-slate-400 mt-1 font-medium">Manage appointments, schedules, and financials.</p>
-                </div>
-                <div class="flex flex-wrap items-center gap-4 w-full xl:w-auto">
-                    <div class="text-[10px] sm:text-xs font-mono bg-emerald-50 dark:bg-emerald-900/30 border border-emerald-100 dark:border-emerald-800/50 text-emerald-700 dark:text-emerald-400 px-4 py-2 rounded-lg shadow-sm hidden md:block text-right leading-tight tracking-wide font-semibold" id="adminClock">
-                        --/--/---- <br> --:--:--
-                    </div>
-                    <div class="w-full sm:w-auto flex-1 sm:flex-none">
-                        <label class="block text-[10px] font-bold text-slate-500 dark:text-slate-400 mb-1.5 uppercase tracking-wider">Filter By Branch</label>
-                        <select id="branchFilterMain" class="w-full sm:w-64 border border-slate-300 dark:border-slate-600 rounded-lg p-2.5 bg-slate-50 dark:bg-slate-700 dark:text-white text-sm font-semibold shadow-sm cursor-pointer outline-none transition hover:border-emerald-400 focus:ring-2 focus:ring-emerald-500/50">
-                            <option value="All">All Branches</option>
-                            <option value="Home Care">Home Care</option>
-                            <option value="Stracare Main">Stracare Main</option>
-                            <option value="Stracare Arayakool">Stracare Arayakool</option>
-                            <option value="Theracare Pallikkuni">Theracare Pallikkuni</option>
-                            <option value="Theracare Azhiyur">Theracare Azhiyur</option>
-                        </select>
-                    </div>
-                </div>
-            </div>
-
-            <div class="grid grid-cols-2 xl:grid-cols-4 gap-4 sm:gap-6 mb-6">
-                <div class="bg-white dark:bg-slate-800 p-6 rounded-2xl shadow-sm border border-slate-200 dark:border-slate-700 transition-colors duration-200">
-                    <div class="flex items-center justify-between mb-4">
-                        <h3 class="text-xs font-semibold text-slate-500 dark:text-slate-400 uppercase tracking-wider">Total Bookings</h3>
-                        <div class="w-10 h-10 bg-indigo-50 dark:bg-indigo-900/30 rounded-lg flex items-center justify-center text-indigo-600 dark:text-indigo-400"><i class="fa-solid fa-calendar-check text-lg"></i></div>
-                    </div>
-                    <p class="text-3xl font-extrabold text-slate-900 dark:text-white" id="dashTotal">0</p>
-                </div>
-                <div class="bg-white dark:bg-slate-800 p-6 rounded-2xl shadow-sm border border-slate-200 dark:border-slate-700 transition-colors duration-200">
-                    <div class="flex items-center justify-between mb-4">
-                        <h3 class="text-xs font-semibold text-slate-500 dark:text-slate-400 uppercase tracking-wider">Pending/Postponed</h3>
-                        <div class="w-10 h-10 bg-amber-50 dark:bg-amber-900/30 rounded-lg flex items-center justify-center text-amber-500 dark:text-amber-400"><i class="fa-regular fa-clock text-lg"></i></div>
-                    </div>
-                    <p class="text-3xl font-extrabold text-slate-900 dark:text-white" id="dashPending">0</p>
-                </div>
-                <div class="bg-white dark:bg-slate-800 p-6 rounded-2xl shadow-sm border border-slate-200 dark:border-slate-700 transition-colors duration-200">
-                    <div class="flex items-center justify-between mb-4">
-                        <h3 class="text-xs font-semibold text-slate-500 dark:text-slate-400 uppercase tracking-wider">Service Done</h3>
-                        <div class="w-10 h-10 bg-emerald-50 dark:bg-emerald-900/30 rounded-lg flex items-center justify-center text-emerald-600 dark:text-emerald-400"><i class="fa-solid fa-check-double text-lg"></i></div>
-                    </div>
-                    <p class="text-3xl font-extrabold text-slate-900 dark:text-white" id="dashDone">0</p>
-                </div>
-                <div class="bg-white dark:bg-slate-800 p-6 rounded-2xl shadow-sm border border-slate-200 dark:border-slate-700 transition-colors duration-200">
-                    <div class="flex items-center justify-between mb-4">
-                        <h3 class="text-xs font-semibold text-slate-500 dark:text-slate-400 uppercase tracking-wider">Receivables</h3>
-                        <div class="w-10 h-10 bg-rose-50 dark:bg-rose-900/30 rounded-lg flex items-center justify-center text-rose-600 dark:text-rose-400"><i class="fa-solid fa-wallet text-lg"></i></div>
-                    </div>
-                    <p class="text-3xl font-extrabold text-rose-600 dark:text-rose-400" id="dashReceivables">₹0</p>
-                </div>
-            </div>
-
-            <div class="grid grid-cols-1 xl:grid-cols-3 gap-6 mb-8">
-                
-                <div class="xl:col-span-2 bg-white dark:bg-slate-800 p-5 rounded-2xl shadow-sm border border-slate-200 dark:border-slate-700 transition-colors duration-200">
-                    <div class="flex justify-between items-center mb-4">
-                        <h3 class="text-lg font-bold text-slate-900 dark:text-white flex items-center gap-2">
-                            <i class="fa-regular fa-calendar text-emerald-600 dark:text-emerald-400"></i> Schedule Calendar
-                        </h3>
-                        <div class="flex gap-2">
-                            <button class="p-1.5 rounded bg-slate-100 dark:bg-slate-700 text-slate-600 dark:text-slate-300 hover:bg-slate-200 dark:hover:bg-slate-600"><i class="fa-solid fa-chevron-left text-sm"></i></button>
-                            <span class="font-bold text-slate-800 dark:text-white px-2 py-1" id="calendarMonth">Loading...</span>
-                            <button class="p-1.5 rounded bg-slate-100 dark:bg-slate-700 text-slate-600 dark:text-slate-300 hover:bg-slate-200 dark:hover:bg-slate-600"><i class="fa-solid fa-chevron-right text-sm"></i></button>
+                <!-- Highlight Card: Home Care -->
+                <div class="modern-card rounded-3xl overflow-hidden group flex flex-col bg-primary border-none shadow-xl transform transition duration-500 hover:-translate-y-2 hover:shadow-2xl" data-aos="fade-up" data-aos-delay="600">
+                    <div class="relative h-48 overflow-hidden bg-teal-800">
+                        <img src="photo12.png" alt="Home Care Physiotherapy" class="w-full h-full object-cover mix-blend-overlay opacity-80 transition-transform duration-700 group-hover:scale-110">
+                        <div class="absolute inset-0 bg-gradient-to-t from-primary to-transparent opacity-90"></div>
+                        <div class="absolute bottom-6 left-6 text-white z-10">
+                            <div class="w-12 h-12 rounded-full bg-white/20 backdrop-blur-sm flex items-center justify-center mb-3">
+                                <i data-lucide="home" class="w-6 h-6"></i>
+                            </div>
                         </div>
                     </div>
-                    
-                    <div class="grid grid-cols-7 gap-1 sm:gap-2 mb-2">
-                        <div class="text-center text-xs font-bold text-slate-400 dark:text-slate-500 uppercase tracking-wider py-2">Sun</div>
-                        <div class="text-center text-xs font-bold text-slate-400 dark:text-slate-500 uppercase tracking-wider py-2">Mon</div>
-                        <div class="text-center text-xs font-bold text-slate-400 dark:text-slate-500 uppercase tracking-wider py-2">Tue</div>
-                        <div class="text-center text-xs font-bold text-slate-400 dark:text-slate-500 uppercase tracking-wider py-2">Wed</div>
-                        <div class="text-center text-xs font-bold text-slate-400 dark:text-slate-500 uppercase tracking-wider py-2">Thu</div>
-                        <div class="text-center text-xs font-bold text-slate-400 dark:text-slate-500 uppercase tracking-wider py-2">Fri</div>
-                        <div class="text-center text-xs font-bold text-slate-400 dark:text-slate-500 uppercase tracking-wider py-2">Sat</div>
-                    </div>
-                    <div id="calendarGrid" class="grid grid-cols-7 gap-1 sm:gap-2">
+                    <div class="p-6 flex-grow flex flex-col bg-primary">
+                        <h3 class="font-bold text-xl text-white mb-2">Physiotherapy at your Home</h3>
+                        <p class="text-sm text-primaryLight leading-relaxed mb-6">Expert clinical care delivered to the comfort and safety of your own house.</p>
+                        <div class="mt-auto">
+                            <a href="#appointment" class="inline-flex items-center gap-2 text-sm font-bold bg-white text-primary px-5 py-2.5 rounded-full hover:bg-primaryLight transition-colors">
+                                Request Home Visit <i data-lucide="arrow-right" class="w-4 h-4"></i>
+                            </a>
                         </div>
+                    </div>
                 </div>
 
-                <div class="xl:col-span-1 bg-white dark:bg-slate-800 p-5 rounded-2xl shadow-sm border border-slate-200 dark:border-slate-700 transition-colors duration-200 flex flex-col">
-                    <h3 class="text-lg font-bold text-slate-900 dark:text-white flex items-center gap-2 mb-4">
-                        <i class="fa-solid fa-user-plus text-emerald-600 dark:text-emerald-400"></i> New Appointment
-                    </h3>
-                    <form id="quickAddForm" class="space-y-4 flex-1 overflow-y-auto custom-scroll pr-1 text-sm">
-                        
+            </div>
+        </div>
+    </section>
+
+    <!-- TESTIMONIALS (Based on Google Reviews) -->
+    <section id="testimonials" class="py-24 bg-soft relative overflow-hidden">
+        <div class="max-w-7xl mx-auto px-6">
+            <div class="text-center max-w-3xl mx-auto mb-16" data-aos="fade-up">
+                <h4 class="text-primary font-bold tracking-wider uppercase text-sm mb-3">Google Reviews</h4>
+                <h2 class="text-4xl md:text-5xl font-display font-bold text-dark mb-4">What Our Patients Say</h2>
+                <p class="text-lg text-slate-600">Real experiences from our patients who have chosen Stra Care.</p>
+            </div>
+
+            <div class="grid lg:grid-cols-3 gap-8">
+                <!-- Testimonial 1 -->
+                <div class="bg-white p-8 rounded-[2rem] shadow-sm border border-slate-100 hover:shadow-lg transition-shadow flex flex-col" data-aos="fade-up" data-aos-delay="100">
+                    <div class="flex text-yellow-400 mb-4 text-sm">
+                        <i class="fa-solid fa-star"></i><i class="fa-solid fa-star"></i><i class="fa-solid fa-star"></i><i class="fa-solid fa-star"></i><i class="fa-solid fa-star"></i>
+                    </div>
+                    <p class="text-slate-600 mb-6 leading-relaxed flex-grow text-[15px]">"My child and I are both undergoing physiotherapy at this clinic, and we've had a wonderful experience. The clinic is clean and modern, with a welcoming atmosphere. The therapists are friendly, knowledgeable, and professional. They've been great at understanding our individual needs and customising treatment plans. Their expertise and gentle approach make the sessions comfortable and effective. We've already seen significant improvement in our conditions."</p>
+                    <div class="flex items-center gap-4 mt-auto">
+                        <div class="w-12 h-12 bg-slate-100 text-slate-700 rounded-full flex items-center justify-center font-bold text-xl overflow-hidden">
+                            <img src="https://ui-avatars.com/api/?name=Jithin+Manomohan&background=0D8ABC&color=fff" alt="Avatar">
+                        </div>
                         <div>
-                            <label class="block text-[10px] font-bold text-slate-500 dark:text-slate-400 mb-1 uppercase tracking-wider">Mobile No</label>
-                            <input type="text" id="qaMobile" placeholder="Enter Mobile to auto-generate ID" required class="w-full bg-slate-50 dark:bg-slate-700 border border-slate-200 dark:border-slate-600 text-slate-900 dark:text-white rounded-lg px-3 py-2.5 focus:ring-2 focus:ring-emerald-500 outline-none transition">
+                            <h4 class="font-bold text-dark text-sm">Jithin Manomohan (Jin)</h4>
+                            <p class="text-xs text-slate-500">Local Guide</p>
                         </div>
-                        
-                        <div class="grid grid-cols-2 gap-3">
-                            <div>
-                                <label class="block text-[10px] font-bold text-slate-500 dark:text-slate-400 mb-1 uppercase tracking-wider">Patient ID (Auto)</label>
-                                <input type="text" id="qaPatientId" readonly class="w-full bg-slate-100 dark:bg-slate-700/50 border border-slate-200 dark:border-slate-600 text-slate-500 dark:text-slate-400 rounded-lg px-3 py-2.5 cursor-not-allowed font-mono text-xs font-bold">
-                            </div>
-                            <div>
-                                <label class="block text-[10px] font-bold text-slate-500 dark:text-slate-400 mb-1 uppercase tracking-wider">Name</label>
-                                <input type="text" id="qaName" required class="w-full bg-slate-50 dark:bg-slate-700 border border-slate-200 dark:border-slate-600 text-slate-900 dark:text-white rounded-lg px-3 py-2.5 focus:ring-2 focus:ring-emerald-500 outline-none transition">
-                            </div>
-                        </div>
-
-                        <div class="grid grid-cols-2 gap-3">
-                            <div>
-                                <label class="block text-[10px] font-bold text-slate-500 dark:text-slate-400 mb-1 uppercase tracking-wider">Date</label>
-                                <input type="date" id="qaDate" required class="w-full bg-slate-50 dark:bg-slate-700 border border-slate-200 dark:border-slate-600 text-slate-900 dark:text-white rounded-lg px-3 py-2.5 focus:ring-2 focus:ring-emerald-500 outline-none transition text-xs font-bold">
-                            </div>
-                            <div>
-                                <label class="block text-[10px] font-bold text-slate-500 dark:text-slate-400 mb-1 uppercase tracking-wider">Time</label>
-                                <input type="time" id="qaTime" required class="w-full bg-slate-50 dark:bg-slate-700 border border-slate-200 dark:border-slate-600 text-slate-900 dark:text-white rounded-lg px-3 py-2.5 focus:ring-2 focus:ring-emerald-500 outline-none transition text-xs font-bold">
-                            </div>
-                        </div>
-
-                        <div class="grid grid-cols-2 gap-3">
-                            <div>
-                                <label class="block text-[10px] font-bold text-slate-500 dark:text-slate-400 mb-1 uppercase tracking-wider">Branch/Doctor</label>
-                                <select id="qaBranch" class="w-full bg-slate-50 dark:bg-slate-700 border border-slate-200 dark:border-slate-600 text-slate-900 dark:text-white rounded-lg px-2 py-2.5 focus:ring-2 focus:ring-emerald-500 outline-none transition text-xs">
-                                    <option value="Stracare Main">Stracare Main</option>
-                                    <option value="Home Care">Home Care</option>
-                                    <option value="Stracare Arayakool">Stracare Arayakool</option>
-                                </select>
-                            </div>
-                            <div>
-                                <label class="block text-[10px] font-bold text-slate-500 dark:text-slate-400 mb-1 uppercase tracking-wider">Mode</label>
-                                <select id="qaMode" class="w-full bg-slate-50 dark:bg-slate-700 border border-slate-200 dark:border-slate-600 text-slate-900 dark:text-white rounded-lg px-2 py-2.5 focus:ring-2 focus:ring-emerald-500 outline-none transition text-xs">
-                                    <option value="Offline">Offline (Clinic)</option>
-                                    <option value="Online">Online (Video)</option>
-                                </select>
-                            </div>
-                        </div>
-
-                        <div class="grid grid-cols-3 gap-2">
-                            <div>
-                                <label class="block text-[10px] font-bold text-slate-500 dark:text-slate-400 mb-1 uppercase tracking-wider">Fee (₹)</label>
-                                <input type="number" id="qaFee" value="0" min="0" class="w-full bg-slate-50 dark:bg-slate-700 border border-slate-200 dark:border-slate-600 text-slate-900 dark:text-white rounded-lg px-2 py-2.5 focus:ring-2 focus:ring-emerald-500 outline-none transition text-xs font-mono font-bold">
-                            </div>
-                            <div>
-                                <label class="block text-[10px] font-bold text-slate-500 dark:text-slate-400 mb-1 uppercase tracking-wider">Adv (₹)</label>
-                                <input type="number" id="qaAdv" value="0" min="0" class="w-full bg-slate-50 dark:bg-slate-700 border border-slate-200 dark:border-slate-600 text-slate-900 dark:text-white rounded-lg px-2 py-2.5 focus:ring-2 focus:ring-emerald-500 outline-none transition text-xs font-mono font-bold">
-                            </div>
-                            <div>
-                                <label class="block text-[10px] font-bold text-slate-500 dark:text-slate-400 mb-1 uppercase tracking-wider">Bal (₹)</label>
-                                <input type="text" id="qaBal" value="0" readonly class="w-full bg-rose-50 dark:bg-rose-900/20 border border-rose-200 dark:border-rose-800 text-rose-600 dark:text-rose-400 rounded-lg px-2 py-2.5 cursor-not-allowed text-xs font-mono font-bold text-center">
-                            </div>
-                        </div>
-
-                        <div>
-                            <label class="block text-[10px] font-bold text-slate-500 dark:text-slate-400 mb-1 uppercase tracking-wider">Notes</label>
-                            <input type="text" id="qaNotes" placeholder="Any specific requirements..." class="w-full bg-slate-50 dark:bg-slate-700 border border-slate-200 dark:border-slate-600 text-slate-900 dark:text-white rounded-lg px-3 py-2.5 focus:ring-2 focus:ring-emerald-500 outline-none transition">
-                        </div>
-                        
-                        <button type="submit" class="w-full bg-emerald-600 text-white font-bold py-3 rounded-lg shadow-sm hover:bg-emerald-700 transition-colors mt-2 flex items-center justify-center gap-2">
-                            <i class="fa-solid fa-plus"></i> Save Appointment
-                        </button>
-                    </form>
-                </div>
-            </div>
-
-            <div class="bg-white dark:bg-slate-800 shadow-sm rounded-2xl overflow-hidden border border-slate-200 dark:border-slate-700 transition-colors duration-200 mb-12">
-                
-                <div class="flex justify-between items-center p-4 border-b border-slate-200 dark:border-slate-700 bg-slate-50 dark:bg-slate-800/50">
-                    <h3 class="font-bold text-slate-800 dark:text-white text-sm uppercase tracking-wider">Recent Appointments</h3>
-                    <div class="flex gap-2 text-sm">
-                        <button id="sortDateBtn" class="flex items-center gap-1.5 px-3 py-1.5 bg-white dark:bg-slate-700 border border-slate-200 dark:border-slate-600 rounded-md text-slate-600 dark:text-slate-300 hover:text-emerald-600 dark:hover:text-emerald-400 shadow-sm transition outline-none font-semibold">
-                            <i class="fa-solid fa-arrow-down-short-wide"></i> Sort Date
-                        </button>
-                        <button onclick="exportTableToCSV('appointments.csv')" class="flex items-center gap-1.5 px-3 py-1.5 bg-emerald-50 dark:bg-emerald-900/30 border border-emerald-200 dark:border-emerald-800 text-emerald-700 dark:text-emerald-400 rounded-md hover:bg-emerald-100 dark:hover:bg-emerald-900/50 shadow-sm transition outline-none font-semibold">
-                            <i class="fa-solid fa-file-excel"></i> Export Excel
-                        </button>
                     </div>
                 </div>
 
-                <div class="overflow-x-auto custom-scroll pb-2">
-                    <table class="w-full text-left text-sm whitespace-nowrap border-collapse min-w-max" id="appointmentsTable">
-                        <thead class="bg-slate-50 dark:bg-slate-700/50 border-b border-slate-200 dark:border-slate-700 align-middle">
-                            <tr>
-                                <th class="py-4 px-4 font-bold text-xs text-slate-500 dark:text-slate-400 uppercase tracking-wider text-left">Trn ID / Date</th>
-                                <th class="py-4 px-4 font-bold text-xs text-slate-500 dark:text-slate-400 uppercase tracking-wider text-left">Patient / Mobile</th>
-                                <th class="py-4 px-4 font-bold text-xs text-slate-500 dark:text-slate-400 uppercase tracking-wider text-left">Branch / Mode</th>
-                                <th class="py-4 px-4 font-bold text-xs text-slate-500 dark:text-slate-400 uppercase tracking-wider text-left">Fee / Adv / Bal</th>
-                                <th class="py-4 px-4 font-bold text-xs text-slate-500 dark:text-slate-400 uppercase tracking-wider text-left">Status</th>
-                                <th class="py-4 px-4 font-bold text-xs text-slate-500 dark:text-slate-400 uppercase tracking-wider text-center">Actions</th>
-                            </tr>
-                        </thead>
-                        <tbody id="tableBody" class="divide-y divide-slate-100 dark:divide-slate-700/80">
-                            </tbody>
-                    </table>
+                <!-- Testimonial 2 -->
+                <div class="bg-white p-8 rounded-[2rem] shadow-sm border border-slate-100 hover:shadow-lg transition-shadow flex flex-col" data-aos="fade-up" data-aos-delay="200">
+                    <div class="flex text-yellow-400 mb-4 text-sm">
+                        <i class="fa-solid fa-star"></i><i class="fa-solid fa-star"></i><i class="fa-solid fa-star"></i><i class="fa-solid fa-star"></i><i class="fa-solid fa-star"></i>
+                    </div>
+                    <p class="text-slate-600 mb-6 leading-relaxed flex-grow text-[15px]">"I got a better treatment and a fastest pain relief. The doctors were so kind and understanding. Definitely I will recommend others to choose Stra Care for their physiotherapy treatment."</p>
+                    <div class="flex items-center gap-4 mt-auto">
+                        <div class="w-12 h-12 bg-slate-100 text-slate-700 rounded-full flex items-center justify-center font-bold text-xl overflow-hidden">
+                            <img src="https://ui-avatars.com/api/?name=Akhila+Antony&background=E53935&color=fff" alt="Avatar">
+                        </div>
+                        <div>
+                            <h4 class="font-bold text-dark text-sm">Akhila Antony</h4>
+                            <p class="text-xs text-slate-500">Reviewer</p>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Testimonial 3 -->
+                <div class="bg-white p-8 rounded-[2rem] shadow-sm border border-slate-100 hover:shadow-lg transition-shadow flex flex-col" data-aos="fade-up" data-aos-delay="300">
+                    <div class="flex text-yellow-400 mb-4 text-sm">
+                        <i class="fa-solid fa-star"></i><i class="fa-solid fa-star"></i><i class="fa-solid fa-star"></i><i class="fa-solid fa-star"></i><i class="fa-solid fa-star"></i>
+                    </div>
+                    <p class="text-slate-600 mb-6 leading-relaxed flex-grow text-[15px]">"A very nice physiotherapy centre in the near by area. All the staffs are well trained and friendly. Visible changes in 1 week of therapy itself."</p>
+                    <div class="flex items-center gap-4 mt-auto">
+                        <div class="w-12 h-12 bg-slate-100 text-slate-700 rounded-full flex items-center justify-center font-bold text-xl overflow-hidden">
+                            <img src="https://ui-avatars.com/api/?name=Parvathy+Mohan&background=000000&color=fff" alt="Avatar">
+                        </div>
+                        <div>
+                            <h4 class="font-bold text-dark text-sm">parvathy mohan</h4>
+                            <p class="text-xs text-slate-500">Reviewer</p>
+                        </div>
+                    </div>
                 </div>
             </div>
         </div>
-    </main>
+    </section>
 
-    <div id="editModal" class="fixed inset-0 bg-slate-900/60 backdrop-blur-sm hidden flex items-center justify-center z- transition-opacity duration-300 px-4">
-        <div class="bg-white dark:bg-slate-800 rounded-2xl shadow-2xl w-full max-w-lg overflow-hidden transform transition-transform duration-300 flex flex-col max-h-[90vh] border border-slate-200 dark:border-slate-700">
-            
-            <div class="px-6 py-4 border-b border-slate-200 dark:border-slate-700 flex justify-between items-center bg-slate-50 dark:bg-slate-800/80 shrink-0">
-                <h3 class="font-bold text-slate-900 dark:text-white text-lg flex items-center gap-2">
-                    <i class="fa-solid fa-pen-to-square text-emerald-600 dark:text-emerald-400 text-sm"></i>
-                    Update Appointment
-                </h3>
-                <button onclick="closeModal()" class="text-slate-400 hover:text-rose-500 transition outline-none bg-white dark:bg-slate-700 rounded-full p-1.5 border border-slate-200 dark:border-slate-600">
-                    <i class="fa-solid fa-xmark w-4 h-4 flex items-center justify-center"></i>
-                </button>
-            </div>
-            
-            <div class="p-6 space-y-6 overflow-y-auto custom-scroll text-sm">
-                <input type="hidden" id="editDocId">
-                
-                <div class="bg-slate-50 dark:bg-slate-700/50 p-4 rounded-xl border border-slate-200 dark:border-slate-600 flex justify-between items-start shadow-sm">
-                    <div>
-                        <p class="text-[10px] text-slate-500 dark:text-slate-400 uppercase tracking-widest font-bold mb-1" id="displayPatientMobile">Mobile: Loading...</p>
-                        <p class="font-bold text-slate-900 dark:text-white text-base sm:text-lg" id="displayPatientName">Loading...</p>
-                        <p class="text-xs text-indigo-500 dark:text-indigo-400 mt-1 font-semibold" id="displayApptMode">Mode: Offline</p>
-                    </div>
-                    <div class="text-right">
-                        <p class="text-[10px] text-slate-500 dark:text-slate-400 uppercase tracking-widest font-bold mb-1">Trn ID</p>
-                        <p class="text-[11px] text-emerald-600 dark:text-emerald-400 font-mono font-semibold bg-emerald-50 dark:bg-emerald-900/30 px-2 py-0.5 rounded border border-emerald-100 dark:border-emerald-800" id="displayTrnId">#TRN</p>
-                    </div>
-                </div>
-
-                <div class="grid grid-cols-2 gap-5">
-                    <div>
-                        <label class="block text-[10px] font-bold text-slate-500 dark:text-slate-400 mb-1.5 uppercase tracking-wider">Mode of Appointment</label>
-                        <select id="editMode" class="w-full border border-slate-300 dark:border-slate-600 rounded-lg p-2.5 bg-white dark:bg-slate-700 dark:text-white text-sm outline-none focus:ring-2 focus:ring-emerald-500 transition shadow-sm font-medium cursor-pointer">
-                            <option value="Offline">Offline (Clinic)</option>
-                            <option value="Online">Online (Video)</option>
-                        </select>
-                    </div>
-                    <div>
-                        <label class="block text-[10px] font-bold text-slate-500 dark:text-slate-400 mb-1.5 uppercase tracking-wider">Service Status</label>
-                        <select id="editServiceStatus" class="w-full border border-slate-300 dark:border-slate-600 rounded-lg p-2.5 bg-white dark:bg-slate-700 dark:text-white text-sm outline-none focus:ring-2 focus:ring-emerald-500 transition shadow-sm font-medium cursor-pointer">
-                            <option value="Pending">Pending</option>
-                            <option value="Done">Done</option>
-                            <option value="Postponed">Postponed</option>
-                            <option value="Not Come">Not Come</option>
-                            <option value="Cancelled">Cancelled</option>
-                        </select>
-                    </div>
-                </div>
-
-                <div id="postponedFields" class="hidden grid-cols-2 gap-5 bg-amber-50 dark:bg-amber-900/20 p-4 rounded-xl border border-amber-200 dark:border-amber-800/50 shadow-inner">
-                    <div>
-                        <label class="block text-[10px] font-bold text-amber-700 dark:text-amber-400 mb-1.5 uppercase tracking-wider">Postponed Date</label>
-                        <input type="date" id="editPostponedDate" class="w-full border border-amber-200 dark:border-amber-700 rounded-lg p-2 bg-white dark:bg-slate-700 dark:text-white text-sm outline-none focus:ring-2 focus:ring-amber-500 transition shadow-sm">
-                    </div>
-                    <div>
-                        <label class="block text-[10px] font-bold text-amber-700 dark:text-amber-400 mb-1.5 uppercase tracking-wider">Postponed Time</label>
-                        <input type="time" id="editPostponedTime" class="w-full border border-amber-200 dark:border-amber-700 rounded-lg p-2 bg-white dark:bg-slate-700 dark:text-white text-sm outline-none focus:ring-2 focus:ring-amber-500 transition shadow-sm">
-                    </div>
-                </div>
-
-                <div class="grid grid-cols-3 gap-3 border-t border-slate-200 dark:border-slate-700 pt-4">
-                    <div>
-                        <label class="block text-[10px] font-bold text-slate-500 dark:text-slate-400 mb-1.5 uppercase tracking-wider">Fee (₹)</label>
-                        <input type="number" id="editActualFee" min="0" class="w-full border border-slate-300 dark:border-slate-600 rounded-lg p-2 bg-white dark:bg-slate-700 dark:text-white text-sm outline-none focus:ring-2 focus:ring-emerald-500 transition shadow-sm font-mono font-bold">
-                    </div>
-                    <div>
-                        <label class="block text-[10px] font-bold text-slate-500 dark:text-slate-400 mb-1.5 uppercase tracking-wider">Adv. R/d (₹)</label>
-                        <input type="number" id="editAdvance" min="0" class="w-full border border-slate-300 dark:border-slate-600 rounded-lg p-2 bg-white dark:bg-slate-700 dark:text-white text-sm outline-none focus:ring-2 focus:ring-emerald-500 transition shadow-sm font-mono font-bold">
-                    </div>
-                    <div>
-                        <label class="block text-[10px] font-bold text-slate-500 dark:text-slate-400 mb-1.5 uppercase tracking-wider">Balance (₹)</label>
-                        <input type="text" id="editBalance" readonly class="w-full border border-rose-200 dark:border-rose-800/50 rounded-lg p-2 bg-rose-50 dark:bg-rose-900/20 text-rose-600 dark:text-rose-400 text-sm outline-none transition shadow-sm font-mono font-bold text-center cursor-not-allowed">
-                    </div>
-                </div>
+    <!-- FOUNDERS (Reduced size design) -->
+    <section id="founders" class="py-16 bg-white border-t border-slate-50">
+        <div class="max-w-5xl mx-auto px-6">
+            <div class="text-center mb-10" data-aos="fade-up">
+                <h2 class="text-3xl font-display font-bold text-dark mb-2">Leadership Team</h2>
             </div>
 
-            <div class="px-6 py-4 border-t border-slate-200 dark:border-slate-700 flex justify-end gap-3 bg-slate-50 dark:bg-slate-800/80 shrink-0">
-                <button onclick="closeModal()" class="px-5 py-2 text-sm font-semibold text-slate-600 dark:text-slate-300 bg-white dark:bg-slate-700 border border-slate-300 dark:border-slate-600 rounded-lg hover:bg-slate-50 dark:hover:bg-slate-600 transition shadow-sm">
-                    Cancel
-                </button>
-                <button onclick="saveUpdate()" class="px-5 py-2 text-sm font-semibold text-white bg-emerald-600 hover:bg-emerald-700 rounded-lg shadow-sm transition flex items-center gap-2">
-                    <i class="fa-solid fa-floppy-disk"></i> Save Changes
-                </button>
+            <div class="grid sm:grid-cols-2 gap-6 max-w-2xl mx-auto">
+                <div class="modern-card rounded-2xl overflow-hidden flex items-center p-4 text-left gap-5" data-aos="fade-up" data-aos-delay="100">
+                    <div class="w-20 h-20 rounded-full overflow-hidden border-2 border-primaryLight flex-shrink-0 bg-slate-100">
+                        <img src="https://stracares.in/assets/photo-shyn.png" class="w-full h-full object-cover object-top" alt="P.M. Shyn">
+                    </div>
+                    <div>
+                        <h3 class="text-lg font-display font-bold text-dark mb-0.5">P.M. SHYN</h3>
+                        <p class="text-primary font-semibold text-[10px] uppercase tracking-wider mb-1.5">Managing Director</p>
+                        <p class="text-slate-500 text-xs leading-relaxed">
+                            Driving commitment to advanced systems.
+                        </p>
+                    </div>
+                </div>
+
+                <div class="modern-card rounded-2xl overflow-hidden flex items-center p-4 text-left gap-5" data-aos="fade-up" data-aos-delay="200">
+                    <div class="w-20 h-20 rounded-full overflow-hidden border-2 border-primaryLight flex-shrink-0 bg-slate-100">
+                        <img src="https://stracares.in/assets/photo-thejaswini.png" class="w-full h-full object-cover object-top" alt="Thejaswini M.K">
+                    </div>
+                    <div>
+                        <h3 class="text-lg font-display font-bold text-dark mb-0.5">THEJASWINI M.K</h3>
+                        <p class="text-primary font-semibold text-[10px] uppercase tracking-wider mb-1.5">Chief Executive Officer</p>
+                        <p class="text-slate-500 text-xs leading-relaxed">
+                            Focusing on clinical excellence and care.
+                        </p>
+                    </div>
+                </div>
             </div>
         </div>
-    </div>
+    </section>
 
+    <!-- BRANCHES -->
+    <section id="branches" class="py-20 bg-dark text-white relative">
+        <div class="max-w-7xl mx-auto px-6">
+            <div class="text-center mb-16" data-aos="fade-up">
+                <h4 class="text-primaryLight font-bold tracking-wider uppercase text-sm mb-3">Our Network</h4>
+                <h2 class="text-3xl md:text-4xl font-display font-bold mb-4">Visit Our Branches</h2>
+            </div>
+
+            <div class="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-5 gap-4">
+                <div class="bg-white/5 border border-white/10 rounded-2xl p-6 text-center hover:bg-white/10 transition" data-aos="fade-up" data-aos-delay="100">
+                    <i data-lucide="map-pin" class="w-8 h-8 text-primaryLight mx-auto mb-3"></i>
+                    <h3 class="font-bold text-sm">MAHE<br><span class="text-slate-400 font-normal">AZHIYUR</span></h3>
+                </div>
+                <div class="bg-white/5 border border-white/10 rounded-2xl p-6 text-center hover:bg-white/10 transition" data-aos="fade-up" data-aos-delay="200">
+                    <i data-lucide="map-pin" class="w-8 h-8 text-primaryLight mx-auto mb-3"></i>
+                    <h3 class="font-bold text-sm">CHOKLI<br><span class="text-slate-400 font-normal">PALLIKUNI</span></h3>
+                </div>
+                <div class="bg-white/5 border border-white/10 rounded-2xl p-6 text-center hover:bg-white/10 transition" data-aos="fade-up" data-aos-delay="300">
+                    <i data-lucide="map-pin" class="w-8 h-8 text-primaryLight mx-auto mb-3"></i>
+                    <h3 class="font-bold text-sm">PANOOR<br><span class="text-slate-400 font-normal">ARAYAKOOL</span></h3>
+                </div>
+                <div class="bg-white/5 border border-white/10 rounded-2xl p-6 text-center hover:bg-white/10 transition" data-aos="fade-up" data-aos-delay="400">
+                    <i data-lucide="map-pin" class="w-8 h-8 text-primaryLight mx-auto mb-3"></i>
+                    <h3 class="font-bold text-sm">KUTHUPARAMBA<br><span class="text-slate-400 font-normal">KOTTAYAMPOYIL</span></h3>
+                </div>
+                <div class="bg-white/5 border border-white/10 rounded-2xl p-6 text-center hover:bg-white/10 transition md:col-span-3 lg:col-span-1 flex flex-col justify-center items-center" data-aos="fade-up" data-aos-delay="500">
+                    <i data-lucide="map-pin" class="w-8 h-8 text-primaryLight mx-auto mb-3"></i>
+                    <h3 class="font-bold text-sm">PERINGATHUR<br><span class="text-slate-400 font-normal">NUCLEUS</span></h3>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- APPOINTMENT -->
+    <section id="appointment" class="py-24 theme-gradient-bg relative overflow-hidden">
+        <div class="max-w-4xl mx-auto px-6">
+            <div class="text-center mb-12" data-aos="fade-up">
+                <h2 class="text-4xl md:text-5xl font-display font-bold text-dark mb-4">Book Appointment</h2>
+                <p class="text-slate-600">Fast, easy, and secure appointment scheduling.</p>
+            </div>
+
+            <form class="bg-white border border-slate-100 rounded-[2rem] shadow-xl p-8 md:p-12 space-y-6" data-aos="fade-up" data-aos-delay="100">
+                <div class="grid md:grid-cols-2 gap-6">
+                    <div class="space-y-2">
+                        <label class="block text-sm font-bold text-slate-700 ml-2">Full Name</label>
+                        <input type="text" placeholder="Your Name" class="w-full px-6 py-4 rounded-2xl bg-soft border border-slate-100 focus:border-primary focus:bg-white focus:ring-2 focus:ring-primary/20 outline-none transition-all">
+                    </div>
+                    <div class="space-y-2">
+                        <label class="block text-sm font-bold text-slate-700 ml-2">Phone Number</label>
+                        <input type="tel" placeholder="Mobile Number" class="w-full px-6 py-4 rounded-2xl bg-soft border border-slate-100 focus:border-primary focus:bg-white focus:ring-2 focus:ring-primary/20 outline-none transition-all">
+                    </div>
+                </div>
+
+                <div class="space-y-2">
+                    <label class="block text-sm font-bold text-slate-700 ml-2">Select Branch / Service</label>
+                    <select class="w-full px-6 py-4 rounded-2xl bg-soft border border-slate-100 focus:border-primary focus:bg-white focus:ring-2 focus:ring-primary/20 outline-none transition-all text-slate-600">
+                        <option value="" disabled selected>Choose Location</option>
+                        <option>Mahe - Azhiyur</option>
+                        <option>Chokli - Pallikuni</option>
+                        <option>Panoor - Arayakool</option>
+                        <option>Kuthuparamba - Kottayampoyil</option>
+                        <option>Peringathur - Nucleus</option>
+                        <option>Home Care Physiotherapy</option>
+                    </select>
+                </div>
+
+                <button type="button" class="w-full py-4 bg-primary text-white rounded-2xl text-lg font-bold shadow-lg shadow-primary/30 hover:-translate-y-1 hover:shadow-xl transition-all flex justify-center items-center gap-2">
+                    Confirm Booking <i data-lucide="check-circle" class="w-5 h-5"></i>
+                </button>
+            </form>
+        </div>
+    </section>
+
+    <!-- FOOTER -->
+    <footer class="bg-white border-t border-slate-100 pt-16 pb-8">
+        <div class="max-w-7xl mx-auto px-6">
+            <div class="grid md:grid-cols-12 gap-12 mb-12">
+                
+                <div class="md:col-span-5">
+                    <!-- Footer Logos -->
+                    <a href="#home" class="flex items-center gap-3 mb-6">
+                        <img src="logo-footer.png" alt="Stra Care Logo" class="h-12 w-auto object-contain">
+                        <img src="name-footer.png" alt="Stra Care" class="h-8 w-auto object-contain">
+                    </a>
+                    <p class="text-slate-500 leading-relaxed max-w-sm mb-6">
+                        Advanced physiotherapy and rehabilitation center delivering premium evidence-based recovery solutions.
+                    </p>
+                </div>
+
+                <div class="md:col-span-4">
+                    <h3 class="text-lg font-bold text-dark mb-6">Contact Us</h3>
+                    <div class="space-y-4 text-slate-600 font-medium">
+                        <p class="flex items-center gap-3">
+                            <i data-lucide="phone" class="w-5 h-5 text-primary"></i>
+                            <a href="tel:+919744902555" class="hover:text-primary transition">+91 97449 02555</a>
+                        </p>
+                        <p class="flex items-center gap-3">
+                            <i data-lucide="phone" class="w-5 h-5 text-primary"></i>
+                            <a href="tel:+919061207871" class="hover:text-primary transition">+91 90612 07871</a>
+                        </p>
+                        <p class="flex items-center gap-3">
+                            <i data-lucide="mail" class="w-5 h-5 text-primary"></i>
+                            <a href="mailto:stracare555@gmail.com" class="hover:text-primary transition">stracare555@gmail.com</a>
+                        </p>
+                    </div>
+                </div>
+
+                <div class="md:col-span-3">
+                    <h3 class="text-lg font-bold text-dark mb-6">Quick Links</h3>
+                    <div class="space-y-3 font-medium">
+                        <a href="#about" class="block text-slate-600 hover:text-primary transition">About Us</a>
+                        <a href="#treatments" class="block text-slate-600 hover:text-primary transition">Treatments</a>
+                        <a href="#branches" class="block text-slate-600 hover:text-primary transition">Branches</a>
+                        <a href="#appointment" class="block text-slate-600 hover:text-primary transition">Book Appointment</a>
+                    </div>
+                </div>
+            </div>
+
+            <div class="border-t border-slate-100 pt-8 text-center text-slate-500 text-sm font-medium">
+                &copy; 2026 STRA CARE Physiotherapy. All Rights Reserved.
+            </div>
+        </div>
+    </footer>
+
+    <!-- FLOATING WHATSAPP -->
+    <a href="https://wa.me/919744902555" target="_blank" class="fixed bottom-6 right-6 w-14 h-14 rounded-full bg-[#25D366] text-white flex items-center justify-center text-2xl shadow-lg shadow-[#25D366]/40 hover:-translate-y-1 hover:scale-110 transition-all z-50">
+        <i class="fa-brands fa-whatsapp"></i>
+    </a>
+
+    <!-- Scripts -->
+    <script src="https://unpkg.com/aos@2.3.1/dist/aos.js"></script>
     <script>
-        // --- 1. Running Clock ---
-        function updateClock() {
-            const now = new Date();
-            const dateStr = now.toLocaleDateString('en-GB', { day: '2-digit', month: 'short', year: 'numeric' });
-            const timeStr = now.toLocaleTimeString('en-US', { hour: '2-digit', minute:'2-digit', second:'2-digit' });
-            document.getElementById('adminClock').innerHTML = `${dateStr} <br> ${timeStr}`;
-            
-            // Also update calendar month text based on current date (for visual fidelity)
-            document.getElementById('calendarMonth').innerText = now.toLocaleDateString('en-US', { month: 'long', year: 'numeric' });
-        }
-        setInterval(updateClock, 1000);
-        updateClock();
-
-        // --- 2. Sidebar & Theme Logic ---
-        const sidebar = document.getElementById('sidebar');
-        const sidebarOverlay = document.getElementById('sidebarOverlay');
-        function toggleSidebar() {
-            sidebar.classList.toggle('-translate-x-full');
-            sidebarOverlay.classList.toggle('hidden');
-        }
-
-        const themeToggleBtn = document.getElementById('themeToggleBtn');
-        const htmlElement = document.documentElement;
-        if (localStorage.getItem('theme') === 'dark' || (!('theme' in localStorage) && window.matchMedia('(prefers-color-scheme: dark)').matches)) {
-            htmlElement.classList.add('dark');
-        } else { htmlElement.classList.remove('dark'); }
-
-        function toggleTheme() {
-            if (htmlElement.classList.contains('dark')) {
-                htmlElement.classList.remove('dark'); localStorage.setItem('theme', 'light');
-            } else {
-                htmlElement.classList.add('dark'); localStorage.setItem('theme', 'dark');
-            }
-        }
-
-        // --- 3. Mock Data Database ---
-        let mockAppointments = [
-            { id: "TRN-001", date: "2026-05-28", time: "10:30 AM", pName: "Rahul Sharma", pMobile: "9876543210", branch: "Stracare Main", mode: "Offline", fee: 1500, adv: 500, status: "Pending", pDate: "", pTime: "" },
-            { id: "TRN-002", date: "2026-05-29", time: "11:00 AM", pName: "Anjali Menon", pMobile: "8765432109", branch: "Home Care", mode: "Online", fee: 800, adv: 800, status: "Done", pDate: "", pTime: "" },
-            { id: "TRN-003", date: "2026-05-30", time: "02:15 PM", pName: "Karthik Nair", pMobile: "7654321098", branch: "Stracare Arayakool", mode: "Offline", fee: 2000, adv: 0, status: "Postponed", pDate: "2026-06-05", pTime: "10:00 AM" }
-        ];
-
-        // --- 4. Form Auto-Calculations & ID Generation ---
-        const qaFee = document.getElementById('qaFee');
-        const qaAdv = document.getElementById('qaAdv');
-        const qaBal = document.getElementById('qaBal');
+        lucide.createIcons();
         
-        function calculateQaBalance() {
-            qaBal.value = (parseFloat(qaFee.value) || 0) - (parseFloat(qaAdv.value) || 0);
-        }
-        qaFee.addEventListener('input', calculateQaBalance);
-        qaAdv.addEventListener('input', calculateQaBalance);
-
-        document.getElementById('qaMobile').addEventListener('input', function(e) {
-            const val = e.target.value;
-            if(val.length >= 4) {
-                document.getElementById('qaPatientId').value = 'PT' + val.substring(0,4) + Math.floor(Math.random()*100);
-            } else { document.getElementById('qaPatientId').value = ''; }
+        AOS.init({
+            once: true, 
+            offset: 30,
+            duration: 800,
+            easing: 'ease-out-cubic',
         });
 
-        // Quick Form Submission
-        document.getElementById('quickAddForm').addEventListener('submit', function(e) {
-            e.preventDefault();
-            const newAppt = {
-                id: "TRN-" + Math.floor(Math.random() * 900 + 100), // Mock random TRN
-                date: document.getElementById('qaDate').value,
-                time: document.getElementById('qaTime').value,
-                pName: document.getElementById('qaName').value,
-                pMobile: document.getElementById('qaMobile').value,
-                branch: document.getElementById('qaBranch').value,
-                mode: document.getElementById('qaMode').value,
-                fee: parseFloat(qaFee.value) || 0,
-                adv: parseFloat(qaAdv.value) || 0,
-                status: "Pending",
-                pDate: "", pTime: ""
-            };
-            mockAppointments.unshift(newAppt); // Add to top
-            renderTable();
-            renderCalendar();
-            alert('Appointment Successfully Booked!');
-            this.reset();
-            qaBal.value = '0';
-        });
-
-        // --- 5. Modal Logic & Postponed Toggle ---
-        const editModal = document.getElementById('editModal');
-        const editServiceStatus = document.getElementById('editServiceStatus');
-        const postponedFields = document.getElementById('postponedFields');
-        const editFee = document.getElementById('editActualFee');
-        const editAdv = document.getElementById('editAdvance');
-        const editBal = document.getElementById('editBalance');
-
-        function calculateModalBalance() {
-            editBal.value = (parseFloat(editFee.value) || 0) - (parseFloat(editAdv.value) || 0);
-        }
-        editFee.addEventListener('input', calculateModalBalance);
-        editAdv.addEventListener('input', calculateModalBalance);
-
-        editServiceStatus.addEventListener('change', function() {
-            if(this.value === 'Postponed') {
-                postponedFields.classList.remove('hidden');
-                postponedFields.classList.add('grid');
+        window.addEventListener('scroll', () => {
+            const nav = document.getElementById('navbar');
+            if (window.scrollY > 20) {
+                nav.classList.add('shadow-sm');
+                nav.style.background = 'rgba(255, 255, 255, 0.95)';
             } else {
-                postponedFields.classList.add('hidden');
-                postponedFields.classList.remove('grid');
+                nav.classList.remove('shadow-sm');
+                nav.style.background = 'rgba(255, 255, 255, 0.85)';
             }
         });
-
-        function closeModal() {
-            editModal.classList.remove('opacity-100');
-            setTimeout(() => { editModal.classList.add('hidden'); editModal.classList.remove('flex'); }, 300);
-        }
-
-        function openEditModal(id) {
-            const appt = mockAppointments.find(a => a.id === id);
-            if(!appt) return;
-
-            document.getElementById('editDocId').value = appt.id;
-            document.getElementById('displayPatientName').innerText = appt.pName;
-            document.getElementById('displayPatientMobile').innerText = `Mobile: ${appt.pMobile}`;
-            document.getElementById('displayTrnId').innerText = appt.id;
-            document.getElementById('displayApptMode').innerText = `Mode: ${appt.mode}`;
-            
-            document.getElementById('editMode').value = appt.mode;
-            document.getElementById('editServiceStatus').value = appt.status;
-            
-            if(appt.status === 'Postponed') {
-                postponedFields.classList.remove('hidden'); postponedFields.classList.add('grid');
-                document.getElementById('editPostponedDate').value = appt.pDate;
-                document.getElementById('editPostponedTime').value = appt.pTime;
-            } else {
-                postponedFields.classList.add('hidden'); postponedFields.classList.remove('grid');
-            }
-
-            document.getElementById('editActualFee').value = appt.fee;
-            document.getElementById('editAdvance').value = appt.adv;
-            calculateModalBalance();
-            
-            editModal.classList.remove('hidden');
-            editModal.classList.add('flex');
-            setTimeout(() => { editModal.classList.add('opacity-100'); }, 10);
-        }
-
-        function saveUpdate() {
-            const id = document.getElementById('editDocId').value;
-            const apptIndex = mockAppointments.findIndex(a => a.id === id);
-            if(apptIndex > -1) {
-                mockAppointments[apptIndex].mode = document.getElementById('editMode').value;
-                mockAppointments[apptIndex].status = document.getElementById('editServiceStatus').value;
-                mockAppointments[apptIndex].fee = parseFloat(document.getElementById('editActualFee').value) || 0;
-                mockAppointments[apptIndex].adv = parseFloat(document.getElementById('editAdvance').value) || 0;
-                
-                if(mockAppointments[apptIndex].status === 'Postponed') {
-                    mockAppointments[apptIndex].pDate = document.getElementById('editPostponedDate').value;
-                    mockAppointments[apptIndex].pTime = document.getElementById('editPostponedTime').value;
-                }
-                
-                renderTable();
-                closeModal();
-            }
-        }
-
-        // --- 6. Table Rendering & Logic ---
-        let lockedBranch = "All";
-        document.getElementById('roleSimulator').addEventListener('change', function(e) {
-            const role = e.target.value;
-            const filterDropdown = document.getElementById('branchFilterMain');
-            
-            if (role.includes("Admin")) {
-                lockedBranch = "All"; filterDropdown.value = "All"; filterDropdown.disabled = false;
-            } else {
-                // Extract branch name from string "Staff - Branch Name"
-                lockedBranch = role.split(" - "); 
-                filterDropdown.value = lockedBranch;
-                filterDropdown.disabled = true;
-            }
-            renderTable();
-        });
-
-        document.getElementById('branchFilterMain').addEventListener('change', renderTable);
-
-        let sortAsc = true;
-        document.getElementById('sortDateBtn').addEventListener('click', function() {
-            sortAsc = !sortAsc;
-            this.innerHTML = sortAsc ? '<i class="fa-solid fa-arrow-down-short-wide"></i> Sort Date' : '<i class="fa-solid fa-arrow-up-short-wide"></i> Sort Date';
-            mockAppointments.sort((a, b) => sortAsc ? new Date(a.date) - new Date(b.date) : new Date(b.date) - new Date(a.date));
-            renderTable();
-        });
-
-        function getStatusBadge(appt) {
-            let html = '';
-            switch(appt.status) {
-                case 'Pending': html = `<span class="bg-slate-100 text-slate-600 dark:bg-slate-700 dark:text-slate-300 px-2.5 py-1 rounded-md text-[10px] font-bold uppercase tracking-wider border border-slate-200 dark:border-slate-600 shadow-sm"><i class="fa-regular fa-clock mr-1"></i> Pending</span>`; break;
-                case 'Done': html = `<span class="bg-emerald-50 text-emerald-600 dark:bg-emerald-900/30 dark:text-emerald-400 px-2.5 py-1 rounded-md text-[10px] font-bold uppercase tracking-wider border border-emerald-200 dark:border-emerald-800 shadow-sm"><i class="fa-solid fa-check mr-1"></i> Done</span>`; break;
-                case 'Postponed': 
-                    html = `<span class="bg-amber-50 text-amber-600 dark:bg-amber-900/30 dark:text-amber-400 px-2.5 py-1 rounded-md text-[10px] font-bold uppercase tracking-wider border border-amber-200 dark:border-amber-800 shadow-sm"><i class="fa-solid fa-clock-rotate-left mr-1"></i> Postponed</span>
-                            <div class="text-[10px] mt-1 text-amber-600 font-semibold text-center">To: ${appt.pDate}</div>`; 
-                    break;
-                case 'Cancelled': html = `<span class="bg-rose-50 text-rose-600 dark:bg-rose-900/30 dark:text-rose-400 px-2.5 py-1 rounded-md text-[10px] font-bold uppercase tracking-wider border border-rose-200 dark:border-rose-800 shadow-sm"><i class="fa-solid fa-ban mr-1"></i> Cancelled</span>`; break;
-                default: html = `<span class="bg-gray-100 text-gray-600 px-2 py-1 rounded text-xs font-bold">${appt.status}</span>`;
-            }
-            return html;
-        }
-
-        function renderTable() {
-            const tbody = document.getElementById('tableBody');
-            tbody.innerHTML = '';
-            
-            const filterVal = document.getElementById('branchFilterMain').value;
-            let total = 0, pending = 0, done = 0, rec = 0;
-
-            mockAppointments.forEach(appt => {
-                if (lockedBranch !== "All" && appt.branch !== lockedBranch) return;
-                if (filterVal !== "All" && appt.branch !== filterVal) return;
-
-                total++;
-                if(appt.status === 'Pending' || appt.status === 'Postponed') pending++;
-                if(appt.status === 'Done') done++;
-                rec += (appt.fee - appt.adv);
-
-                const bal = appt.fee - appt.adv;
-                const tr = document.createElement('tr');
-                tr.className = "hover:bg-slate-50 dark:hover:bg-slate-800/50 transition-colors search-row";
-                tr.innerHTML = `
-                    <td class="py-4 px-4 align-middle border-b border-slate-100 dark:border-slate-700 text-left">
-                        <div class="font-bold text-slate-900 dark:text-white">${appt.id}</div>
-                        <div class="text-[11px] text-slate-500 dark:text-slate-400 mt-0.5"><i class="fa-regular fa-calendar mr-1"></i>${appt.date} <br> <i class="fa-regular fa-clock mr-1"></i>${appt.time}</div>
-                    </td>
-                    <td class="py-4 px-4 align-middle border-b border-slate-100 dark:border-slate-700 text-left">
-                        <div class="font-bold text-slate-900 dark:text-white">${appt.pName}</div>
-                        <div class="text-[11px] font-mono text-slate-500 dark:text-slate-400 mt-0.5"><i class="fa-solid fa-phone mr-1"></i>${appt.pMobile}</div>
-                    </td>
-                    <td class="py-4 px-4 align-middle border-b border-slate-100 dark:border-slate-700 text-left">
-                        <div class="font-semibold text-indigo-600 dark:text-indigo-400 text-xs">${appt.branch}</div>
-                        <div class="text-[11px] text-slate-500 dark:text-slate-400 mt-0.5"><i class="fa-solid fa-globe mr-1"></i>${appt.mode}</div>
-                    </td>
-                    <td class="py-4 px-4 align-middle border-b border-slate-100 dark:border-slate-700 text-left font-mono text-xs">
-                        <div class="text-slate-700 dark:text-slate-300">Fee: ₹${appt.fee}</div>
-                        <div class="text-emerald-600 dark:text-emerald-400">Adv: ₹${appt.adv}</div>
-                        <div class="text-rose-600 dark:text-rose-400 font-bold border-t border-slate-200 dark:border-slate-600 pt-1 mt-1">Bal: ₹${bal}</div>
-                    </td>
-                    <td class="py-4 px-4 align-middle border-b border-slate-100 dark:border-slate-700 text-left">
-                        ${getStatusBadge(appt)}
-                    </td>
-                    <td class="py-4 px-4 align-middle border-b border-slate-100 dark:border-slate-700 text-center">
-                        <div class="flex items-center justify-center gap-2">
-                            <button onclick="openEditModal('${appt.id}')" class="text-slate-400 hover:text-emerald-600 dark:hover:text-emerald-400 transition p-2 rounded-md hover:bg-slate-100 dark:hover:bg-slate-700 outline-none" title="Edit Appointment">
-                                <i class="fa-solid fa-pen-to-square"></i>
-                            </button>
-                            <button onclick="printReceipt('${appt.id}')" class="text-slate-400 hover:text-indigo-600 dark:hover:text-indigo-400 transition p-2 rounded-md hover:bg-slate-100 dark:hover:bg-slate-700 outline-none" title="Print Receipt">
-                                <i class="fa-solid fa-print"></i>
-                            </button>
-                        </div>
-                    </td>
-                `;
-                tbody.appendChild(tr);
-            });
-
-            document.getElementById('dashTotal').innerText = total;
-            document.getElementById('dashPending').innerText = pending;
-            document.getElementById('dashDone').innerText = done;
-            document.getElementById('dashReceivables').innerText = "₹" + rec;
-        }
-
-        // --- 7. Print Receipt Logic ---
-        function printReceipt(id) {
-            const appt = mockAppointments.find(a => a.id === id);
-            if(!appt) return;
-
-            const printWindow = window.open('', '_blank');
-            printWindow.document.write(`
-                <html>
-                <head>
-                    <title>Receipt - ${id}</title>
-                    <style>
-                        body { font-family: 'Helvetica Neue', Helvetica, Arial, sans-serif; padding: 40px; color: #333; max-width: 600px; margin: auto;}
-                        .header { text-align: center; margin-bottom: 30px; border-bottom: 2px solid #009B95; padding-bottom: 20px;}
-                        .header h1 { margin: 0; color: #1E3A5F; letter-spacing: 1px; }
-                        .header p { margin: 5px 0 0 0; color: #777; font-size: 14px; }
-                        .row { display: flex; justify-content: space-between; margin-bottom: 12px; font-size: 15px; }
-                        .row span { color: #666; }
-                        .row strong { color: #111; }
-                        .financials { margin-top: 30px; border-top: 1px solid #ddd; padding-top: 20px; }
-                        .total { font-size: 18px; font-weight: bold; color: #009B95; }
-                        .footer { text-align: center; margin-top: 50px; font-size: 12px; color: #999; }
-                    </style>
-                </head>
-                <body>
-                    <div class="header">
-                        <h1>STRA CARE CLINIC</h1>
-                        <p>Official Payment Receipt</p>
-                    </div>
-                    
-                    <div class="row"><span>Transaction ID:</span> <strong>${appt.id}</strong></div>
-                    <div class="row"><span>Date & Time:</span> <strong>${appt.date} | ${appt.time}</strong></div>
-                    <div class="row"><span>Patient Name:</span> <strong>${appt.pName}</strong></div>
-                    <div class="row"><span>Mobile:</span> <strong>${appt.pMobile}</strong></div>
-                    <div class="row"><span>Branch:</span> <strong>${appt.branch}</strong></div>
-                    <div class="row"><span>Mode:</span> <strong>${appt.mode}</strong></div>
-                    
-                    <div class="financials">
-                        <div class="row"><span>Total Fee:</span> <strong>₹${appt.fee}</strong></div>
-                        <div class="row"><span>Advance Paid:</span> <strong>₹${appt.adv}</strong></div>
-                        <div class="row total"><span>Balance Due:</span> <strong>₹${appt.fee - appt.adv}</strong></div>
-                    </div>
-                    
-                    <div class="footer">
-                        <p>Thank you for choosing Stra Care.</p>
-                        <p>This is a computer-generated receipt.</p>
-                    </div>
-                    
-                    <script>
-                        window.onload = function() { window.print(); }
-                    </script>
-                </body>
-                </html>
-            `);
-            printWindow.document.close();
-        }
-
-        // --- 8. Simple Calendar Rendering ---
-        function renderCalendar() {
-            const grid = document.getElementById('calendarGrid');
-            grid.innerHTML = '';
-            // Blank spaces for start of month (e.g., Friday start)
-            for(let i=0; i<5; i++) { grid.innerHTML += `<div class="bg-slate-50 dark:bg-slate-800/30 rounded-lg p-2 opacity-50 calendar-day border border-transparent"></div>`; }
-            
-            for(let i=1; i<=31; i++) {
-                // Check if mock data has an appointment on this day (lazy check matching 2026-05-xx)
-                let dateStr = i < 10 ? `2026-05-0${i}` : `2026-05-${i}`;
-                let hasAppt = mockAppointments.some(a => a.date === dateStr && a.status !== 'Cancelled');
-                
-                let dots = hasAppt ? `<div class="mt-2 flex gap-1 justify-center"><div class="w-2 h-2 rounded-full bg-emerald-500 shadow-sm animate-pulse"></div></div>` : '';
-                
-                // Highlight today (mock today as 28)
-                let todayClass = (i===28) ? 'bg-emerald-50 dark:bg-emerald-900/20 border-emerald-200 dark:border-emerald-700/50 text-emerald-700 dark:text-emerald-400 font-bold' : 'bg-white dark:bg-slate-700/50 border-slate-100 dark:border-slate-700 text-slate-700 dark:text-slate-300';
-                
-                grid.innerHTML += `
-                    <div class="border rounded-lg p-2 flex flex-col items-center justify-start calendar-day transition cursor-pointer shadow-sm ${todayClass}">
-                        <span class="text-sm">${i}</span>
-                        ${dots}
-                    </div>
-                `;
-            }
-        }
-
-        function masterSearchTable() {
-            const input = document.getElementById("masterSearch").value.toLowerCase();
-            const rows = document.querySelectorAll(".search-row");
-            rows.forEach(row => {
-                const text = row.innerText.toLowerCase();
-                row.style.display = text.includes(input) ? "" : "none";
-            });
-        }
-
-        // Init Everything
-        renderTable();
-        renderCalendar();
     </script>
 </body>
 </html>
