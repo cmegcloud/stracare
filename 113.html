@@ -871,24 +871,29 @@
         setTimeout(typingEffect, 500);
 
     </script>
-
+    
     <script type="module">
         import { initializeApp } from "https://www.gstatic.com/firebasejs/10.8.0/firebase-app.js";
+        import { getAnalytics } from "https://www.gstatic.com/firebasejs/10.8.0/firebase-analytics.js";
         import { getFirestore, collection, addDoc } from "https://www.gstatic.com/firebasejs/10.8.0/firebase-firestore.js";
 
-        // IMPORTANT: Replace this block with your actual Firebase project configuration
+        // Your web app's Firebase configuration
         const firebaseConfig = {
-            apiKey: "YOUR_API_KEY",
-            authDomain: "YOUR_PROJECT_ID.firebaseapp.com",
-            projectId: "YOUR_PROJECT_ID",
-            storageBucket: "YOUR_PROJECT_ID.appspot.com",
-            messagingSenderId: "YOUR_MESSAGING_SENDER_ID",
-            appId: "YOUR_APP_ID"
+            apiKey: "AIzaSyDwfmoDPvslFmTn3GjO56VAxhODRlem5bg",
+            authDomain: "stra-care.firebaseapp.com",
+            projectId: "stra-care",
+            storageBucket: "stra-care.firebasestorage.app",
+            messagingSenderId: "329966100049",
+            appId: "1:329966100049:web:d4b4dc7033f0ed12da6270",
+            measurementId: "G-TQ7YK3RVSR"
         };
 
+        // Initialize Firebase
         const app = initializeApp(firebaseConfig);
+        const analytics = getAnalytics(app);
         const db = getFirestore(app);
 
+        // Handle Form Submission
         document.getElementById('fb-booking-form').addEventListener('submit', async (e) => {
             e.preventDefault();
             
@@ -900,7 +905,7 @@
             submitBtn.disabled = true;
 
             try {
-                // Submit to Firestore collection named 'appointments'
+                // Pushing to the "appointments" collection
                 await addDoc(collection(db, "appointments"), {
                     fullName: document.getElementById('fb-name').value,
                     age: document.getElementById('fb-age').value,
@@ -924,5 +929,6 @@
             }
         });
     </script>
+
 </body>
 </html>
