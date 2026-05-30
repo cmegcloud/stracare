@@ -1,0 +1,267 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Stra Care - A5 Receipt</title>
+    
+    <!-- Tailwind & Icons -->
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <link href="https://fonts.googleapis.com/css2?family=Outfit:wght@400;500;600;700;800&family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
+    
+    <!-- PDF Generation Library -->
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/html2pdf.js/0.10.1/html2pdf.bundle.min.js"></script>
+
+    <style>
+        /* Base Setup */
+        body {
+            background-color: #e2e8f0;
+            font-family: 'Inter', sans-serif;
+            display: flex;
+            justify-content: center;
+            padding: 40px 0;
+            margin: 0;
+        }
+
+        /* A5 Page Formatting (Portrait) */
+        .a5-page {
+            width: 148mm;
+            min-height: 210mm;
+            background-color: white;
+            box-shadow: 0 10px 25px rgba(0, 0, 0, 0.15);
+            position: relative;
+            display: flex;
+            flex-direction: column;
+            overflow: hidden;
+            /* Margins inside the receipt */
+            padding: 10mm; 
+        }
+
+        /* Editable Typing Area */
+        [contenteditable="true"] {
+            outline: none;
+            cursor: text;
+            border-bottom: 1px dashed transparent;
+            transition: border-color 0.2s;
+            min-width: 20px;
+            display: inline-block;
+        }
+        [contenteditable="true"]:hover, [contenteditable="true"]:focus {
+            border-bottom: 1px dashed #cbd5e1;
+        }
+        [contenteditable="true"]:empty:before {
+            content: attr(placeholder);
+            color: #94a3b8;
+            pointer-events: none;
+        }
+
+        /* Print Specific CSS */
+        @media print {
+            @page {
+                size: A5 portrait;
+                margin: 0; 
+            }
+            body {
+                background-color: white;
+                padding: 0;
+                margin: 0;
+            }
+            .a5-page {
+                box-shadow: none;
+                margin: 0;
+                page-break-after: always;
+            }
+            .no-print {
+                display: none !important;
+            }
+            [contenteditable="true"] {
+                border-bottom: none !important;
+            }
+        }
+    </style>
+</head>
+<body>
+
+    <!-- Floating Action Buttons (Hidden on Print/PDF) -->
+    <div class="no-print fixed bottom-8 right-8 flex flex-col gap-3 z-50">
+        <button onclick="downloadPDF()" class="bg-indigo-600 hover:bg-indigo-700 text-white font-bold py-3 px-5 rounded-full shadow-lg hover:-translate-y-1 transition-all flex items-center justify-center gap-2 text-sm">
+            <i class="fa-solid fa-download"></i> Save PDF
+        </button>
+        <button onclick="window.print()" class="bg-[#0F766E] hover:bg-[#0D9488] text-white font-bold py-3 px-5 rounded-full shadow-lg hover:-translate-y-1 transition-all flex items-center justify-center gap-2 text-sm">
+            <i class="fa-solid fa-print"></i> Print A5
+        </button>
+    </div>
+
+    <!-- The A5 Receipt Page -->
+    <div id="receipt-page" class="a5-page">
+        
+        <!-- Watermark -->
+        <div class="absolute inset-0 flex items-center justify-center pointer-events-none opacity-[0.04] z-0">
+            <img src="assets/logo.png" alt="Watermark" class="w-[250px] object-contain grayscale">
+        </div>
+
+        <!-- HEADER -->
+        <header class="w-full shrink-0 z-10 border-b-2 border-[#0F766E] pb-3 mb-4 flex justify-between items-start">
+            <div class="flex flex-col">
+                <div class="flex items-center gap-2 mb-1">
+                    <img src="assets/logo.png" alt="Logo" class="h-10 w-10 object-contain" onerror="this.src='https://via.placeholder.com/40x40?text=Logo'">
+                    <img src="assets/name.png" alt="Stra Care" class="h-6 object-contain" onerror="this.src='https://via.placeholder.com/100x24?text=STRA+CARE'">
+                </div>
+                <div class="text-[9px] text-slate-700 leading-tight">
+                    <strong class="text-[#0F766E]">Centre for Physiotherapy</strong><br>
+                    Kunninumeethal, 6th Mile, Kottayampoyil<br>
+                    Mob: 9744902555, 9061207871
+                </div>
+            </div>
+            <div class="text-right flex flex-col items-end">
+                <h1 class="text-2xl font-black text-slate-800 tracking-widest uppercase mb-1">Receipt</h1>
+                <div class="bg-slate-100 px-2 py-1 rounded border border-slate-200 text-[10px] text-slate-700 text-left w-32">
+                    <div class="flex justify-between mb-0.5">
+                        <span class="font-bold">Date:</span> 
+                        <span id="autoDate" contenteditable="true"></span>
+                    </div>
+                    <div class="flex justify-between">
+                        <span class="font-bold">No:</span> 
+                        <span id="autoRcptNo" contenteditable="true" class="font-mono text-emerald-700 font-bold"></span>
+                    </div>
+                </div>
+            </div>
+        </header>
+
+        <!-- PATIENT INFO -->
+        <main class="flex-1 w-full z-10 flex flex-col">
+            
+            <div class="bg-slate-50 border border-slate-200 rounded p-3 mb-4 text-[11px]">
+                <div class="grid grid-cols-2 gap-y-2 gap-x-4">
+                    <div>
+                        <span class="text-slate-500 font-bold uppercase text-[9px] block">Patient Name</span>
+                        <span contenteditable="true" placeholder="Enter Name" class="font-bold text-slate-800 text-[13px] w-full"></span>
+                    </div>
+                    <div>
+                        <span class="text-slate-500 font-bold uppercase text-[9px] block">Mobile No</span>
+                        <span contenteditable="true" placeholder="Enter Mobile" class="font-mono font-semibold text-slate-800 w-full"></span>
+                    </div>
+                    <div>
+                        <span class="text-slate-500 font-bold uppercase text-[9px] block">Consulting Doctor</span>
+                        <span contenteditable="true" placeholder="Enter Doctor Name" class="font-semibold text-slate-800 w-full"></span>
+                    </div>
+                    <div>
+                        <span class="text-slate-500 font-bold uppercase text-[9px] block">Branch</span>
+                        <span contenteditable="true" placeholder="e.g. Kottayampoyil" class="font-semibold text-slate-800 w-full"></span>
+                    </div>
+                </div>
+            </div>
+
+            <!-- PARTICULARS TABLE -->
+            <table class="w-full text-left border-collapse mb-4 z-10">
+                <thead>
+                    <tr class="bg-[#0F766E] text-white">
+                        <th class="py-2 px-3 font-bold text-[10px] uppercase tracking-wider rounded-tl">Description</th>
+                        <th class="py-2 px-3 font-bold text-[10px] uppercase tracking-wider text-right rounded-tr w-24">Amount (₹)</th>
+                    </tr>
+                </thead>
+                <tbody class="text-[12px]">
+                    <tr class="border-b border-slate-200">
+                        <td class="py-3 px-3">
+                            <div contenteditable="true" placeholder="Enter service description..." class="w-full font-medium text-slate-800">Physiotherapy Consultation & Treatment Session</div>
+                        </td>
+                        <td class="py-3 px-3 text-right">
+                            <span contenteditable="true" placeholder="0.00" class="font-mono font-bold text-slate-800">1500.00</span>
+                        </td>
+                    </tr>
+                    <tr class="border-b border-slate-200">
+                        <td class="py-3 px-3">
+                            <div contenteditable="true" placeholder="Add additional item or leave blank..." class="w-full text-slate-600"></div>
+                        </td>
+                        <td class="py-3 px-3 text-right">
+                            <span contenteditable="true" placeholder="" class="font-mono font-bold text-slate-800"></span>
+                        </td>
+                    </tr>
+                </tbody>
+            </table>
+
+            <!-- TOTALS & PAYMENT INFO -->
+            <div class="flex justify-between items-start mt-auto z-10">
+                
+                <!-- Left side: Payment Info -->
+                <div class="w-1/2 pr-4 text-[10px]">
+                    <div class="mb-2">
+                        <span class="font-bold text-slate-600 block mb-0.5">Payment Method:</span>
+                        <span contenteditable="true" placeholder="Cash / UPI / Card" class="font-medium text-slate-800 bg-slate-100 px-2 py-1 rounded inline-block min-w-[80px]">Cash</span>
+                    </div>
+                    <div>
+                        <span class="font-bold text-slate-600 block mb-0.5">Reference No (If online):</span>
+                        <span contenteditable="true" placeholder="N/A" class="font-mono text-slate-800 border-b border-slate-300 min-w-[100px] inline-block"></span>
+                    </div>
+                </div>
+
+                <!-- Right side: Calculation -->
+                <div class="w-1/2 text-[11px]">
+                    <div class="flex justify-between py-1.5 border-b border-slate-200">
+                        <span class="font-bold text-slate-600">Total Fee:</span>
+                        <span contenteditable="true" placeholder="0.00" class="font-mono font-bold text-slate-800">1500.00</span>
+                    </div>
+                    <div class="flex justify-between py-1.5 border-b border-slate-200 text-emerald-600">
+                        <span class="font-bold">Advance Paid:</span>
+                        <span contenteditable="true" placeholder="0.00" class="font-mono font-bold">1500.00</span>
+                    </div>
+                    <div class="flex justify-between py-1.5 text-rose-600 bg-rose-50 px-2 mt-1 rounded">
+                        <span class="font-bold">Balance Due:</span>
+                        <span contenteditable="true" placeholder="0.00" class="font-mono font-bold">0.00</span>
+                    </div>
+                </div>
+            </div>
+
+        </main>
+
+        <!-- FOOTER / SIGNATURE -->
+        <footer class="w-full shrink-0 mt-8 z-10 border-t border-slate-200 pt-4 flex justify-between items-end">
+            <div class="text-[9px] text-slate-500 italic">
+                * Wishing you a speedy recovery.<br>
+                * This is a computer-generated receipt.
+            </div>
+            <div class="text-center flex flex-col items-center">
+                <div class="h-8 border-b border-slate-400 w-32 mb-1"></div>
+                <span class="text-[10px] font-bold text-slate-700">Authorized Signature</span>
+            </div>
+        </footer>
+    </div>
+
+    <!-- Scripts -->
+    <script>
+        // Auto-fill date and random receipt number on load
+        document.addEventListener('DOMContentLoaded', () => {
+            const dateSpan = document.getElementById('autoDate');
+            const rcptSpan = document.getElementById('autoRcptNo');
+            
+            if(dateSpan) {
+                const today = new Date();
+                dateSpan.innerText = today.toLocaleDateString('en-GB', {
+                    day: '2-digit', month: 'short', year: 'numeric'
+                });
+            }
+            if(rcptSpan) {
+                // Generates a random receipt number like RCPT-8492
+                rcptSpan.innerText = "RCPT-" + Math.floor(1000 + Math.random() * 9000);
+            }
+        });
+
+        // PDF Generation
+        function downloadPDF() {
+            const element = document.getElementById('receipt-page');
+            
+            const opt = {
+                margin:       0,
+                filename:     'StraCare_Receipt.pdf',
+                image:        { type: 'jpeg', quality: 0.98 },
+                html2canvas:  { scale: 2, useCORS: true }, 
+                // Explicitly set to A5 format
+                jsPDF:        { unit: 'mm', format: 'a5', orientation: 'portrait' }
+            };
+
+            html2pdf().set(opt).from(element).save();
+        }
+    </script>
+</body>
+</html>
