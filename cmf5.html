@@ -130,21 +130,22 @@
             </div>
 
             <!-- Mobile Menu Toggle Icon -->
-            <button id="mobile-menu-btn" class="md:hidden text-slate-700 hover:text-primary transition p-2">
-                <i data-lucide="menu" class="w-7 h-7"></i>
-            </button>
-        </div>
+            <!-- Mobile Menu Toggle Icon (Placed inside the main navbar container) -->
+<button id="mobile-menu-btn" class="md:hidden text-slate-700 hover:text-primary transition p-2">
+    <i data-lucide="menu" class="w-7 h-7"></i>
+</button>
 
-        <!-- Mobile Menu Dropdown -->
-        <div id="mobile-menu" class="hidden md:hidden bg-white border-t border-slate-100 absolute top-full left-0 w-full shadow-lg">
-            <nav class="flex flex-col p-6 space-y-4 text-center font-semibold text-slate-700">
-                <a href="#about" class="hover:text-primary transition mobile-link">About</a>
-                <a href="#treatments" class="hover:text-primary transition mobile-link">Services</a>
-                <a href="#branches" class="hover:text-primary transition mobile-link">Branches</a>
-                <a href="#testimonials" class="hover:text-primary transition mobile-link">Reviews</a>
-                <a href="#appointment" class="mt-4 px-6 py-3 bg-primary text-white rounded-full font-medium shadow-md mx-auto inline-block mobile-link">Book Appointment</a>
-            </nav>
-        </div>
+<!-- Mobile Menu Dropdown (Placed just outside the main navbar container, still in header) -->
+<div id="mobile-menu" class="hidden md:hidden bg-white border-t border-slate-100 absolute top-full left-0 w-full shadow-lg">
+    <nav class="flex flex-col p-6 space-y-4 text-center font-semibold text-slate-700">
+        <a href="#about" class="hover:text-primary transition mobile-link">About</a>
+        <a href="#treatments" class="hover:text-primary transition mobile-link">Services</a>
+        <a href="#branches" class="hover:text-primary transition mobile-link">Branches</a>
+        <a href="#testimonials" class="hover:text-primary transition mobile-link">Reviews</a>
+        <a href="#appointment" class="mt-4 px-6 py-3 bg-primary text-white rounded-full font-medium shadow-md mx-auto inline-block mobile-link">Book Appointment</a>
+    </nav>
+</div>
+
     </header>
 
     <!-- HERO SECTION with Typewriter Effect and main.jpg bg -->
@@ -746,20 +747,21 @@
         });
 
         // Mobile Menu Toggle logic
-        const mobileMenuBtn = document.getElementById('mobile-menu-btn');
-        const mobileMenu = document.getElementById('mobile-menu');
-        const mobileLinks = document.querySelectorAll('.mobile-link');
+const mobileMenuBtn = document.getElementById('mobile-menu-btn');
+const mobileMenu = document.getElementById('mobile-menu');
+const mobileLinks = document.querySelectorAll('.mobile-link');
 
-        mobileMenuBtn.addEventListener('click', () => {
-            mobileMenu.classList.toggle('hidden');
-        });
+// Open/Close menu on hamburger click
+mobileMenuBtn.addEventListener('click', () => {
+    mobileMenu.classList.toggle('hidden');
+});
 
-        // Hide mobile menu on link click
-        mobileLinks.forEach(link => {
-            link.addEventListener('click', () => {
-                mobileMenu.classList.add('hidden');
-            });
-        });
+// Hide mobile menu automatically when a link is clicked
+mobileLinks.forEach(link => {
+    link.addEventListener('click', () => {
+        mobileMenu.classList.add('hidden');
+    });
+});
 
         // Typewriter Effect
         const words = ["Live Better.", "Recover Faster.", "Stay Active.", "Pain Free."];
