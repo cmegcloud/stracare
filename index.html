@@ -193,7 +193,7 @@
                     Kerala's Premier Physiotherapy
                 </div>
                 
-                <h1 class="text-5xl md:text-6xl lg:text-7xl font-display font-extrabold leading-[1.15] text-slate-900 mb-6 h-[120px] md:h-[150px] lg:h-[170px]">
+                <h1 class="text-5xl md:text-6xl lg:text-7xl font-display font-extrabold leading-[1.15] text-slate-900 mb-6 min-h-[140px] sm:min-h-[150px] lg:min-h-[170px]">
                     <span class="block">Move Better.</span>
                     <span class="text-primary" id="typewriter-text"></span><span class="typewriter-cursor">&nbsp;</span>
                 </h1>
@@ -254,7 +254,7 @@
                     
                     <div class="flex items-center gap-8 pt-6 border-t border-white/10">
                         <div>
-                            <p class="text-4xl font-display font-bold text-primary mb-1">10k+</p>
+                            <p class="text-4xl font-display font-bold text-primary mb-1">25k+</p>
                             <p class="text-sm font-semibold text-slate-400 uppercase tracking-wider">Happy Patients</p>
                         </div>
                         <div class="w-px h-12 bg-white/10"></div>
@@ -556,13 +556,13 @@
                     <div class="w-14 h-14 bg-white/10 rounded-2xl flex items-center justify-center mb-6 border border-white/5 group-hover:bg-primary transition-colors">
                         <i data-lucide="map-pin" class="w-6 h-6 text-white"></i>
                     </div>
-                    <h3 class="font-bold text-xl text-white mb-1">PERINGATHUR</h3>
-                    <p class="text-primaryLight font-medium mb-8">NUCLEUS</p>
+                    <h3 class="font-bold text-xl text-white mb-1">NADAPURAM</h3>
+                    <p class="text-primaryLight font-medium mb-8">THUNERI</p>
                     <div class="flex gap-3">
                         <a href="tel:+919744902555" class="flex-1 bg-white/10 hover:bg-white/20 text-white py-3 rounded-xl flex items-center justify-center gap-2 transition-colors font-semibold text-sm">
                             <i data-lucide="phone" class="w-4 h-4"></i> Call
                         </a>
-                        <a href="#" class="flex-1 bg-primary hover:bg-primaryHover text-white py-3 rounded-xl flex items-center justify-center gap-2 transition-colors font-semibold text-sm">
+                        <a href="javascript:void(0)" onclick="alert('Renovation under processing')" class="flex-1 bg-primary hover:bg-primaryHover text-white py-3 rounded-xl flex items-center justify-center gap-2 transition-colors font-semibold text-sm">
                             <i data-lucide="navigation" class="w-4 h-4"></i> Map
                         </a>
                     </div>
@@ -666,7 +666,7 @@
                         <label class="block text-sm font-bold text-dark ml-1">Mobile Number</label>
                         <div class="relative">
                             <i data-lucide="phone" class="absolute left-4 top-1/2 -translate-y-1/2 w-5 h-5 text-slate-400"></i>
-                            <input type="tel" id="fb-mobile" required placeholder="10-digit number" class="w-full pl-12 pr-6 py-4 rounded-xl bg-slate-50 border border-slate-200 focus:border-primary focus:bg-white focus:ring-2 focus:ring-primary/20 outline-none transition-all">
+                            <input type="tel" id="fb-mobile" pattern="[0-9]{10}" maxlength="10" title="Please enter a valid 10-digit mobile number" required placeholder="10-digit number" class="w-full pl-12 pr-6 py-4 rounded-xl bg-slate-50 border border-slate-200 focus:border-primary focus:bg-white focus:ring-2 focus:ring-primary/20 outline-none transition-all">
                         </div>
                     </div>
                     <div class="space-y-2">
@@ -679,7 +679,7 @@
                                 <option value="Chokli">Chokli - Pallikuni</option>
                                 <option value="Panoor">Panoor - Arayakool</option>
                                 <option value="Kuthuparamba">Kuthuparamba - Kottayampoyil</option>
-                                <option value="Peringathur">Peringathur - Nucleus</option>
+                                <option value="Nadapuram">Nadapuram - Thuneri</option>
                                 <option value="Home Care" class="font-bold text-primary">Home Care Physiotherapy</option>
                             </select>
                             <i data-lucide="chevron-down" class="absolute right-4 top-1/2 -translate-y-1/2 w-5 h-5 text-slate-400 pointer-events-none"></i>
@@ -1019,6 +1019,13 @@
         document.getElementById('fb-booking-form').addEventListener('submit', async (e) => {
             e.preventDefault();
             
+            // Explicit strict mobile number check
+            const mobileVal = document.getElementById('fb-mobile').value;
+            if (!/^\d{10}$/.test(mobileVal)) {
+                alert("Please enter exactly 10 digits for your mobile number.");
+                return; // Stopps submission if not 10 digits
+            }
+
             const submitBtn = document.getElementById('fb-submit-btn');
             const originalHTML = submitBtn.innerHTML;
             
@@ -1031,7 +1038,7 @@
                 await addDoc(collection(db, "appointments"), {
                     fullName: document.getElementById('fb-name').value,
                     age: document.getElementById('fb-age').value,
-                    mobile: document.getElementById('fb-mobile').value,
+                    mobile: mobileVal,
                     branch: document.getElementById('fb-branch').value,
                     preferredDate: document.getElementById('fb-date').value,
                     preferredTime: document.getElementById('fb-time').value,
