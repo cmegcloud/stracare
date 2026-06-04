@@ -20,7 +20,7 @@
             --bg: #f4f6f9; --card: #ffffff; --card-grey: #f8fafc;
             --dark-blue: #061E5C; --logo-red: #E95455; --action-blue: #6589DA; 
             --emerald: #10b981; --amber: #f59e0b; --text: #0A1128; --sub: #475569;
-            --shadow: 0 4px 15px rgba(6, 30, 92, 0.05); --card-border: rgba(6, 30, 92, 0.08);
+            --shadow: 0 4px 15px rgba(6, 30, 92, 0.05); --card-border: rgba(6, 30, 92, 0.1);
             --radius-card: 12px; --radius-btn: 6px;
         }
 
@@ -28,38 +28,56 @@
         h1, h2, h3.section-heading { color: var(--logo-red) !important; }
 
         /* Login Screen */
-        #login-screen { position: fixed; inset: 0; background: var(--bg); z-index: 99999; display: flex; align-items: center; justify-content: center; }
+        #login-screen { position: fixed; inset: 0; background: var(--bg); z-index: 99999; display: flex; align-items: center; justify-content: center; padding: 20px; }
         .login-card { background: var(--card); padding: 40px; border-radius: var(--radius-card); box-shadow: 0 10px 40px rgba(6,30,92,0.1); width: 100%; max-width: 400px; text-align: center; border: 1px solid var(--card-border); }
         
         /* Layout */
         .app-layout { display: none; height: 100vh; width: 100vw; overflow: hidden; }
-        .sidebar { width: 260px; background: var(--card); border-right: 1px solid var(--card-border); display: flex; flex-direction: column; z-index: 50; transition: width 0.3s; }
-        .main-content { flex: 1; display: flex; flex-direction: column; overflow: hidden; position: relative; }
-        .top-header { height: 70px; background: var(--card); border-bottom: 1px solid var(--card-border); display: flex; align-items: center; justify-content: space-between; padding: 0 24px; z-index: 40; }
-        .content-scroll { flex: 1; overflow-y: auto; padding: 24px; -webkit-overflow-scrolling: touch; }
+        .sidebar { width: 260px; background: var(--card); border-right: 1px solid var(--card-border); display: flex; flex-direction: column; z-index: 50; transition: width 0.3s; position: relative; }
+        .main-content { flex: 1; display: flex; flex-direction: column; overflow: hidden; position: relative; min-width: 0; } /* min-width 0 prevents flex blowouts */
+        .top-header { height: 70px; background: var(--card); border-bottom: 1px solid var(--card-border); display: flex; align-items: center; justify-content: space-between; padding: 0 20px; z-index: 40; }
+        .content-scroll { flex: 1; overflow-y: auto; overflow-x: hidden; padding: 20px; -webkit-overflow-scrolling: touch; }
+
+        /* Sidebar Collapse Logic */
+        .sidebar.collapsed { width: 80px; }
+        .sidebar.collapsed .nav-text, .sidebar.collapsed .menu-heading { display: none; }
+        .sidebar.collapsed .logo-full { display: none; }
+        .sidebar.collapsed .logo-icon { display: block !important; margin: 0 auto; }
+        .sidebar.collapsed .nav-item { justify-content: center; padding: 12px 0; margin: 4px 12px; }
+        .sidebar.collapsed .nav-item i:first-child { margin-right: 0; font-size: 18px; }
+        .sidebar.collapsed .user-details { display: none; }
+        .sidebar.collapsed .powered-by-box { display: none; }
+        
+        .sidebar-toggle-btn { position: absolute; right: -14px; top: 21px; width: 28px; height: 28px; background: var(--dark-blue); color: white; border-radius: 50%; display: flex; align-items: center; justify-content: center; cursor: pointer; z-index: 60; box-shadow: 0 4px 10px rgba(6, 30, 92, 0.3); border: 2px solid var(--card); font-size: 12px; transition: transform 0.3s ease, background 0.3s; }
+        .sidebar-toggle-btn:hover { background: var(--action-blue); transform: scale(1.1); }
+        .sidebar.collapsed .sidebar-toggle-btn i { transform: rotate(180deg); }
 
         /* Components */
         .glass-card { background: var(--card); border-radius: var(--radius-card); box-shadow: var(--shadow); border: 1px solid var(--card-border); }
         .input-field { width: 100%; padding: 10px 14px; border-radius: var(--radius-btn); border: 1px solid var(--card-border); background: var(--card-grey); color: var(--text); font-size: 13px; outline: none; }
         .input-field:focus { border-color: var(--action-blue); background: var(--card); }
-        .btn-blue { background: var(--dark-blue); color: white; padding: 10px 20px; border-radius: var(--radius-btn); font-weight: 600; cursor: pointer; border: none; font-size: 13px; display: inline-flex; align-items: center; gap: 8px; }
+        .btn-blue { background: var(--dark-blue); color: white; padding: 10px 20px; border-radius: var(--radius-btn); font-weight: 600; cursor: pointer; border: none; font-size: 13px; display: inline-flex; align-items: center; justify-content: center; gap: 8px; white-space: nowrap; }
         .btn-blue:hover { background: var(--action-blue); }
         
         /* Sidebar Nav */
-        .nav-item { display: flex; align-items: center; padding: 12px 16px; margin: 4px 16px; border-radius: var(--radius-btn); color: var(--sub); font-weight: 600; font-size: 13px; cursor: pointer; }
+        .nav-scroll { flex: 1; overflow-y: auto; overflow-x: hidden; }
+        .nav-scroll::-webkit-scrollbar { width: 4px; }
+        .nav-scroll::-webkit-scrollbar-thumb { background: var(--card-border); border-radius: 4px; }
+        .nav-item { display: flex; align-items: center; padding: 12px 16px; margin: 4px 16px; border-radius: var(--radius-btn); color: var(--sub); font-weight: 600; font-size: 13px; cursor: pointer; transition: all 0.2s; white-space: nowrap;}
         .nav-item i { width: 24px; font-size: 16px; text-align: center; margin-right: 12px; }
         .nav-item:hover { background: var(--card-grey); color: var(--text); }
         .nav-item.active { background: rgba(101, 137, 218, 0.1); color: var(--action-blue); }
         .nav-item.active i { color: var(--action-blue); }
 
-        /* Tables */
-        .data-table { width: 100%; border-collapse: collapse; text-align: left; }
-        .data-table th { padding: 12px 16px; font-size: 12px; font-weight: 700; color: var(--sub); text-transform: uppercase; border-bottom: 2px solid var(--card-border); white-space: nowrap; cursor: pointer; }
+        /* Tables (Responsive Fix) */
+        .table-container { width: 100%; max-width: 100%; overflow-x: auto; -webkit-overflow-scrolling: touch; }
+        .data-table { width: 100%; border-collapse: collapse; text-align: left; min-width: 800px; }
+        .data-table th { padding: 14px 16px; font-size: 12px; font-weight: 700; color: var(--sub); text-transform: uppercase; border-bottom: 2px solid var(--card-border); white-space: nowrap; cursor: pointer; }
         .data-table th:hover { color: var(--action-blue); }
-        .data-table td { padding: 12px 16px; font-size: 13px; font-weight: 500; border-bottom: 1px solid var(--card-border); color: var(--text); }
+        .data-table td { padding: 14px 16px; font-size: 13px; font-weight: 500; border-bottom: 1px solid var(--card-border); color: var(--text); }
         .data-table tr:hover td { background: var(--card-grey); }
         
-        .badge { padding: 4px 10px; border-radius: 20px; font-size: 11px; font-weight: 700; text-transform: uppercase; }
+        .badge { padding: 4px 10px; border-radius: 20px; font-size: 11px; font-weight: 700; text-transform: uppercase; white-space: nowrap; }
         .badge-emerald { background: rgba(16, 185, 129, 0.1); color: var(--emerald); border: 1px solid rgba(16, 185, 129, 0.2); }
         .badge-red { background: rgba(233, 84, 85, 0.1); color: var(--logo-red); border: 1px solid rgba(233, 84, 85, 0.2); }
         .badge-blue { background: rgba(101, 137, 218, 0.1); color: var(--action-blue); border: 1px solid rgba(101, 137, 218, 0.2); }
@@ -68,7 +86,7 @@
         /* Modals */
         .modal-overlay { position: fixed; inset: 0; background: rgba(0,0,0,0.6); backdrop-filter: blur(4px); z-index: 9999; display: none; align-items: center; justify-content: center; padding: 16px; }
         .modal-overlay.active { display: flex; }
-        .modal-content { background: var(--card); width: 100%; max-width: 900px; border-radius: var(--radius-card); box-shadow: 0 25px 50px rgba(0,0,0,0.25); max-height: 90vh; overflow-y: auto; }
+        .modal-content { background: var(--card); width: 100%; max-width: 900px; border-radius: var(--radius-card); box-shadow: 0 25px 50px rgba(0,0,0,0.25); max-height: 90vh; overflow-y: auto; overflow-x: hidden; }
         .modal-content-sm { max-width: 500px; }
 
         /* A5 Print CSS */
@@ -78,6 +96,14 @@
             #printArea { position: absolute; left: 0; top: 0; width: 100%; padding: 20px; }
             @page { size: A5 portrait; margin: 10mm; }
             .no-print { display: none !important; }
+        }
+
+        /* Mobile Fixes */
+        @media (max-width: 1024px) {
+            .sidebar { position: fixed; height: 100%; transform: translateX(-100%); }
+            .sidebar.mobile-open { transform: translateX(0); }
+            #mobileOverlay { position: fixed; inset: 0; background: rgba(0,0,0,0.5); z-index: 45; display: none; }
+            #mobileOverlay.mobile-open { display: block; }
         }
     </style>
 </head>
@@ -108,52 +134,77 @@
 
     <div class="app-layout" id="app-layout">
         
-        <aside class="sidebar shadow-xl">
-            <div class="h-[70px] flex items-center gap-3 px-6 border-b border-[var(--card-border)] shrink-0">
-                <img src="assets/logo.png" alt="SC" class="h-8 object-contain" onerror="this.src='https://via.placeholder.com/32?text=SC'">
-                <img src="assets/name.png" alt="STRA CARE" class="h-5 object-contain" onerror="this.style.display='none'">
-                <span class="font-extrabold text-[var(--dark-blue)] tracking-wider">STRA CARE</span>
+        <div id="mobileOverlay" onclick="toggleMobileSidebar()"></div>
+
+        <aside class="sidebar shadow-xl" id="sidebar">
+            <div class="sidebar-toggle-btn hidden lg:flex" onclick="toggleDesktopSidebar()">
+                <i class="fa-solid fa-chevron-left" id="collapseIcon"></i>
+            </div>
+
+            <div class="h-[70px] flex items-center justify-center gap-2 px-6 border-b border-[var(--card-border)] shrink-0 relative">
+                <img src="assets/logo.png" alt="SC" class="h-8 object-contain logo-full" onerror="this.src='https://via.placeholder.com/32?text=SC'">
+                <img src="assets/name.png" alt="STRA CARE" class="h-5 object-contain logo-full" onerror="this.style.display='none'">
+                
+                <img src="assets/logo.png" alt="SC" class="h-8 object-contain logo-icon hidden" style="display: none;" onerror="this.src='https://via.placeholder.com/32?text=SC'">
+                
+                <button class="lg:hidden absolute right-4 text-[var(--text)] text-xl" onclick="toggleMobileSidebar()"><i class="fa-solid fa-xmark"></i></button>
             </div>
             
-            <div class="flex-1 overflow-y-auto py-4">
-                <div class="px-6 mb-2 text-[10px] font-bold text-[var(--sub)] uppercase tracking-wider">Clinic Operations</div>
+            <div class="nav-scroll py-4">
+                <div class="px-6 mb-2 text-[10px] font-bold text-[var(--sub)] uppercase tracking-wider menu-heading">Clinic Operations</div>
                 
                 <a onclick="switchTab('appointments')" id="tab-appointments" class="nav-item active">
-                    <i class="fa-solid fa-calendar-check"></i> Appointments
+                    <i class="fa-solid fa-calendar-check"></i> <span class="nav-text">Appointments</span>
                 </a>
                 
-                <div class="px-6 mt-6 mb-2 text-[10px] font-bold text-[var(--sub)] uppercase tracking-wider">Management</div>
+                <div class="px-6 mt-6 mb-2 text-[10px] font-bold text-[var(--sub)] uppercase tracking-wider menu-heading">Management</div>
                 <a onclick="switchTab('doctors')" id="tab-doctors" class="nav-item">
-                    <i class="fa-solid fa-user-doctor"></i> Manage Doctors
+                    <i class="fa-solid fa-user-doctor"></i> <span class="nav-text">Manage Doctors</span>
                 </a>
             </div>
 
-            <div class="p-4 border-t border-[var(--card-border)] bg-[var(--card-grey)]">
-                <button onclick="logout()" class="w-full text-left flex items-center gap-3 text-sm font-bold text-[var(--logo-red)] hover:opacity-80 p-2">
-                    <i class="fa-solid fa-power-off"></i> Secure Logout
-                </button>
+            <div class="sidebar-user p-4 border-t border-[var(--card-border)] shrink-0 flex items-center gap-3 cursor-pointer hover:bg-[var(--card-grey)] transition-colors" onclick="logout()">
+                <div class="w-10 h-10 rounded-full bg-[rgba(233,84,85,0.1)] text-[var(--logo-red)] flex items-center justify-center font-bold text-lg shrink-0">
+                    <i class="fa-solid fa-power-off"></i>
+                </div>
+                <div class="user-details flex-1 min-w-0">
+                    <p class="text-sm font-bold text-[var(--text)] m-0 truncate" id="sidebar-user-name">User</p>
+                    <p class="text-[10px] text-[var(--logo-red)] font-extrabold uppercase tracking-wide truncate">Secure Logout</p>
+                </div>
+            </div>
+
+            <div class="powered-by-box p-3 text-center border-t border-[var(--card-border)] bg-[var(--bg)] shrink-0">
+                <a href="https://cmfilings.com" target="_blank" class="opacity-60 hover:opacity-100 transition-opacity block">
+                    <p class="text-[8px] font-bold text-[var(--sub)] uppercase tracking-widest mb-1.5">Powered By</p>
+                    <img src="assets/name-cmf.png" alt="CM Filings" class="h-4 w-auto object-contain mx-auto" onerror="this.src='https://via.placeholder.com/120x20?text=CM+Filings'">
+                </a>
             </div>
         </aside>
 
         <main class="main-content">
             <header class="top-header">
-                <div class="font-bold text-gray-800 flex items-center gap-2">
-                    <i class="fa-solid fa-building text-[var(--action-blue)]"></i> 
-                    Branch: 
-                    <select id="header-branch-filter" onchange="applyAdminBranchFilter()" class="text-[var(--action-blue)] bg-[rgba(101,137,218,0.1)] px-2 py-1 rounded text-xs ml-1 font-bold outline-none border-none cursor-pointer">
-                        <option value="ALL">All Branches</option>
-                        <option value="Mahe">Mahe</option>
-                        <option value="Chokli">Chokli</option>
-                        <option value="Panoor">Panoor</option>
-                        <option value="Kuthuparamba">Kuthuparamba</option>
-                        <option value="Nadapuram">Nadapuram</option>
-                        <option value="Home Care">Home Care</option>
-                    </select>
+                <div class="flex items-center gap-3">
+                    <button class="lg:hidden text-[var(--text)] text-xl" onclick="toggleMobileSidebar()"><i class="fa-solid fa-bars"></i></button>
+                    
+                    <div class="font-bold text-gray-800 flex items-center gap-2">
+                        <i class="fa-solid fa-building text-[var(--action-blue)] hidden sm:block"></i> 
+                        <span class="hidden sm:block">Branch:</span>
+                        <select id="header-branch-filter" onchange="applyAdminBranchFilter()" class="text-[var(--action-blue)] bg-[rgba(101,137,218,0.1)] px-2 py-1 rounded text-xs sm:ml-1 font-bold outline-none border-none cursor-pointer max-w-[120px] sm:max-w-max">
+                            <option value="ALL">All Branches</option>
+                            <option value="Mahe">Mahe</option>
+                            <option value="Chokli">Chokli</option>
+                            <option value="Panoor">Panoor</option>
+                            <option value="Kuthuparamba">Kuthuparamba</option>
+                            <option value="Nadapuram">Nadapuram</option>
+                            <option value="Home Care">Home Care</option>
+                        </select>
+                    </div>
                 </div>
+
                 <div class="flex items-center gap-3">
                     <div class="text-right hidden sm:block">
-                        <p class="text-xs font-bold text-gray-900 leading-none" id="header-user">Admin User</p>
-                        <p class="text-[10px] text-[var(--sub)] font-semibold uppercase tracking-wide mt-1" id="header-role">Super Admin</p>
+                        <p class="text-xs font-bold text-gray-900 leading-none" id="header-user">Admin</p>
+                        <p class="text-[10px] text-[var(--sub)] font-semibold uppercase tracking-wide mt-1" id="header-role">Role</p>
                     </div>
                     <div class="w-9 h-9 rounded-full bg-[var(--dark-blue)] text-white flex items-center justify-center font-bold text-sm shadow-md">
                         <i class="fa-solid fa-user-shield"></i>
@@ -169,71 +220,69 @@
                             <h1 class="text-2xl font-extrabold mb-1" style="color: var(--dark-blue) !important;">Appointments & Billing</h1>
                             <p class="text-sm text-[var(--sub)] font-medium">Track schedules, payments, and client records.</p>
                         </div>
-                        <div class="flex gap-3">
-                            <button onclick="filterToday()" class="btn-blue !bg-[var(--emerald)]"><i class="fa-solid fa-clock"></i> Today's Bookings</button>
-                            <button onclick="openAptModal()" class="btn-blue"><i class="fa-solid fa-plus"></i> New Booking</button>
+                        <div class="flex flex-wrap gap-3 w-full sm:w-auto">
+                            <button onclick="filterToday()" class="btn-blue flex-1 sm:flex-none !bg-[var(--emerald)]"><i class="fa-solid fa-clock"></i> Today</button>
+                            <button onclick="openAptModal()" class="btn-blue flex-1 sm:flex-none"><i class="fa-solid fa-plus"></i> New</button>
                         </div>
                     </div>
 
                     <div class="glass-card p-4 mb-6 flex flex-wrap gap-4 items-end bg-[var(--card-grey)]">
-                        <div>
+                        <div class="flex-1 min-w-[150px]">
                             <label class="block text-[10px] font-bold uppercase text-[var(--sub)] mb-1">Search Patient Name</label>
                             <input type="text" id="filter-name" oninput="renderTable()" placeholder="E.g. John" class="input-field py-2 bg-white">
                         </div>
-                        <div>
+                        <div class="flex-1 min-w-[150px]">
                             <label class="block text-[10px] font-bold uppercase text-[var(--sub)] mb-1">Search Mobile No</label>
                             <input type="text" id="filter-mobile" oninput="renderTable()" placeholder="E.g. 9876..." class="input-field py-2 bg-white">
                         </div>
-                        <button onclick="clearFilters()" class="px-4 py-2 text-xs font-bold text-[var(--sub)] hover:text-[var(--dark-blue)] border border-[var(--card-border)] rounded bg-white">Clear All</button>
+                        <button onclick="clearFilters()" class="px-4 py-2 text-xs font-bold text-[var(--sub)] hover:text-[var(--dark-blue)] border border-[var(--card-border)] rounded bg-white w-full sm:w-auto mt-2 sm:mt-0">Clear</button>
                     </div>
 
-                    <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-6 mb-6">
-                        <div class="glass-card p-5 border-l-4 border-l-[var(--action-blue)]">
-                            <h3 class="text-sm font-bold text-[var(--sub)] uppercase tracking-wide mb-1">Today's Appointments</h3>
-                            <h2 class="text-2xl font-extrabold text-gray-900" id="kpi-today">0</h2>
+                    <div class="grid grid-cols-2 lg:grid-cols-4 gap-4 sm:gap-6 mb-6">
+                        <div class="glass-card p-4 sm:p-5 border-l-4 border-l-[var(--action-blue)]">
+                            <h3 class="text-[10px] sm:text-xs font-bold text-[var(--sub)] uppercase tracking-wide mb-1">Today's Apts</h3>
+                            <h2 class="text-xl sm:text-2xl font-extrabold text-gray-900" id="kpi-today">0</h2>
                         </div>
-                        <div class="glass-card p-5 border-l-4 border-l-[var(--emerald)]">
-                            <h3 class="text-sm font-bold text-[var(--sub)] uppercase tracking-wide mb-1">Total Revenue</h3>
-                            <h2 class="text-2xl font-extrabold text-gray-900" id="kpi-revenue">₹0</h2>
+                        <div class="glass-card p-4 sm:p-5 border-l-4 border-l-[var(--emerald)]">
+                            <h3 class="text-[10px] sm:text-xs font-bold text-[var(--sub)] uppercase tracking-wide mb-1">Total Revenue</h3>
+                            <h2 class="text-xl sm:text-2xl font-extrabold text-gray-900" id="kpi-revenue">₹0</h2>
                         </div>
-                        <div class="glass-card p-5 border-l-4 border-l-[var(--logo-red)]">
-                            <h3 class="text-sm font-bold text-[var(--sub)] uppercase tracking-wide mb-1">Pending Balances</h3>
-                            <h2 class="text-2xl font-extrabold text-gray-900" id="kpi-balance">₹0</h2>
+                        <div class="glass-card p-4 sm:p-5 border-l-4 border-l-[var(--logo-red)]">
+                            <h3 class="text-[10px] sm:text-xs font-bold text-[var(--sub)] uppercase tracking-wide mb-1">Pending Balances</h3>
+                            <h2 class="text-xl sm:text-2xl font-extrabold text-gray-900" id="kpi-balance">₹0</h2>
                         </div>
-                        <div class="glass-card p-5 border-l-4 border-l-[var(--amber)]">
-                            <h3 class="text-sm font-bold text-[var(--sub)] uppercase tracking-wide mb-1">Total Doctors</h3>
-                            <h2 class="text-2xl font-extrabold text-gray-900" id="kpi-doctors">0</h2>
+                        <div class="glass-card p-4 sm:p-5 border-l-4 border-l-[var(--amber)]">
+                            <h3 class="text-[10px] sm:text-xs font-bold text-[var(--sub)] uppercase tracking-wide mb-1">Active Doctors</h3>
+                            <h2 class="text-xl sm:text-2xl font-extrabold text-gray-900" id="kpi-doctors">0</h2>
                         </div>
                     </div>
 
-                    <div class="glass-card overflow-hidden">
-                        <div class="overflow-x-auto min-h-[400px]">
-                            <table class="data-table" id="aptTable">
-                                <thead>
-                                    <tr>
-                                        <th onclick="sortTable('bookingId')">Booking ID <i class="fa-solid fa-sort ml-1"></i></th>
-                                        <th onclick="sortTable('preferredDate')">Date & Time <i class="fa-solid fa-sort ml-1"></i></th>
-                                        <th onclick="sortTable('fullName')">Patient Info <i class="fa-solid fa-sort ml-1"></i></th>
-                                        <th onclick="sortTable('doctorName')">Doctor <i class="fa-solid fa-sort ml-1"></i></th>
-                                        <th onclick="sortTable('patientReporting')">Status <i class="fa-solid fa-sort ml-1"></i></th>
-                                        <th>Balance (₹)</th>
-                                        <th class="text-right">Actions</th>
-                                    </tr>
-                                </thead>
-                                <tbody id="aptBody">
-                                    <tr><td colspan="7" class="text-center py-6 font-bold text-[var(--sub)]"><i class="fa-solid fa-spinner fa-spin"></i> Loading Database...</td></tr>
-                                </tbody>
-                            </table>
-                        </div>
+                    <div class="glass-card table-container">
+                        <table class="data-table" id="aptTable">
+                            <thead>
+                                <tr>
+                                    <th onclick="sortTable('bookingId')">Booking ID <i class="fa-solid fa-sort ml-1"></i></th>
+                                    <th onclick="sortTable('preferredDate')">Date & Time <i class="fa-solid fa-sort ml-1"></i></th>
+                                    <th onclick="sortTable('fullName')">Patient Info <i class="fa-solid fa-sort ml-1"></i></th>
+                                    <th onclick="sortTable('doctorName')">Doctor <i class="fa-solid fa-sort ml-1"></i></th>
+                                    <th onclick="sortTable('patientReporting')">Status <i class="fa-solid fa-sort ml-1"></i></th>
+                                    <th>Balance (₹)</th>
+                                    <th class="text-right">Actions</th>
+                                </tr>
+                            </thead>
+                            <tbody id="aptBody">
+                                <tr><td colspan="7" class="text-center py-6 font-bold text-[var(--sub)]"><i class="fa-solid fa-spinner fa-spin"></i> Loading Database...</td></tr>
+                            </tbody>
+                        </table>
                     </div>
                 </div>
 
                 <div id="view-doctors" class="hidden">
-                    <div class="flex justify-between items-center mb-6">
+                    <div class="flex flex-col sm:flex-row justify-between items-start sm:items-center mb-6 gap-4">
                         <h1 class="text-2xl font-extrabold" style="color: var(--dark-blue) !important;">Manage Doctors</h1>
-                        <button onclick="openDoctorModal()" class="btn-blue"><i class="fa-solid fa-plus"></i> Add Doctor</button>
+                        <button onclick="openDoctorModal()" class="btn-blue w-full sm:w-auto"><i class="fa-solid fa-plus"></i> Add Doctor</button>
                     </div>
-                    <div class="glass-card overflow-hidden max-w-4xl">
+                    <div class="glass-card table-container max-w-4xl">
                         <table class="data-table">
                             <thead><tr><th>Doctor Name</th><th>Specialization</th><th>Assigned Branch</th><th class="text-right">Action</th></tr></thead>
                             <tbody id="doctorBody"></tbody>
@@ -254,7 +303,7 @@
             <form id="aptForm" onsubmit="saveAppointment(event)" class="p-6">
                 <input type="hidden" id="apt-id">
                 
-                <div class="grid md:grid-cols-2 gap-8">
+                <div class="grid md:grid-cols-2 gap-6 md:gap-8">
                     <div>
                         <h4 class="text-xs font-extrabold text-[var(--action-blue)] mb-4 uppercase tracking-wider border-b border-[var(--card-border)] pb-2">Patient Details</h4>
                         
@@ -302,7 +351,7 @@
                         </div>
                     </div>
 
-                    <div class="bg-[var(--card-grey)] p-4 rounded-lg border border-[var(--card-border)]">
+                    <div class="bg-[var(--card-grey)] p-4 rounded-lg border border-[var(--card-border)] h-max">
                         <h4 class="text-xs font-extrabold text-[var(--logo-red)] mb-4 uppercase tracking-wider border-b border-[var(--card-border)] pb-2">Clinic Administration</h4>
                         
                         <div class="grid grid-cols-2 gap-3 mb-3">
@@ -421,6 +470,7 @@
                     <h1 class="text-2xl font-extrabold uppercase tracking-widest text-black !important">STRA CARE</h1>
                     <p class="text-xs font-bold uppercase">Advanced Physiotherapy Center</p>
                     <p class="text-[10px]" id="bill-branchAddress">Branch Address</p>
+                    <p class="text-[10px] mt-1">+91 97449 02555 | info@stracares.in | www.stracares.in</p>
                 </div>
                 <div class="flex justify-between text-xs font-bold mb-6">
                     <div>
@@ -467,6 +517,12 @@
         let currentSort = { key: '#TimeStamp', asc: false };
         let activeAdminBranch = "ALL";
 
+        // --- Helper: Local Timezone Date ---
+        function getLocalToday() {
+            const d = new Date();
+            return d.getFullYear() + '-' + String(d.getMonth() + 1).padStart(2, '0') + '-' + String(d.getDate()).padStart(2, '0');
+        }
+
         // --- 2. FIREBASE FIRESTORE CONFIGURATION ---
         const firebaseConfig = {
             apiKey: "AIzaSyDwfmoDPvslFmTn3GjO56VAxhODRlem5bg",
@@ -474,8 +530,7 @@
             projectId: "stra-care",
             storageBucket: "stra-care.firebasestorage.app",
             messagingSenderId: "329966100049",
-            appId: "1:329966100049:web:d4b4dc7033f0ed12da6270",
-            measurementId: "G-TQ7YK3RVSR"
+            appId: "1:329966100049:web:d4b4dc7033f0ed12da6270"
         };
         
         if (!firebase.apps.length) {
@@ -527,6 +582,7 @@
             // Set Headers
             document.getElementById('header-user').innerText = currentUser.username.toUpperCase();
             document.getElementById('header-role').innerText = currentUser.role;
+            document.getElementById('sidebar-user-name').innerText = currentUser.username.toUpperCase();
 
             const headerSelect = document.getElementById('header-branch-filter');
             if (currentUser.role !== 'Super Admin') {
@@ -574,7 +630,17 @@
             });
         }
 
-        // --- 5. NAVIGATION ---
+        // --- 5. SIDEBAR & NAVIGATION ---
+        function toggleDesktopSidebar() {
+            const sidebar = document.getElementById('sidebar');
+            sidebar.classList.toggle('collapsed');
+        }
+
+        function toggleMobileSidebar() {
+            document.getElementById('sidebar').classList.toggle('mobile-open');
+            document.getElementById('mobileOverlay').classList.toggle('mobile-open');
+        }
+
         function switchTab(tabId) {
             document.getElementById('view-appointments').style.display = tabId === 'appointments' ? 'block' : 'none';
             document.getElementById('view-doctors').style.display = tabId === 'doctors' ? 'block' : 'none';
@@ -624,7 +690,7 @@
                 return;
             }
 
-            const todayStr = new Date().toISOString().split('T')[0];
+            const todayStr = getLocalToday();
             let tDay = 0;
 
             data.forEach(apt => {
@@ -640,17 +706,20 @@
                 let tStr = apt.status === 'Rescheduled' ? apt.reschTime : (apt.confirmedTime || apt.preferredTime || '--');
 
                 const tr = document.createElement('tr');
+                tr.className = "cursor-pointer";
+                tr.onclick = () => openAptModal(apt.id); // Row click opens edit
+                
                 tr.innerHTML = `
-                    <td class="font-mono text-[var(--action-blue)] font-bold text-xs cursor-pointer" onclick="openAptModal('${apt.id}')">${apt.bookingId}</td>
-                    <td class="cursor-pointer" onclick="openAptModal('${apt.id}')"><span class="font-bold">${dStr}</span><br><span class="text-[10px] text-[var(--sub)]">${tStr}</span></td>
-                    <td class="cursor-pointer" onclick="openAptModal('${apt.id}')"><span class="font-bold">${apt.fullName}</span><br><span class="text-[10px] text-[var(--sub)]">${apt.mobile}</span></td>
-                    <td class="cursor-pointer" onclick="openAptModal('${apt.id}')">${apt.doctorName || '--'}</td>
-                    <td class="cursor-pointer" onclick="openAptModal('${apt.id}')"><span class="badge ${badge}">${apt.status}</span></td>
-                    <td class="font-bold text-gray-800 cursor-pointer" onclick="openAptModal('${apt.id}')">₹${Number(apt.balance).toLocaleString()}</td>
+                    <td class="font-mono text-[var(--action-blue)] font-bold text-xs">${apt.bookingId}</td>
+                    <td><span class="font-bold">${dStr}</span><br><span class="text-[10px] text-[var(--sub)]">${tStr}</span></td>
+                    <td><span class="font-bold">${apt.fullName}</span><br><span class="text-[10px] text-[var(--sub)]">${apt.mobile}</span></td>
+                    <td>${apt.doctorName || '--'}</td>
+                    <td><span class="badge ${badge}">${apt.status}</span></td>
+                    <td class="font-bold text-gray-800">₹${Number(apt.balance).toLocaleString()}</td>
                     <td class="text-right whitespace-nowrap">
-                        <button onclick="openAptModal('${apt.id}')" title="Edit Record" class="text-[var(--sub)] hover:text-[var(--action-blue)] p-1"><i class="fa-solid fa-pen"></i></button>
-                        <button onclick="generateBill('${apt.id}')" title="Print Bill" class="text-[var(--action-blue)] hover:text-[var(--dark-blue)] p-1 ml-2"><i class="fa-solid fa-print"></i></button>
-                        <button onclick="sendWA('${apt.id}')" title="WhatsApp Client" class="text-[var(--emerald)] hover:opacity-80 p-1 ml-2"><i class="fa-brands fa-whatsapp text-lg"></i></button>
+                        <button onclick="event.stopPropagation(); openAptModal('${apt.id}')" title="Edit Record" class="text-[var(--sub)] hover:text-[var(--action-blue)] p-2"><i class="fa-solid fa-pen"></i></button>
+                        <button onclick="event.stopPropagation(); generateBill('${apt.id}')" title="Print Bill" class="text-[var(--action-blue)] hover:text-[var(--dark-blue)] p-2 ml-1"><i class="fa-solid fa-print"></i></button>
+                        <button onclick="event.stopPropagation(); sendWA('${apt.id}')" title="WhatsApp Client" class="text-[var(--emerald)] hover:opacity-80 p-2 ml-1"><i class="fa-brands fa-whatsapp text-lg"></i></button>
                     </td>
                 `;
                 tbody.appendChild(tr);
@@ -672,7 +741,7 @@
         }
 
         function filterToday() {
-            const today = new Date().toISOString().split('T')[0];
+            const today = getLocalToday();
             document.getElementById('filter-name').value = '';
             document.getElementById('filter-mobile').value = '';
             
@@ -707,7 +776,6 @@
             const sel = document.getElementById('apt-doctor');
             sel.innerHTML = '<option value="">-- Select Doctor --</option>';
             
-            // Filter doctors based on the selected branch inside the form
             doctors.filter(d => d.branch === 'ALL' || (d.branch || "").toLowerCase().includes(branchVal.toLowerCase())).forEach(d => {
                 sel.innerHTML += `<option value="${d.name}">${d.name} (${d.spec})</option>`;
             });
@@ -764,9 +832,9 @@
                 document.getElementById('apt-resch-date').value = apt.reschDate || "";
                 document.getElementById('apt-resch-time').value = apt.reschTime || "";
 
-                document.getElementById('apt-total').value = apt.paymentAmount || 0;
-                document.getElementById('apt-received').value = apt.paymentReceived || 0;
-                document.getElementById('apt-balance').value = apt.balanceReceivables || 0;
+                document.getElementById('apt-total').value = apt.total || 0;
+                document.getElementById('apt-received').value = apt.received || 0;
+                document.getElementById('apt-balance').value = apt.balance || 0;
                 document.getElementById('a-adminNotes').value = apt.adminNotes || "";
             } else {
                 document.getElementById('aptModalTitle').innerText = "New Appointment";
@@ -775,7 +843,7 @@
                 document.getElementById('apt-patientId').value = `PAT${yy}${mm}${rnd}`;
                 document.getElementById('apt-bookingId').value = `BKG${yy}${mm}${rnd}`;
                 document.getElementById('apt-trxId').value = `TRX${yy}${mm}${rnd}`;
-                document.getElementById('apt-date').valueAsDate = new Date();
+                document.getElementById('apt-date').value = getLocalToday();
             }
 
             toggleReschedule();
@@ -805,16 +873,16 @@
         }
 
         function setMinDateTime(input) {
-            const today = new Date();
-            const minDateStr = today.toISOString().split('T')[0];
+            const todayStr = getLocalToday();
             
             if (input.type === 'date') {
-                input.setAttribute('min', minDateStr);
+                input.setAttribute('min', todayStr);
             } else if (input.type === 'time') {
                 const dateInputId = input.id.replace('time', 'date');
                 const dateInput = document.getElementById(dateInputId);
                 
-                if (dateInput && dateInput.value === minDateStr) {
+                if (dateInput && dateInput.value === todayStr) {
+                    const today = new Date();
                     const hh = String(today.getHours()).padStart(2,'0');
                     const mm = String(today.getMinutes()).padStart(2,'0');
                     input.setAttribute('min', `${hh}:${mm}`);
@@ -838,7 +906,7 @@
             // Validate Time if Date is Today
             const dateVal = document.getElementById('apt-date').value;
             const timeVal = document.getElementById('apt-time').value;
-            const todayStr = new Date().toISOString().split('T')[0];
+            const todayStr = getLocalToday();
             
             if (dateVal === todayStr) {
                 const now = new Date();
@@ -849,7 +917,7 @@
                 }
             }
 
-            // Validate Reschedule Date if Rescheduled
+            // Validate Reschedule Date
             if (document.getElementById('apt-status').value === 'Rescheduled') {
                 const rDate = document.getElementById('apt-resch-date').value;
                 const rTime = document.getElementById('apt-resch-time').value;
