@@ -33,8 +33,8 @@
         
         /* Layout */
         .app-layout { display: none; height: 100vh; width: 100vw; overflow: hidden; }
-        .sidebar { width: 260px; background: var(--card); border-right: 1px solid var(--card-border); display: flex; flex-direction: column; z-index: 50; transition: width 0.3s; position: relative; }
-        .main-content { flex: 1; display: flex; flex-direction: column; overflow: hidden; position: relative; min-width: 0; } /* min-width 0 prevents flex blowouts */
+        .sidebar { width: 260px; background: var(--card); border-right: 1px solid var(--card-border); display: flex; flex-direction: column; z-index: 100; transition: width 0.3s; position: relative; }
+        .main-content { flex: 1; display: flex; flex-direction: column; overflow: hidden; position: relative; min-width: 0; }
         .top-header { height: 70px; background: var(--card); border-bottom: 1px solid var(--card-border); display: flex; align-items: center; justify-content: space-between; padding: 0 20px; z-index: 40; }
         .content-scroll { flex: 1; overflow-y: auto; overflow-x: hidden; padding: 20px; -webkit-overflow-scrolling: touch; }
 
@@ -46,7 +46,7 @@
         .sidebar.collapsed .nav-item { justify-content: center; padding: 12px 0; margin: 4px 12px; }
         .sidebar.collapsed .nav-item i:first-child { margin-right: 0; font-size: 18px; }
         .sidebar.collapsed .user-details { display: none; }
-        .sidebar.collapsed .powered-by-box { display: none; }
+        .sidebar.collapsed .powered-by-box p { display: none; }
         
         .sidebar-toggle-btn { position: absolute; right: -14px; top: 21px; width: 28px; height: 28px; background: var(--dark-blue); color: white; border-radius: 50%; display: flex; align-items: center; justify-content: center; cursor: pointer; z-index: 60; box-shadow: 0 4px 10px rgba(6, 30, 92, 0.3); border: 2px solid var(--card); font-size: 12px; transition: transform 0.3s ease, background 0.3s; }
         .sidebar-toggle-btn:hover { background: var(--action-blue); transform: scale(1.1); }
@@ -69,7 +69,7 @@
         .nav-item.active { background: rgba(101, 137, 218, 0.1); color: var(--action-blue); }
         .nav-item.active i { color: var(--action-blue); }
 
-        /* Tables (Responsive Fix) */
+        /* Tables */
         .table-container { width: 100%; max-width: 100%; overflow-x: auto; -webkit-overflow-scrolling: touch; }
         .data-table { width: 100%; border-collapse: collapse; text-align: left; min-width: 800px; }
         .data-table th { padding: 14px 16px; font-size: 12px; font-weight: 700; color: var(--sub); text-transform: uppercase; border-bottom: 2px solid var(--card-border); white-space: nowrap; cursor: pointer; }
@@ -102,7 +102,7 @@
         @media (max-width: 1024px) {
             .sidebar { position: fixed; height: 100%; transform: translateX(-100%); }
             .sidebar.mobile-open { transform: translateX(0); }
-            #mobileOverlay { position: fixed; inset: 0; background: rgba(0,0,0,0.5); z-index: 45; display: none; }
+            #mobileOverlay { position: fixed; inset: 0; background: rgba(0,0,0,0.5); z-index: 90; display: none; }
             #mobileOverlay.mobile-open { display: block; }
         }
     </style>
@@ -141,18 +141,14 @@
                 <i class="fa-solid fa-chevron-left" id="collapseIcon"></i>
             </div>
 
-            <div class="h-[70px] flex items-center justify-center gap-2 px-6 border-b border-[var(--card-border)] shrink-0 relative">
-                <img src="assets/logo.png" alt="SC" class="h-8 object-contain logo-full" onerror="this.src='https://via.placeholder.com/32?text=SC'">
-                <img src="assets/name.png" alt="STRA CARE" class="h-5 object-contain logo-full" onerror="this.style.display='none'">
-                
+            <div class="h-[70px] flex items-center justify-center px-6 border-b border-[var(--card-border)] shrink-0 relative">
+                <img src="assets/logo.png" alt="STRA CARE" class="h-10 object-contain logo-full" onerror="this.src='https://via.placeholder.com/32?text=SC'">
                 <img src="assets/logo.png" alt="SC" class="h-8 object-contain logo-icon hidden" style="display: none;" onerror="this.src='https://via.placeholder.com/32?text=SC'">
-                
                 <button class="lg:hidden absolute right-4 text-[var(--text)] text-xl" onclick="toggleMobileSidebar()"><i class="fa-solid fa-xmark"></i></button>
             </div>
             
             <div class="nav-scroll py-4">
                 <div class="px-6 mb-2 text-[10px] font-bold text-[var(--sub)] uppercase tracking-wider menu-heading">Clinic Operations</div>
-                
                 <a onclick="switchTab('appointments')" id="tab-appointments" class="nav-item active">
                     <i class="fa-solid fa-calendar-check"></i> <span class="nav-text">Appointments</span>
                 </a>
@@ -163,20 +159,10 @@
                 </a>
             </div>
 
-            <div class="sidebar-user p-4 border-t border-[var(--card-border)] shrink-0 flex items-center gap-3 cursor-pointer hover:bg-[var(--card-grey)] transition-colors" onclick="logout()">
-                <div class="w-10 h-10 rounded-full bg-[rgba(233,84,85,0.1)] text-[var(--logo-red)] flex items-center justify-center font-bold text-lg shrink-0">
-                    <i class="fa-solid fa-power-off"></i>
-                </div>
-                <div class="user-details flex-1 min-w-0">
-                    <p class="text-sm font-bold text-[var(--text)] m-0 truncate" id="sidebar-user-name">User</p>
-                    <p class="text-[10px] text-[var(--logo-red)] font-extrabold uppercase tracking-wide truncate">Secure Logout</p>
-                </div>
-            </div>
-
-            <div class="powered-by-box p-3 text-center border-t border-[var(--card-border)] bg-[var(--bg)] shrink-0">
-                <a href="https://cmfilings.com" target="_blank" class="opacity-60 hover:opacity-100 transition-opacity block">
-                    <p class="text-[8px] font-bold text-[var(--sub)] uppercase tracking-widest mb-1.5">Powered By</p>
-                    <img src="assets/name-cmf.png" alt="CM Filings" class="h-4 w-auto object-contain mx-auto" onerror="this.src='https://via.placeholder.com/120x20?text=CM+Filings'">
+            <div class="powered-by-box p-4 text-center border-t border-[var(--card-border)] bg-[var(--card-grey)] shrink-0">
+                <a href="https://cmfilings.com" target="_blank" class="opacity-60 hover:opacity-100 transition-opacity block flex flex-col items-center gap-1.5">
+                    <p class="text-[9px] font-bold text-[var(--sub)] uppercase tracking-widest">Powered By</p>
+                    <img src="assets/name-cmf.png" alt="CM Filings" class="h-6 w-auto object-contain mx-auto" onerror="this.src='https://via.placeholder.com/120x30?text=CM+Filings'">
                 </a>
             </div>
         </aside>
@@ -201,14 +187,17 @@
                     </div>
                 </div>
 
-                <div class="flex items-center gap-3">
+                <div class="flex items-center gap-4">
                     <div class="text-right hidden sm:block">
-                        <p class="text-xs font-bold text-gray-900 leading-none" id="header-user">Admin</p>
-                        <p class="text-[10px] text-[var(--sub)] font-semibold uppercase tracking-wide mt-1" id="header-role">Role</p>
+                        <p class="text-xs font-bold text-gray-900 leading-none" id="header-user">Admin User</p>
+                        <p class="text-[10px] text-[var(--sub)] font-semibold uppercase tracking-wide mt-1" id="header-role">Super Admin</p>
                     </div>
                     <div class="w-9 h-9 rounded-full bg-[var(--dark-blue)] text-white flex items-center justify-center font-bold text-sm shadow-md">
                         <i class="fa-solid fa-user-shield"></i>
                     </div>
+                    <button onclick="logout()" class="flex items-center gap-2 bg-red-50 text-red-600 hover:bg-red-100 hover:text-red-700 px-3 py-1.5 rounded text-xs font-bold transition border border-red-200">
+                        <i class="fa-solid fa-power-off"></i> <span class="hidden sm:block">Logout</span>
+                    </button>
                 </div>
             </header>
 
@@ -310,11 +299,11 @@
                         <div class="grid grid-cols-2 gap-3 mb-3">
                             <div>
                                 <label class="block text-xs font-bold text-[var(--sub)] mb-1">Patient ID (Auto)</label>
-                                <input type="text" id="apt-patientId" readonly class="input-field bg-[rgba(0,0,0,0.02)] font-mono text-xs">
+                                <input type="text" id="apt-patientId" readonly class="input-field bg-[rgba(0,0,0,0.02)] font-mono text-xs border-[var(--card-border)] shadow-none">
                             </div>
                             <div>
                                 <label class="block text-xs font-bold text-[var(--sub)] mb-1">Booking ID (Auto)</label>
-                                <input type="text" id="apt-bookingId" readonly class="input-field bg-[rgba(0,0,0,0.02)] font-mono text-xs">
+                                <input type="text" id="apt-bookingId" readonly class="input-field bg-[rgba(0,0,0,0.02)] font-mono text-xs border-[var(--card-border)] shadow-none">
                             </div>
                         </div>
 
@@ -405,9 +394,14 @@
                             </div>
                         </div>
                         
-                        <div>
+                        <div class="mb-3">
                             <label class="block text-[10px] font-bold text-gray-800 uppercase mb-1">Transaction ID (Auto)</label>
-                            <input type="text" id="apt-trxId" readonly class="input-field bg-[rgba(0,0,0,0.02)] font-mono text-xs text-gray-700">
+                            <input type="text" id="apt-trxId" readonly class="input-field bg-[rgba(0,0,0,0.02)] font-mono text-xs text-gray-700 shadow-none border-[var(--card-border)]">
+                        </div>
+
+                        <div>
+                            <label class="block text-xs font-bold text-gray-800 mb-1">Internal Admin Notes</label>
+                            <textarea id="a-adminNotes" rows="2" class="input-field bg-white resize-none" placeholder="Billing or diagnosis notes..."></textarea>
                         </div>
                     </div>
                 </div>
@@ -467,10 +461,10 @@
             </div>
             <div id="printArea" class="p-8 bg-white text-black relative">
                 <div class="text-center border-b-2 border-black pb-4 mb-6">
-                    <h1 class="text-2xl font-extrabold uppercase tracking-widest text-black !important">STRA CARE</h1>
-                    <p class="text-xs font-bold uppercase">Advanced Physiotherapy Center</p>
-                    <p class="text-[10px]" id="bill-branchAddress">Branch Address</p>
-                    <p class="text-[10px] mt-1">+91 97449 02555 | info@stracares.in | www.stracares.in</p>
+                    <h1 class="text-2xl font-extrabold uppercase tracking-widest text-black !important m-0">STRA CARE</h1>
+                    <p class="text-xs font-bold uppercase m-0">Advanced Physiotherapy Center</p>
+                    <p class="text-[10px] m-0" id="bill-branchAddress">Branch Address</p>
+                    <p class="text-[10px] mt-1 m-0 font-semibold">+91 97449 02555 | info@stracares.in | www.stracares.in</p>
                 </div>
                 <div class="flex justify-between text-xs font-bold mb-6">
                     <div>
@@ -502,7 +496,6 @@
 
 
     <script>
-        // --- 1. HARDCODED RBAC CONFIG (NO FIREBASE AUTH) ---
         const USERS = {
             'admin':  { pass: 'admin@123',  role: 'Super Admin', branch: 'ALL' },
             'strab1': { pass: 'strab1@123', role: 'Branch Staff', branch: 'Mahe' },
@@ -516,14 +509,17 @@
         let currentUser = JSON.parse(sessionStorage.getItem('stra_user')) || null;
         let currentSort = { key: '#TimeStamp', asc: false };
         let activeAdminBranch = "ALL";
+        let firestoreUnsubscribe = null;
 
-        // --- Helper: Local Timezone Date ---
+        // FIXED: Gets accurate local date, bypassing UTC offset bugs
         function getLocalToday() {
             const d = new Date();
-            return d.getFullYear() + '-' + String(d.getMonth() + 1).padStart(2, '0') + '-' + String(d.getDate()).padStart(2, '0');
+            const year = d.getFullYear();
+            const month = String(d.getMonth() + 1).padStart(2, '0');
+            const day = String(d.getDate()).padStart(2, '0');
+            return `${year}-${month}-${day}`;
         }
 
-        // --- 2. FIREBASE FIRESTORE CONFIGURATION ---
         const firebaseConfig = {
             apiKey: "AIzaSyDwfmoDPvslFmTn3GjO56VAxhODRlem5bg",
             authDomain: "stra-care.firebaseapp.com",
@@ -538,14 +534,12 @@
         }
         const db = firebase.firestore();
 
-        // Local State
         let appointments = [];
         let doctors = JSON.parse(localStorage.getItem('stra_docs')) || [
             { id: 1, name: 'Dr. Thejaswi M.K', spec: 'BPT, MPT (Ortho)', branch: 'ALL' },
             { id: 2, name: 'P.M. SHYN', spec: 'Managing Director', branch: 'ALL' }
         ];
 
-        // --- 3. INIT & LOGIN ---
         window.onload = () => {
             if (!currentUser) {
                 document.getElementById('login-screen').style.display = 'flex';
@@ -579,16 +573,14 @@
             document.getElementById('login-screen').style.display = 'none';
             document.getElementById('app-layout').style.display = 'flex';
             
-            // Set Headers
             document.getElementById('header-user').innerText = currentUser.username.toUpperCase();
             document.getElementById('header-role').innerText = currentUser.role;
-            document.getElementById('sidebar-user-name').innerText = currentUser.username.toUpperCase();
 
             const headerSelect = document.getElementById('header-branch-filter');
             if (currentUser.role !== 'Super Admin') {
-                document.getElementById('tab-doctors').style.display = 'none'; // Hide doctors tab
+                document.getElementById('tab-doctors').style.display = 'none'; 
                 headerSelect.value = currentUser.branch;
-                headerSelect.disabled = true; // Lock dropdown for staff
+                headerSelect.disabled = true; 
                 activeAdminBranch = currentUser.branch;
             } else {
                 headerSelect.disabled = false;
@@ -596,7 +588,7 @@
             }
 
             renderDoctors();
-            fetchFirestoreData(); // Initiates real-time listening
+            fetchFirestoreData(); 
         }
 
         function applyAdminBranchFilter() {
@@ -604,9 +596,10 @@
             renderTable();
         }
 
-        // --- 4. FIRESTORE DATA FETCHING ---
         function fetchFirestoreData() {
-            db.collection("appointments").orderBy("#TimeStamp", "desc").onSnapshot((snapshot) => {
+            if (firestoreUnsubscribe) firestoreUnsubscribe(); 
+
+            firestoreUnsubscribe = db.collection("appointments").orderBy("#TimeStamp", "desc").onSnapshot((snapshot) => {
                 appointments = [];
                 snapshot.forEach((doc) => {
                     const data = doc.data();
@@ -620,6 +613,7 @@
                     data.total = Number(data.paymentAmount || 0);
                     data.received = Number(data.paymentReceived || 0);
                     data.balance = Number(data.balanceReceivables || 0);
+                    data.adminNotes = data.adminNotes || "";
 
                     appointments.push(data);
                 });
@@ -630,10 +624,20 @@
             });
         }
 
-        // --- 5. SIDEBAR & NAVIGATION ---
         function toggleDesktopSidebar() {
             const sidebar = document.getElementById('sidebar');
             sidebar.classList.toggle('collapsed');
+            
+            const logoFullList = document.querySelectorAll('.logo-full');
+            const logoIcon = document.querySelector('.logo-icon');
+            
+            if(sidebar.classList.contains('collapsed')) {
+                logoFullList.forEach(el => el.style.display = 'none');
+                logoIcon.style.display = 'block';
+            } else {
+                logoFullList.forEach(el => el.style.display = 'block');
+                logoIcon.style.display = 'none';
+            }
         }
 
         function toggleMobileSidebar() {
@@ -649,18 +653,15 @@
             document.getElementById('tab-doctors').classList.toggle('active', tabId === 'doctors');
         }
 
-        // --- 6. APPOINTMENTS LOGIC ---
         function renderTable() {
             const tbody = document.getElementById('aptBody');
             tbody.innerHTML = '';
             
-            // 1. Branch Filter
             let data = appointments;
             if (activeAdminBranch !== 'ALL') {
                 data = data.filter(a => (a.branch || "").toLowerCase().includes(activeAdminBranch.toLowerCase()));
             }
 
-            // 2. Text Filters
             const nFilt = document.getElementById('filter-name').value.toLowerCase();
             const mFilt = document.getElementById('filter-mobile').value.toLowerCase();
             
@@ -669,7 +670,6 @@
                 (a.mobile || "").includes(mFilt)
             );
 
-            // 3. Sort
             data.sort((a, b) => {
                 let valA = a[currentSort.key] || "";
                 let valB = b[currentSort.key] || "";
@@ -681,7 +681,6 @@
                 return 0;
             });
 
-            // 4. Render & Calc KPIs
             if(data.length === 0) {
                 tbody.innerHTML = `<tr><td colspan="7" class="text-center py-6 font-bold text-[var(--sub)]">No records found.</td></tr>`;
                 document.getElementById('kpi-today').innerText = 0;
@@ -707,7 +706,7 @@
 
                 const tr = document.createElement('tr');
                 tr.className = "cursor-pointer";
-                tr.onclick = () => openAptModal(apt.id); // Row click opens edit
+                tr.onclick = () => openAptModal(apt.id); 
                 
                 tr.innerHTML = `
                     <td class="font-mono text-[var(--action-blue)] font-bold text-xs">${apt.bookingId}</td>
@@ -771,7 +770,6 @@
             appointments = tempApt; 
         }
 
-        // --- 7. MODAL & FIRESTORE SAVE LOGIC ---
         function updateDocDropdown(branchVal) {
             const sel = document.getElementById('apt-doctor');
             sel.innerHTML = '<option value="">-- Select Doctor --</option>';
@@ -781,6 +779,7 @@
             });
         }
 
+        // FIXED: Re-mapped confirmedTime tracking properly to prevent JS crashes.
         function openAptModal(id = null) {
             document.getElementById('aptForm').reset();
             const now = new Date();
@@ -795,7 +794,7 @@
                         branchSelect.selectedIndex = i; break;
                     }
                 }
-                branchSelect.disabled = true; // Staff cannot change form branch
+                branchSelect.disabled = true; 
             } else {
                 branchSelect.disabled = false;
                 branchSelect.value = activeAdminBranch !== 'ALL' ? activeAdminBranch : "Mahe";
@@ -823,11 +822,11 @@
                 
                 document.getElementById('apt-notes').value = apt.notes || "";
                 document.getElementById('apt-date').value = apt.preferredDate || "";
-                document.getElementById('apt-time').value = apt.preferredTime || "";
+                // Confirmed Time field uses ID apt-time 
+                document.getElementById('apt-time').value = apt.confirmedTime || apt.preferredTime || ""; 
                 
                 document.getElementById('apt-status').value = apt.status || "Pending";
                 document.getElementById('apt-doctor').value = apt.doctorName || "";
-                document.getElementById('apt-confTime').value = apt.confirmedTime || "";
                 
                 document.getElementById('apt-resch-date').value = apt.reschDate || "";
                 document.getElementById('apt-resch-time').value = apt.reschTime || "";
@@ -835,7 +834,11 @@
                 document.getElementById('apt-total').value = apt.total || 0;
                 document.getElementById('apt-received').value = apt.received || 0;
                 document.getElementById('apt-balance').value = apt.balance || 0;
-                document.getElementById('a-adminNotes').value = apt.adminNotes || "";
+                
+                const adminNotesElement = document.getElementById('a-adminNotes');
+                if (adminNotesElement) {
+                    adminNotesElement.value = apt.adminNotes || "";
+                }
             } else {
                 document.getElementById('aptModalTitle').innerText = "New Appointment";
                 document.getElementById('apt-id').value = "";
@@ -896,14 +899,12 @@
             e.preventDefault();
             const docId = document.getElementById('apt-id').value;
             
-            // Validate Mobile Strictly
             const mobileVal = document.getElementById('apt-mobile').value;
             if(!/^\d{10}$/.test(mobileVal)) {
                 alert("Mobile number must be exactly 10 digits.");
                 return;
             }
 
-            // Validate Time if Date is Today
             const dateVal = document.getElementById('apt-date').value;
             const timeVal = document.getElementById('apt-time').value;
             const todayStr = getLocalToday();
@@ -917,7 +918,6 @@
                 }
             }
 
-            // Validate Reschedule Date
             if (document.getElementById('apt-status').value === 'Rescheduled') {
                 const rDate = document.getElementById('apt-resch-date').value;
                 const rTime = document.getElementById('apt-resch-time').value;
@@ -935,6 +935,8 @@
             btn.innerHTML = '<i class="fa-solid fa-spinner fa-spin"></i> Saving...';
             btn.disabled = true;
 
+            const safeAdminNotes = document.getElementById('a-adminNotes') ? document.getElementById('a-adminNotes').value : "";
+
             const payload = {
                 patientId: document.getElementById('apt-patientId').value,
                 bookingId: document.getElementById('apt-bookingId').value,
@@ -945,12 +947,12 @@
                 mobile: mobileVal,
                 branch: document.getElementById('apt-branch').value,
                 preferredDate: dateVal,
-                preferredTime: timeVal,
+                preferredTime: timeVal, 
                 notes: document.getElementById('apt-notes').value,
                 
                 patientReporting: document.getElementById('apt-status').value,
                 doctorName: document.getElementById('apt-doctor').value,
-                confirmedTime: document.getElementById('apt-confTime').value,
+                confirmedTime: timeVal, 
                 
                 reschDate: document.getElementById('apt-resch-date').value,
                 reschTime: document.getElementById('apt-resch-time').value,
@@ -958,7 +960,7 @@
                 paymentAmount: Number(document.getElementById('apt-total').value),
                 paymentReceived: Number(document.getElementById('apt-received').value),
                 balanceReceivables: Number(document.getElementById('apt-balance').value),
-                adminNotes: document.getElementById('a-adminNotes').value
+                adminNotes: safeAdminNotes
             };
 
             try {
@@ -971,14 +973,13 @@
                 closeModal('aptModal');
             } catch (error) {
                 console.error("Firebase Error:", error);
-                alert("Failed to save to database.");
+                alert("Failed to save to database. " + error.message);
             } finally {
                 btn.innerHTML = '<i class="fa-solid fa-floppy-disk"></i> Save Booking';
                 btn.disabled = false;
             }
         }
 
-        // --- 8. DOCTOR LOGIC ---
         function renderDoctors() {
             const tbody = document.getElementById('doctorBody');
             tbody.innerHTML = '';
@@ -1030,7 +1031,6 @@
             }
         }
 
-        // --- 9. BILLING & WHATSAPP ---
         function generateBill(id) {
             const apt = appointments.find(a => a.id === id);
             if(!apt) return;
