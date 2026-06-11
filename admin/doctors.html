@@ -1,0 +1,44 @@
+<div class="card">
+
+    <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:20px;">
+
+        <h2>Doctors</h2>
+
+        <button onclick="openDoctorForm()"
+        style="
+        background:#991b1b;
+        color:white;
+        border:none;
+        padding:10px 18px;
+        border-radius:10px;
+        cursor:pointer;">
+        Add Doctor
+        </button>
+
+    </div>
+
+    <table width="100%">
+
+        <thead>
+
+        <tr>
+
+            <th align="left">Doctor ID</th>
+            <th align="left">Doctor Name</th>
+            <th align="left">Specialization</th>
+            <th align="left">Fee</th>
+            <th align="left">Actions</th>
+
+        </tr>
+
+        </thead>
+
+        <tbody id="doctorTable">
+
+        </tbody>
+
+    </table>
+
+</div>
+
+<script src="doctors.js"></script>
