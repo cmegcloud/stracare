@@ -1,0 +1,75 @@
+<div class="bg-white border rounded p-5">
+
+    <div class="flex justify-between items-center mb-5">
+
+        <h2 class="text-xl font-bold">
+            Patient Receivables
+        </h2>
+
+        <input
+            id="receivableSearch"
+            class="border p-2 rounded w-72"
+            placeholder="Search Mobile / Patient">
+
+    </div>
+
+    <div class="grid grid-cols-4 gap-4 mb-5">
+
+        <div class="border rounded p-4">
+            <div>Total Receivable</div>
+            <div id="totalReceivable"
+                 class="text-2xl font-bold">
+                ₹0
+            </div>
+        </div>
+
+        <div class="border rounded p-4">
+            <div>Total Patients</div>
+            <div id="totalReceivablePatients"
+                 class="text-2xl font-bold">
+                0
+            </div>
+        </div>
+
+        <div class="border rounded p-4">
+            <div>Overdue</div>
+            <div id="totalOverdue"
+                 class="text-2xl font-bold">
+                0
+            </div>
+        </div>
+
+        <div class="border rounded p-4">
+            <div>Collection Today</div>
+            <div id="todayCollection"
+                 class="text-2xl font-bold">
+                ₹0
+            </div>
+        </div>
+
+    </div>
+
+    <table class="w-full">
+
+        <thead>
+
+        <tr>
+
+            <th>Mobile</th>
+            <th>Patient</th>
+            <th>Branch</th>
+            <th>Balance</th>
+            <th>Last Visit</th>
+            <th>Action</th>
+
+        </tr>
+
+        </thead>
+
+        <tbody id="receivableTable">
+
+        </tbody>
+
+    </table>
+
+</div>
