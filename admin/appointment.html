@@ -1,0 +1,62 @@
+let editingAppointment = null;
+
+async function saveAppointment() {
+
+const mobile =
+document.getElementById(
+"appointmentMobile"
+).value;
+
+const appointment = {
+
+mobile: mobile,
+
+patientName:
+document.getElementById(
+"appointmentPatientName"
+).value,
+
+branch:
+document.getElementById(
+"appointmentBranch"
+).value,
+
+appointmentDate:
+document.getElementById(
+"appointmentDate"
+).value,
+
+appointmentTime:
+document.getElementById(
+"appointmentTime"
+).value,
+
+remarks:
+document.getElementById(
+"appointmentRemarks"
+).value,
+
+bookedBy:
+document.getElementById(
+"bookedBy"
+).value,
+
+status: "Pending",
+
+consultedDoctor: "",
+
+createdAt:
+serverTimestamp()
+
+};
+
+await addDoc(
+collection(db,"appointments"),
+appointment
+);
+
+alert("Appointment Saved");
+
+loadAppointments();
+
+}
