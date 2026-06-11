@@ -1,77 +1,17 @@
-// firebase.js
-
-import { initializeApp } from "https://www.gstatic.com/firebasejs/10.12.2/firebase-app.js";
-
-import {
-getFirestore,
-collection,
-addDoc,
-setDoc,
-doc,
-getDocs,
-getDoc,
-updateDoc,
-deleteDoc,
-query,
-where,
-onSnapshot,
-serverTimestamp
-}
-from "https://www.gstatic.com/firebasejs/10.12.2/firebase-firestore.js";
-
-import {
-getAuth,
-signInWithEmailAndPassword,
-signOut,
-onAuthStateChanged
-}
-from "https://www.gstatic.com/firebasejs/10.12.2/firebase-auth.js";
-
 const firebaseConfig = {
 
-apiKey: "YOUR_API_KEY",
+  apiKey: "AIzaSyDwfmoDPvslFmTn3GjO56VAxhODRlem5bg",
 
-authDomain: "YOUR_PROJECT.firebaseapp.com",
+  authDomain: "stra-care.firebaseapp.com",
 
-projectId: "YOUR_PROJECT_ID",
+  projectId: "stra-care",
 
-storageBucket: "YOUR_PROJECT.appspot.com",
+  storageBucket: "stra-care.firebasestorage.app",
 
-messagingSenderId: "123456789",
+  messagingSenderId: "329966100049",
 
-appId: "APP_ID"
+  appId: "1:329966100049:web:d4b4dc7033f0ed12da6270",
 
-};
-
-const app = initializeApp(firebaseConfig);
-
-const db = getFirestore(app);
-
-const auth = getAuth(app);
-
-window.db = db;
-window.auth = auth;
-
-window.collections = {
-
-users: collection(db,"users"),
-
-branches: collection(db,"branches"),
-
-patients: collection(db,"patients"),
-
-doctors: collection(db,"doctors"),
-
-appointments: collection(db,"appointments"),
-
-receipts: collection(db,"receipts"),
-
-payments: collection(db,"payments"),
-
-receivables: collection(db,"receivables"),
-
-settings: collection(db,"settings"),
-
-logs: collection(db,"logs")
+  measurementId: "G-TQ7YK3RVSR"
 
 };
