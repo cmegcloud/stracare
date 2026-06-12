@@ -414,6 +414,23 @@ async function loadPage(page){
             "page-content"
         ).innerHTML = html;
 
+const oldScript =
+document.getElementById("pageScript");
+
+if(oldScript){
+    oldScript.remove();
+}
+
+const script =
+document.createElement("script");
+
+script.src =
+"js/" + page + ".js?v=" + Date.now();
+
+script.id = "pageScript";
+
+document.body.appendChild(script);
+
         document
         .querySelectorAll(".menu-item")
         .forEach(item => {
