@@ -8,58 +8,86 @@ alert("Patients JS Loaded");
 
 async function savePatient() {
 
-alert("Save Button Clicked");
+    alert("Save Button Clicked");
 
-const mobile =
-document.getElementById("patientMobile").value.trim();
+    try {
 
-    const patientData = {
+        const mobile =
+        document.getElementById("patientMobile").value.trim();
 
-        mobile: mobile,
+        if(!mobile){
 
-        patientName:
+            alert("Enter Mobile Number");
+            return;
+
+        }
+
+        const patientData = {
+
+            mobile: mobile,
+
+            patientName:
             document.getElementById("patientName").value,
 
-        gender:
+            gender:
             document.getElementById("patientGender").value,
 
-        age:
+            age:
             document.getElementById("patientAge").value,
 
-        address:
+            address:
             document.getElementById("patientAddress").value,
 
-        notes:
+            notes:
             document.getElementById("patientNotes").value,
 
-        branchId:
-            currentBranch,
+            branchId:
+            currentBranch || "ALL",
 
-        updatedAt:
-    new Date()
-    };
+            updatedAt:
+            new Date()
 
-    alert(typeof db);
-alert(typeof window.db);
+        };
 
-try{
+        alert("Before Save");
 
-    alert("Before Save");
+        await window.setDoc(
 
-    await setDoc(
-        doc(window.db, "patients", mobile),
-        patientData,
-        { merge:true }
-    );
+            window.doc(
+                window.db,
+                "patients",
+                mobile
+            ),
 
-    alert("After Save");
+            patientData,
 
-}catch(error){
+            {
+                merge:true
+            }
 
-    alert("ERROR: " + error.message);
+        );
+
+        alert("After Save");
+
+        await loadPatients();
+
+        renderPatients();
+
+        alert("Patient Saved Successfully");
+
+    }
+    catch(error){
+
+        console.error(error);
+
+        alert(
+            "ERROR : " +
+            error.message
+        );
+
+    }
 
 }
-
     alert("Patient Saved");
 
 await loadPatients();
