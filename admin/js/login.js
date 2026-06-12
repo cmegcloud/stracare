@@ -31,11 +31,17 @@ users.forEach(doc=>{
 const user = doc.data();
 
 if(
+
 user.username === username &&
 user.password === password &&
 user.active === true
+
 ){
+
+alert("User Match Found");
+
 validUser = user;
+
 }
 
 });
