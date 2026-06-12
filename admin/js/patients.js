@@ -8,20 +8,34 @@ alert("Patients JS Loaded");
 
 async function savePatient() {
 
-    alert("Save Button Clicked");
-
     try {
 
-        const mobile =
-        document.getElementById("patientMobile").value.trim();
+        alert("1");
 
-        if(!mobile){
+        await window.setDoc(
 
-            alert("Enter Mobile Number");
-            return;
+            window.doc(
+                window.db,
+                "patients",
+                "TEST123"
+            ),
 
-        }
+            {
+                mobile:"TEST123",
+                patientName:"Test Patient"
+            }
 
+        );
+
+        alert("2");
+
+    } catch(error){
+
+        alert(error.message);
+
+    }
+
+}
         const patientData = {
 
             mobile: mobile,
