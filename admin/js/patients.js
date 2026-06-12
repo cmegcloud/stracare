@@ -204,12 +204,26 @@ async function openPatient(mobile) {
 // LIVE MOBILE SEARCH
 // ===========================
 
-document
-.getElementById("patientMobile")
-.addEventListener("keyup", function () {
+setTimeout(() => {
 
-    searchPatientByMobile(
-        this.value
-    );
+    const mobileInput =
+        document.getElementById("patientMobile");
 
-});
+    if(mobileInput){
+
+        mobileInput.addEventListener(
+            "keyup",
+            function(){
+
+                searchPatientByMobile(
+                    this.value
+                );
+
+            }
+        );
+
+    }
+
+    renderPatients();
+
+}, 300);
