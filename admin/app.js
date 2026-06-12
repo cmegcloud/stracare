@@ -13,44 +13,41 @@ const state = {
 };
 
 // =====================
-// AUTH CHECK
+// LOGIN CHECK
 // =====================
 
-onAuthStateChanged(auth, async (user) => {
+document.addEventListener("DOMContentLoaded", async () => {
 
-    if (!user) {
-        window.location.href = "login.html";
+    const userData =
+        localStorage.getItem("currentUser");
+
+    if (!userData) {
+
+        window.location.href =
+            "login.html";
+
         return;
     }
 
-    currentUser = user;
+    currentUser =
+        JSON.parse(userData);
 
-    await loadUserProfile();
+    currentBranch =
+        currentUser.branchId;
+
+    const userName =
+        document.getElementById("user-name");
+
+    if (userName) {
+
+        userName.innerText =
+            currentUser.username;
+
+    }
 
     await loadDashboard();
 
 });
-
-// =====================
-// USER PROFILE
-// =====================
-
-async function loadUserProfile() {
-
-    const snap = await getDoc(
-        doc(db, "users", currentUser.uid)
-    );
-
-    if (!snap.exists()) return;
-
-    const data = snap.data();
-
-    currentBranch = data.branchId;
-
-    document.getElementById("user-name").innerText =
-        data.name || "User";
-
-}
 
 // =====================
 // DASHBOARD
@@ -77,16 +74,32 @@ async function loadDashboard() {
 
 function renderKPIs() {
 
-    document.getElementById("kpiPatients").innerText =
+    const p =
+        document.getElementById("kpiPatients");
+
+    const d =
+        document.getElementById("kpiDoctors");
+
+    const a =
+        document.getElementById("kpiAppointments");
+
+    const r =
+        document.getElementById("kpiReceivables");
+
+    if (p)
+        p.innerText =
         state.patients.length;
 
-    document.getElementById("kpiDoctors").innerText =
+    if (d)
+        d.innerText =
         state.doctors.length;
 
-    document.getElementById("kpiAppointments").innerText =
+    if (a)
+        a.innerText =
         state.appointments.length;
 
-    document.getElementById("kpiReceivables").innerText =
+    if (r)
+        r.innerText =
         "₹" + totalReceivable();
 
 }
@@ -97,18 +110,29 @@ function renderKPIs() {
 
 async function loadPatients() {
 
-    const snap = await getDocs(
-        collection(db, "patients")
-    );
+    const snap =
+        await getDocs(
+            collection(db, "patients")
+        );
 
     state.patients = [];
 
-    snap.forEach(doc => {
+    snap.forEach(docSnap => {
 
-        state.patients.push({
-            id: doc.id,
-            ...doc.data()
-        });
+        const row =
+            docSnap.data();
+
+        if (
+            currentBranch === "ALL" ||
+            row.branchId === currentBranch
+        ) {
+
+            state.patients.push({
+                id: docSnap.id,
+                ...row
+            });
+
+        }
 
     });
 
@@ -120,18 +144,29 @@ async function loadPatients() {
 
 async function loadDoctors() {
 
-    const snap = await getDocs(
-        collection(db, "doctors")
-    );
+    const snap =
+        await getDocs(
+            collection(db, "doctors")
+        );
 
     state.doctors = [];
 
-    snap.forEach(doc => {
+    snap.forEach(docSnap => {
 
-        state.doctors.push({
-            id: doc.id,
-            ...doc.data()
-        });
+        const row =
+            docSnap.data();
+
+        if (
+            currentBranch === "ALL" ||
+            row.branchId === currentBranch
+        ) {
+
+            state.doctors.push({
+                id: docSnap.id,
+                ...row
+            });
+
+        }
 
     });
 
@@ -143,18 +178,29 @@ async function loadDoctors() {
 
 async function loadAppointments() {
 
-    const snap = await getDocs(
-        collection(db, "appointments")
-    );
+    const snap =
+        await getDocs(
+            collection(db, "appointments")
+        );
 
     state.appointments = [];
 
-    snap.forEach(doc => {
+    snap.forEach(docSnap => {
 
-        state.appointments.push({
-            id: doc.id,
-            ...doc.data()
-        });
+        const row =
+            docSnap.data();
+
+        if (
+            currentBranch === "ALL" ||
+            row.branchId === currentBranch
+        ) {
+
+            state.appointments.push({
+                id: docSnap.id,
+                ...row
+            });
+
+        }
 
     });
 
@@ -166,18 +212,29 @@ async function loadAppointments() {
 
 async function loadReceipts() {
 
-    const snap = await getDocs(
-        collection(db, "receipts")
-    );
+    const snap =
+        await getDocs(
+            collection(db, "receipts")
+        );
 
     state.receipts = [];
 
-    snap.forEach(doc => {
+    snap.forEach(docSnap => {
 
-        state.receipts.push({
-            id: doc.id,
-            ...doc.data()
-        });
+        const row =
+            docSnap.data();
+
+        if (
+            currentBranch === "ALL" ||
+            row.branchId === currentBranch
+        ) {
+
+            state.receipts.push({
+                id: docSnap.id,
+                ...row
+            });
+
+        }
 
     });
 
@@ -189,18 +246,29 @@ async function loadReceipts() {
 
 async function loadPayments() {
 
-    const snap = await getDocs(
-        collection(db, "payments")
-    );
+    const snap =
+        await getDocs(
+            collection(db, "payments")
+        );
 
     state.payments = [];
 
-    snap.forEach(doc => {
+    snap.forEach(docSnap => {
 
-        state.payments.push({
-            id: doc.id,
-            ...doc.data()
-        });
+        const row =
+            docSnap.data();
+
+        if (
+            currentBranch === "ALL" ||
+            row.branchId === currentBranch
+        ) {
+
+            state.payments.push({
+                id: docSnap.id,
+                ...row
+            });
+
+        }
 
     });
 
@@ -212,18 +280,29 @@ async function loadPayments() {
 
 async function loadReceivables() {
 
-    const snap = await getDocs(
-        collection(db, "receivables")
-    );
+    const snap =
+        await getDocs(
+            collection(db, "receivables")
+        );
 
     state.receivables = [];
 
-    snap.forEach(doc => {
+    snap.forEach(docSnap => {
 
-        state.receivables.push({
-            id: doc.id,
-            ...doc.data()
-        });
+        const row =
+            docSnap.data();
+
+        if (
+            currentBranch === "ALL" ||
+            row.branchId === currentBranch
+        ) {
+
+            state.receivables.push({
+                id: docSnap.id,
+                ...row
+            });
+
+        }
 
     });
 
@@ -236,7 +315,8 @@ async function loadReceivables() {
 function totalReceivable() {
 
     return state.receivables.reduce(
-        (sum, row) => sum + Number(row.balance || 0),
+        (sum, row) =>
+        sum + Number(row.balance || 0),
         0
     );
 
@@ -246,8 +326,15 @@ function totalReceivable() {
 // LOGOUT
 // =====================
 
-async function logout() {
+function logout() {
 
-    await signOut(auth);
+    localStorage.removeItem(
+        "currentUser"
+    );
+
+    window.location.href =
+        "login.html";
 
 }
+
+window.logout = logout;
