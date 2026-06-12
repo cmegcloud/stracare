@@ -338,3 +338,20 @@ function logout() {
 }
 
 window.logout = logout;
+
+// =====================
+// GLOBAL EXPORTS
+// =====================
+
+window.state = state;
+
+window.loadDashboard = loadDashboard;
+
+window.loadPatients = loadPatients;
+window.loadDoctors = loadDoctors;
+window.loadAppointments = loadAppointments;
+window.loadReceipts = loadReceipts;
+window.loadPayments = loadPayments;
+window.loadReceivables = loadReceivables;
+
+window.renderKPIs = renderKPIs;
