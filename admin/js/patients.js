@@ -101,7 +101,8 @@ async function deletePatient(mobile) {
         doc(db, "patients", mobile)
     );
 
-    loadPatients();
+    await loadPatients();
+renderPatients();
 
 }
 
