@@ -36,8 +36,7 @@ document.getElementById("patientMobile").value.trim();
             currentBranch,
 
         updatedAt:
-            serverTimestamp()
-
+    new Date()
     };
 
     alert(typeof db);
