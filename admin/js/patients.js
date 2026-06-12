@@ -40,11 +40,25 @@ document.getElementById("patientMobile").value.trim();
 
     };
 
+    alert(typeof db);
+alert(typeof window.db);
+
+try{
+
     await setDoc(
-        doc(db, "patients", mobile),
+        doc(window.db, "patients", mobile),
         patientData,
-        { merge: true }
+        { merge:true }
     );
+
+    alert("Patient Saved Successfully");
+
+}catch(error){
+
+    alert(error.message);
+    console.log(error);
+
+}
 
     alert("Patient Saved");
 
