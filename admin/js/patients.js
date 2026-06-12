@@ -10,32 +10,14 @@ async function savePatient() {
 
     try {
 
-        alert("1");
+        const mobile =
+        document.getElementById("patientMobile").value.trim();
 
-        await window.setDoc(
+        if(!mobile){
+            alert("Enter Mobile Number");
+            return;
+        }
 
-            window.doc(
-                window.db,
-                "patients",
-                "TEST123"
-            ),
-
-            {
-                mobile:"TEST123",
-                patientName:"Test Patient"
-            }
-
-        );
-
-        alert("2");
-
-    } catch(error){
-
-        alert(error.message);
-
-    }
-
-}
         const patientData = {
 
             mobile: mobile,
@@ -56,43 +38,31 @@ async function savePatient() {
             document.getElementById("patientNotes").value,
 
             branchId:
-            currentBranch || "ALL",
+            window.currentBranch || "ALL",
 
             updatedAt:
             new Date()
 
         };
 
-        alert("Before Save");
-
         await window.setDoc(
-
             window.doc(
                 window.db,
                 "patients",
                 mobile
             ),
-
             patientData,
-
-            {
-                merge:true
-            }
-
+            { merge:true }
         );
 
-        alert("After Save");
+        alert("Patient Saved Successfully");
 
         await loadPatients();
 
         renderPatients();
 
-        alert("Patient Saved Successfully");
-
     }
     catch(error){
-
-        console.error(error);
 
         alert(
             "ERROR : " +
@@ -102,7 +72,6 @@ async function savePatient() {
     }
 
 }
-
 // ===========================
 // SEARCH BY MOBILE
 // ===========================
