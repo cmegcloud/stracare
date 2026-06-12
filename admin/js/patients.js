@@ -45,18 +45,19 @@ alert(typeof window.db);
 
 try{
 
+    alert("Before Save");
+
     await setDoc(
         doc(window.db, "patients", mobile),
         patientData,
         { merge:true }
     );
 
-    alert("Patient Saved Successfully");
+    alert("After Save");
 
 }catch(error){
 
-    alert(error.message);
-    console.log(error);
+    alert("ERROR: " + error.message);
 
 }
 
