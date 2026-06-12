@@ -7,6 +7,8 @@ from
 
 async function login(){
 
+alert("Login Clicked");
+
 const username =
 document.getElementById(
 "username"
