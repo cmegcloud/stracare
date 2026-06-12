@@ -88,13 +88,6 @@ async function savePatient() {
     }
 
 }
-    alert("Patient Saved");
-
-await loadPatients();
-
-renderPatients();
-
-}
 
 // ===========================
 // SEARCH BY MOBILE
