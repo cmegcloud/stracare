@@ -1,275 +1,336 @@
+// appointments.js
+
+let editingAppointment = null;
+
+// ===========================
+// LOAD APPOINTMENTS
+// ===========================
+
 async function loadAppointments(){
 
-const table =
-document.getElementById(
-"appointmentTable"
-);
+    const table =
+    document.getElementById(
+        "appointmentTable"
+    );
 
-if(!table) return;
+    if(!table) return;
 
-table.innerHTML = "";
+    table.innerHTML = "";
 
-const snapshot =
-await window.getDocs(
-window.collections.appointments
-);
+    const snapshot =
+    await window.getDocs(
+        window.collections.appointments
+    );
 
-snapshot.forEach(docSnap=>{
+    snapshot.forEach(docSnap=>{
 
-const a = docSnap.data();
+        const a =
+        docSnap.data();
 
-if(
-window.currentBranch !== "ALL" &&
-a.branchId !== window.currentBranch
-){
-return;
-}
+        if(
+            window.currentBranch !== "ALL" &&
+            a.branchId !== window.currentBranch
+        ){
+            return;
+        }
 
-const a =
-docSnap.data();
+        table.innerHTML += `
 
-table.innerHTML += `
+        <tr>
 
-<tr>
+            <td>${a.appointmentDate || ''}</td>
 
-<td>${a.appointmentDate||''}</td>
+            <td>${a.appointmentTime || ''}</td>
 
-<td>${a.appointmentTime||''}</td>
+            <td>${a.patientName || ''}</td>
 
-<td>${a.patientName||''}</td>
+            <td>${a.mobile || ''}</td>
 
-<td>${a.mobile||''}</td>
+            <td>${a.doctorName || ''}</td>
 
-<td>${a.doctorName||''}</td>
+            <td>${a.status || ''}</td>
 
-<td>${a.status||''}</td>
+            <td>
 
-<td>
+                <button
+                onclick="deleteAppointment('${docSnap.id}')">
 
-<button onclick="editAppointment('${docSnap.id}')">
-Edit
-</button>
+                    Delete
 
-<button onclick="deleteAppointment('${docSnap.id}')">
-Delete
-</button>
+                </button>
 
-</td>
+            </td>
 
-</tr>
+        </tr>
 
-`;
+        `;
 
-});
+    });
 
 }
+
+// ===========================
+// NEW APPOINTMENT FORM
+// ===========================
 
 function openAppointmentForm(){
 
-openModal(
-"New Appointment",
+    openModal(
 
-`
+        "New Appointment",
 
-<div style="display:grid;gap:12px">
+        `
 
-<input
-id="mobile"
-placeholder="Mobile Number">
+        <div style="display:grid;gap:12px">
 
-<input
-id="patientName"
-placeholder="Patient Name">
+            <input
+            id="mobile"
+            placeholder="Mobile Number">
 
-<input
-id="appointmentDate"
-type="date">
+            <input
+            id="patientName"
+            placeholder="Patient Name">
 
-<input
-id="appointmentTime"
-type="time">
+            <input
+            id="appointmentDate"
+            type="date">
 
-<input
-id="doctorName"
-placeholder="Doctor Name">
+            <input
+            id="appointmentTime"
+            type="time">
 
-<input
-id="consultationFee"
-type="number"
-placeholder="Consultation Fee">
+            <input
+            id="doctorName"
+            placeholder="Doctor Name">
 
-<select id="status">
+            <input
+            id="consultationFee"
+            type="number"
+            placeholder="Consultation Fee">
 
-<option value="Booked">
-Booked
-</option>
+            <select id="status">
 
-<option value="Pending">
-Pending
-</option>
+                <option value="Booked">
+                    Booked
+                </option>
 
-<option value="Completed">
-Completed
-</option>
+                <option value="Pending">
+                    Pending
+                </option>
 
-<option value="Cancelled">
-Cancelled
-</option>
+                <option value="Completed">
+                    Completed
+                </option>
 
-</select>
+                <option value="Cancelled">
+                    Cancelled
+                </option>
 
-<button onclick="saveAppointment()">
+            </select>
 
-Save Appointment
+            <button
+            onclick="saveAppointment()">
 
-</button>
+                Save Appointment
 
-</div>
+            </button>
 
-`
+        </div>
 
-);
+        `
+
+    );
 
 }
+
+// ===========================
+// SAVE APPOINTMENT
+// ===========================
 
 async function saveAppointment(){
 
-const appointment = {
+    try{
 
-mobile:
-document.getElementById(
-"mobile"
-).value,
+        const fee =
+        Number(
+            document.getElementById(
+                "consultationFee"
+            ).value || 0
+        );
 
-patientName:
-document.getElementById(
-"patientName"
-).value,
+        const appointment = {
 
-  branchId:
-window.currentBranch || "ALL",
+            mobile:
+            document.getElementById(
+                "mobile"
+            ).value,
 
-appointmentDate:
-document.getElementById(
-"appointmentDate"
-).value,
+            patientName:
+            document.getElementById(
+                "patientName"
+            ).value,
 
-appointmentTime:
-document.getElementById(
-"appointmentTime"
-).value,
+            branchId:
+            window.currentBranch || "ALL",
 
-doctorName:
-document.getElementById(
-"doctorName"
-).value,
+            appointmentDate:
+            document.getElementById(
+                "appointmentDate"
+            ).value,
 
-consultationFee:
-Number(
-document.getElementById(
-"consultationFee"
-).value
-),
+            appointmentTime:
+            document.getElementById(
+                "appointmentTime"
+            ).value,
 
-receivedAmount:0,
+            doctorName:
+            document.getElementById(
+                "doctorName"
+            ).value,
 
-balanceAmount:
-Number(
-document.getElementById(
-"consultationFee"
-).value
-),
+            consultationFee:
+            fee,
 
-status:
-document.getElementById(
-"status"
-).value,
+            receivedAmount:0,
 
-bookingSource:"Admin",
+            balanceAmount:
+            fee,
 
-rescheduled:false,
+            status:
+            document.getElementById(
+                "status"
+            ).value,
 
-cancelled:false,
+            bookingSource:"Admin",
 
-createdAt:
-window.serverTimestamp()
+            rescheduled:false,
 
-};
+            cancelled:false,
 
-await window.addDoc(
-window.collections.appointments,
-appointment
-);
+            createdAt:
+            window.serverTimestamp()
 
-closeModal();
+        };
 
-showToast(
-"Appointment Saved"
-);
+        await window.addDoc(
+            window.collections.appointments,
+            appointment
+        );
 
-loadAppointments();
+        closeModal();
+
+        showToast(
+            "Appointment Saved"
+        );
+
+        await loadAppointments();
+
+    }
+    catch(error){
+
+        alert(
+            "ERROR : " +
+            error.message
+        );
+
+    }
 
 }
+
+// ===========================
+// DELETE APPOINTMENT
+// ===========================
 
 async function deleteAppointment(id){
 
-if(
-!confirm(
-"Delete Appointment?"
-)
-)return;
+    if(
+        !confirm(
+            "Delete Appointment?"
+        )
+    ) return;
 
-await window.deleteDoc(
-window.doc(
-window.db,
-"appointments",
-id
-)
-);
+    await window.deleteDoc(
 
-showToast(
-"Appointment Deleted"
-);
+        window.doc(
+            window.db,
+            "appointments",
+            id
+        )
 
-loadAppointments();
+    );
+
+    showToast(
+        "Appointment Deleted"
+    );
+
+    await loadAppointments();
 
 }
+
+// ===========================
+// RESCHEDULE
+// ===========================
 
 async function rescheduleAppointment(
-id,
-newDate
+    id,
+    newDate
 ){
 
-await window.updateDoc(
+    await window.updateDoc(
 
-doc(
-db,
-"appointments",
-id
-),
+        window.doc(
+            window.db,
+            "appointments",
+            id
+        ),
 
-{
+        {
 
-rescheduled:true,
+            rescheduled:true,
 
-rescheduledDate:newDate,
+            rescheduledDate:newDate,
 
-appointmentDate:newDate
+            appointmentDate:newDate,
+
+            status:"Rescheduled"
+
+        }
+
+    );
+
+    showToast(
+        "Appointment Rescheduled"
+    );
+
+    await loadAppointments();
 
 }
 
-);
+// ===========================
+// EXPORTS
+// ===========================
 
-showToast(
-"Appointment Rescheduled"
-);
+window.loadAppointments =
+loadAppointments;
 
-loadAppointments();
+window.openAppointmentForm =
+openAppointmentForm;
 
-}
+window.saveAppointment =
+saveAppointment;
 
-window.loadAppointments = loadAppointments;
-window.openAppointmentForm = openAppointmentForm;
-window.saveAppointment = saveAppointment;
-window.deleteAppointment = deleteAppointment;
-window.rescheduleAppointment = rescheduleAppointment;
+window.deleteAppointment =
+deleteAppointment;
+
+window.rescheduleAppointment =
+rescheduleAppointment;
+
+// ===========================
+// AUTO LOAD
+// ===========================
+
+setTimeout(()=>{
+
+    loadAppointments();
+
+},500);
