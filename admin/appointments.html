@@ -1,184 +1,21 @@
-let editingAppointment = null;
+<div class="card">
 
-async function saveAppointment() {
+    <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:20px;">
 
-const mobile =
-document.getElementById(
-"appointmentMobile"
-).value.trim();
+        <h2>Appointments</h2>
 
-const appointment = {
+        <button
+        onclick="openAppointmentForm()"
+        style="background:#991b1b;color:white;padding:10px 16px;border:none;border-radius:8px;">
+            + New Appointment
+        </button>
 
-mobile,
+    </div>
 
-patientName:
-document.getElementById(
-"appointmentPatientName"
-).value,
+    <div id="appointmentsTable">
+        Loading...
+    </div>
 
-branch:
-document.getElementById(
-"appointmentBranch"
-).value,
+</div>
 
-appointmentDate:
-document.getElementById(
-"appointmentDate"
-).value,
-
-appointmentTime:
-document.getElementById(
-"appointmentTime"
-).value,
-
-remarks:
-document.getElementById(
-"appointmentRemarks"
-).value,
-
-bookedBy:
-document.getElementById(
-"bookedBy"
-).value,
-
-bookingSource:
-document.getElementById(
-"bookedBy"
-).value === "Patient"
-? "Website"
-: "Admin",
-
-status:"Pending",
-
-consultedDoctor:"",
-
-consultationFee:0,
-
-receivedAmount:0,
-
-balanceAmount:0,
-
-paymentStatus:"Pending",
-
-rescheduled:false,
-
-rescheduledDate:"",
-
-cancelled:false,
-
-createdAt:
-serverTimestamp()
-
-};
-
-if(editingAppointment){
-
-await updateDoc(
-
-doc(
-db,
-"appointments",
-editingAppointment
-),
-
-appointment
-
-);
-
-alert("Appointment Updated");
-
-}else{
-
-await addDoc(
-
-collection(
-db,
-"appointments"
-),
-
-appointment
-
-);
-
-alert("Appointment Saved");
-
-}
-
-editingAppointment = null;
-
-loadAppointments();
-
-closeModal();
-
-}
-
-async function rescheduleAppointment(
-appointmentId
-){
-
-const newDate =
-prompt(
-"Enter New Date (YYYY-MM-DD)"
-);
-
-if(!newDate) return;
-
-await updateDoc(
-
-doc(
-db,
-"appointments",
-appointmentId
-),
-
-{
-
-rescheduled:true,
-
-rescheduledDate:newDate,
-
-appointmentDate:newDate,
-
-status:"Rescheduled"
-
-}
-
-);
-
-alert(
-"Appointment Rescheduled"
-);
-
-loadAppointments();
-
-}
-
-async function cancelAppointment(
-appointmentId
-){
-
-await updateDoc(
-
-doc(
-db,
-"appointments",
-appointmentId
-),
-
-{
-
-cancelled:true,
-
-status:"Cancelled"
-
-}
-
-);
-
-alert(
-"Appointment Cancelled"
-);
-
-loadAppointments();
-
-}
+<script src="js/appointments.js"></script>
