@@ -394,55 +394,128 @@ Saved Successfully
 
 <script>
 
+async function loadPage(page){
+
+    document.getElementById("pageTitle").innerText =
+        page.charAt(0).toUpperCase() +
+        page.slice(1);
+
+    try{
+
+        const response =
+        await fetch(page + ".html");
+
+        const html =
+        await response.text();
+
+        document.getElementById(
+            "page-content"
+        ).innerHTML = html;
+
+        document
+        .querySelectorAll(".menu-item")
+        .forEach(item => {
+
+            item.classList.remove("active");
+
+            if(
+                item.innerText
+                .toLowerCase()
+                .includes(page)
+            ){
+                item.classList.add("active");
+            }
+
+        });
+
+    }catch(error){
+
+        console.error(error);
+
+        document.getElementById(
+            "page-content"
+        ).innerHTML =
+
+        `
+        <div class="card">
+
+            <h3 style="color:red">
+                Error Loading Page
+            </h3>
+
+            <p>
+                Could not load:
+                ${page}.html
+            </p>
+
+        </div>
+        `;
+
+    }
+
+}
+
 function showToast(message){
 
-const toast =
-document.getElementById("toast");
+    const toast =
+    document.getElementById("toast");
 
-toast.innerHTML = message;
+    toast.innerHTML =
+    message;
 
-toast.style.display = "block";
+    toast.style.display =
+    "block";
 
-setTimeout(()=>{
-toast.style.display="none";
-},3000);
+    setTimeout(()=>{
+
+        toast.style.display =
+        "none";
+
+    },3000);
 
 }
 
 function openModal(title,html){
 
-document.getElementById(
-"modalTitle"
-).innerHTML = title;
+    document.getElementById(
+        "modalTitle"
+    ).innerHTML = title;
 
-document.getElementById(
-"modalContent"
-).innerHTML = html;
+    document.getElementById(
+        "modalContent"
+    ).innerHTML = html;
 
-document.getElementById(
-"globalModal"
-).style.display="flex";
+    document.getElementById(
+        "globalModal"
+    ).style.display = "flex";
 
 }
 
 function closeModal(){
 
-document.getElementById(
-"globalModal"
-).style.display="none";
+    document.getElementById(
+        "globalModal"
+    ).style.display = "none";
 
 }
 
 function toggleMenu(){
 
-document.querySelector(
-".sidebar"
-).classList.toggle("show");
+    document.querySelector(
+        ".sidebar"
+    ).classList.toggle("show");
 
 }
 
-</script>
+document.addEventListener(
+"DOMContentLoaded",
+function(){
 
+    loadPage("dashboard");
+
+});
+
+</script>
 </body>
 
 </html>
