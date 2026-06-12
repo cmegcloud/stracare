@@ -13,10 +13,32 @@ async function savePatient() {
         const mobile =
         document.getElementById("patientMobile").value.trim();
 
-        if(!mobile){
-            alert("Enter Mobile Number");
-            return;
-        }
+if(!mobile){
+
+    alert("Enter Mobile Number");
+    return;
+
+}
+
+if(mobile.length !== 10){
+
+    alert(
+        "Mobile Number must be 10 digits"
+    );
+
+    return;
+
+}
+
+if(!/^[0-9]{10}$/.test(mobile)){
+
+    alert(
+        "Enter Valid Mobile Number"
+    );
+
+    return;
+
+}
 
         const patientData = {
 
