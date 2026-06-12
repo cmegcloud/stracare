@@ -5,11 +5,11 @@ async function saveAppointment() {
 const mobile =
 document.getElementById(
 "appointmentMobile"
-).value;
+).value.trim();
 
 const appointment = {
 
-mobile: mobile,
+mobile,
 
 patientName:
 document.getElementById(
@@ -41,21 +41,143 @@ document.getElementById(
 "bookedBy"
 ).value,
 
-status: "Pending",
+bookingSource:
+document.getElementById(
+"bookedBy"
+).value === "Patient"
+? "Website"
+: "Admin",
 
-consultedDoctor: "",
+status:"Pending",
+
+consultedDoctor:"",
+
+consultationFee:0,
+
+receivedAmount:0,
+
+balanceAmount:0,
+
+paymentStatus:"Pending",
+
+rescheduled:false,
+
+rescheduledDate:"",
+
+cancelled:false,
 
 createdAt:
 serverTimestamp()
 
 };
 
-await addDoc(
-collection(db,"appointments"),
+if(editingAppointment){
+
+await updateDoc(
+
+doc(
+db,
+"appointments",
+editingAppointment
+),
+
 appointment
+
+);
+
+alert("Appointment Updated");
+
+}else{
+
+await addDoc(
+
+collection(
+db,
+"appointments"
+),
+
+appointment
+
 );
 
 alert("Appointment Saved");
+
+}
+
+editingAppointment = null;
+
+loadAppointments();
+
+closeModal();
+
+}
+
+async function rescheduleAppointment(
+appointmentId
+){
+
+const newDate =
+prompt(
+"Enter New Date (YYYY-MM-DD)"
+);
+
+if(!newDate) return;
+
+await updateDoc(
+
+doc(
+db,
+"appointments",
+appointmentId
+),
+
+{
+
+rescheduled:true,
+
+rescheduledDate:newDate,
+
+appointmentDate:newDate,
+
+status:"Rescheduled"
+
+}
+
+);
+
+alert(
+"Appointment Rescheduled"
+);
+
+loadAppointments();
+
+}
+
+async function cancelAppointment(
+appointmentId
+){
+
+await updateDoc(
+
+doc(
+db,
+"appointments",
+appointmentId
+),
+
+{
+
+cancelled:true,
+
+status:"Cancelled"
+
+}
+
+);
+
+alert(
+"Appointment Cancelled"
+);
 
 loadAppointments();
 
