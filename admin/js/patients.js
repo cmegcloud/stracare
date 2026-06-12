@@ -4,8 +4,6 @@
 // ADD / UPDATE PATIENT
 // ===========================
 
-alert("Patients JS Loaded");
-
 async function savePatient() {
 
     try {
