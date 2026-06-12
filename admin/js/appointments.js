@@ -10,11 +10,20 @@ if(!table) return;
 table.innerHTML = "";
 
 const snapshot =
-await getDocs(
-collections.appointments
+await window.getDocs(
+window.collections.appointments
 );
 
 snapshot.forEach(docSnap=>{
+
+const a = docSnap.data();
+
+if(
+window.currentBranch !== "ALL" &&
+a.branchId !== window.currentBranch
+){
+return;
+}
 
 const a =
 docSnap.data();
@@ -137,6 +146,9 @@ document.getElementById(
 "patientName"
 ).value,
 
+  branchId:
+window.currentBranch || "ALL",
+
 appointmentDate:
 document.getElementById(
 "appointmentDate"
@@ -180,12 +192,12 @@ rescheduled:false,
 cancelled:false,
 
 createdAt:
-serverTimestamp()
+window.serverTimestamp()
 
 };
 
-await addDoc(
-collections.appointments,
+await window.addDoc(
+window.collections.appointments,
 appointment
 );
 
@@ -207,9 +219,9 @@ if(
 )
 )return;
 
-await deleteDoc(
-doc(
-db,
+await window.deleteDoc(
+window.doc(
+window.db,
 "appointments",
 id
 )
@@ -228,7 +240,7 @@ id,
 newDate
 ){
 
-await updateDoc(
+await window.updateDoc(
 
 doc(
 db,
@@ -255,3 +267,9 @@ showToast(
 loadAppointments();
 
 }
+
+window.loadAppointments = loadAppointments;
+window.openAppointmentForm = openAppointmentForm;
+window.saveAppointment = saveAppointment;
+window.deleteAppointment = deleteAppointment;
+window.rescheduleAppointment = rescheduleAppointment;
