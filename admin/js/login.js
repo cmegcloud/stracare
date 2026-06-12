@@ -20,12 +20,17 @@ document.getElementById(
 ).value.trim();
 
 const users =
+alert("Before Firestore");
+
+const users =
 await getDocs(
 collection(
 window.db,
 "users"
 )
 );
+
+alert("After Firestore");
 
 let validUser = null;
 
