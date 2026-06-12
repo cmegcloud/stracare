@@ -9,28 +9,20 @@ async function login(){
 
 alert("Login Clicked");
 
+try{
+
 const username =
-document.getElementById(
-"username"
-).value.trim();
+document.getElementById("username").value.trim();
 
 const password =
-document.getElementById(
-"password"
-).value.trim();
-
-const users =
-alert("Before Firestore");
+document.getElementById("password").value.trim();
 
 const users =
 await getDocs(
-collection(
-window.db,
-"users"
-)
+collection(window.db,"users")
 );
 
-alert("After Firestore");
+alert("Users Found : " + users.size);
 
 let validUser = null;
 
@@ -39,24 +31,18 @@ users.forEach(doc=>{
 const user = doc.data();
 
 if(
-
 user.username === username &&
 user.password === password &&
 user.active === true
-
 ){
-
 validUser = user;
-
 }
 
 });
 
 if(!validUser){
 
-alert(
-"Invalid Username or Password"
-);
+alert("Invalid Username or Password");
 
 return;
 
@@ -67,8 +53,16 @@ localStorage.setItem(
 JSON.stringify(validUser)
 );
 
-window.location.href =
-"index.html";
+alert("Login Success");
+
+window.location.href="index.html";
+
+}catch(err){
+
+alert(err.message);
+console.log(err);
+
+}
 
 }
 
