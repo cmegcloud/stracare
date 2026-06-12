@@ -223,14 +223,17 @@ function renderPatients() {
 
             <td>
 
-                <button
-                    onclick="openPatient('${patient.mobile}')">
+<button
+onclick="openPatient('${patient.mobile}')">
+Edit
+</button>
 
-                    Edit
+<button
+onclick="deletePatient('${patient.mobile}')">
+Delete
+</button>
 
-                </button>
-
-            </td>
+</td>
 
         </tr>
 
