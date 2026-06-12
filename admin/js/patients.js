@@ -8,8 +8,10 @@ alert("Patients JS Loaded");
 
 async function savePatient() {
 
-    const mobile =
-        document.getElementById("patientMobile").value.trim();
+alert("Save Button Clicked");
+
+const mobile =
+document.getElementById("patientMobile").value.trim();
 
     const patientData = {
 
