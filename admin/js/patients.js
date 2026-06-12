@@ -46,7 +46,9 @@ async function savePatient() {
 
     alert("Patient Saved");
 
-    loadPatients();
+await loadPatients();
+
+renderPatients();
 
 }
 
@@ -230,3 +232,16 @@ setTimeout(() => {
     renderPatients();
 
 }, 300);
+
+window.savePatient = savePatient;
+window.openPatient = openPatient;
+window.deletePatient = deletePatient;
+window.renderPatients = renderPatients;
+
+setTimeout(async () => {
+
+    await loadPatients();
+
+    renderPatients();
+
+}, 500);
