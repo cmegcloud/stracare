@@ -136,17 +136,45 @@ async function searchPatientByMobile(mobile) {
 // DELETE PATIENT
 // ===========================
 
-async function deletePatient(mobile) {
+async function deletePatient(mobile){
 
-    if (!confirm("Delete Patient?"))
+    if(
+        !confirm(
+            "Delete Patient?"
+        )
+    ){
         return;
+    }
 
-    await deleteDoc(
-        doc(db, "patients", mobile)
-    );
+    try{
 
-    await loadPatients();
-renderPatients();
+        await window.deleteDoc(
+
+            window.doc(
+                window.db,
+                "patients",
+                mobile
+            )
+
+        );
+
+        await window.loadPatients();
+
+        renderPatients();
+
+        showToast(
+            "Patient Deleted"
+        );
+
+    }
+    catch(error){
+
+        alert(
+            "ERROR : " +
+            error.message
+        );
+
+    }
 
 }
 
