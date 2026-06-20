@@ -261,41 +261,50 @@
             <div id="bottomnav-container"></div>
         </div>
     </div> <script>
-        // Define your users and their branch access
-        window.appUsers = {
-            "admin": { password: "adminPassword123", role: "admin", branch: "ALL" },
-            "userB1": { password: "passwordB1", role: "user", branch: "Branch 1" },
-            "userB2": { password: "passwordB2", role: "user", branch: "Branch 2" },
-            "userB3": { password: "passwordB3", role: "user", branch: "Branch 3" },
-            "userB4": { password: "passwordB4", role: "user", branch: "Branch 4" },
-            "userB5": { password: "passwordB5", role: "user", branch: "Branch 5" },
-            "userB6": { password: "passwordB6", role: "user", branch: "Branch 6" }
-        };
+    // Define your users and their branch access
+    window.appUsers = {
+        "admin": { password: "adminPassword123", role: "admin", branch: "ALL" },
+        "userB1": { password: "passwordB1", role: "user", branch: "Branch 1" },
+        "userB2": { password: "passwordB2", role: "user", branch: "Branch 2" },
+        "userB3": { password: "passwordB3", role: "user", branch: "Branch 3" },
+        "userB4": { password: "passwordB4", role: "user", branch: "Branch 4" },
+        "userB5": { password: "passwordB5", role: "user", branch: "Branch 5" },
+        "userB6": { password: "passwordB6", role: "user", branch: "Branch 6" }
+    };
 
-        window.currentUser = null;
+    window.currentUser = null;
 
-        window.handleLogin = function() {
-            const userVal = document.getElementById('loginUsername').value.trim();
-            const passVal = document.getElementById('loginPassword').value.trim();
-            const errDiv = document.getElementById('login-error');
+    window.handleLogin = function() {
+        const userVal = document.getElementById('loginUsername').value.trim();
+        const passVal = document.getElementById('loginPassword').value.trim();
+        const errDiv = document.getElementById('login-error');
 
-            if (window.appUsers[userVal] && window.appUsers[userVal].password === passVal) {
-                // Successful Login
-                window.currentUser = window.appUsers[userVal];
-                document.getElementById('login-container').style.display = 'none';
-                document.getElementById('app-container').style.display = 'flex';
-                
-                // Trigger dashboard data fetch with the new user context
-                if(window.fetchDashboardData) window.fetchDashboardData();
-                
-                // Restrict UI for non-admins
-                if(window.currentUser.role !== 'admin') {
-                    console.log("Logged in as standard user. Limited access applied.");
-                }
+        if (window.appUsers[userVal] && window.appUsers[userVal].password === passVal) {
+            // Successful Login
+            window.currentUser = window.appUsers[userVal];
+            document.getElementById('login-container').style.display = 'none';
+            document.getElementById('app-container').style.display = 'flex';
+            
+            // NEW: Update the Branch UI Text
+            const branchTextElement = document.getElementById('dash-branch-text');
+            if (window.currentUser.role === 'admin') {
+                branchTextElement.innerText = "Master Access (All Branches)";
+                branchTextElement.style.color = "var(--primary)";
             } else {
-                errDiv.style.display = 'block';
+                branchTextElement.innerText = window.currentUser.branch;
             }
-        };
+            
+            // Trigger dashboard data fetch with the new user context
+            if(window.fetchDashboardData) window.fetchDashboardData();
+            
+            // Restrict UI for non-admins
+            if(window.currentUser.role !== 'admin') {
+                console.log("Logged in as standard user. Limited access applied.");
+            }
+        } else {
+            errDiv.style.display = 'block';
+        }
+    };
 
         // Global UI State
         window.allApts = [];
