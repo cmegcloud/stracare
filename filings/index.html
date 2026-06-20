@@ -113,16 +113,34 @@
 </head>
 <body>
 
-    <div id="login-container" style="display: flex; height: 100vh; width: 100vw; align-items: center; justify-content: center; background: var(--bg); z-index: 9999; position: fixed; top: 0; left: 0;">
+    <!-- UPDATED: Login Screen -->
+    <div id="login-container" style="display: flex; flex-direction: column; height: 100vh; width: 100vw; align-items: center; justify-content: center; background: var(--bg); z-index: 9999; position: fixed; top: 0; left: 0; padding: 20px;">
         <div style="background: var(--surface); padding: 40px; border-radius: 16px; box-shadow: var(--shadow); border: 1px solid var(--border); width: 100%; max-width: 400px; text-align: center;">
-            <h2 style="color: var(--primary); margin-bottom: 24px;">Stra Care Login</h2>
-            <input type="text" id="loginUsername" placeholder="Username (e.g., admin, userB1)" style="width: 100%; padding: 12px; margin-bottom: 16px; border-radius: 8px; border: 1px solid var(--border); font-size: 14px;">
-            <input type="password" id="loginPassword" placeholder="Password" style="width: 100%; padding: 12px; margin-bottom: 24px; border-radius: 8px; border: 1px solid var(--border); font-size: 14px;">
-            <button onclick="window.handleLogin()" style="width: 100%; background: var(--primary); color: white; border: none; padding: 14px; border-radius: 8px; font-weight: bold; cursor: pointer; font-size: 14px;">Access Dashboard</button>
+            <h2 style="color: var(--text-main); margin-bottom: 24px; font-weight: 800; line-height: 1.3;">Welcome Back<br><span style="color: var(--primary); font-size: 18px;">Stra Care Administration</span></h2>
+            
+            <input type="text" id="loginUsername" placeholder="Username (e.g., admin, userB1)" style="width: 100%; padding: 14px; margin-bottom: 16px; border-radius: 8px; border: 1px solid var(--border); font-size: 14px; outline: none; background: #FAFAFA;">
+            
+            <div style="position: relative; margin-bottom: 16px;">
+                <input type="password" id="loginPassword" placeholder="Password" style="width: 100%; padding: 14px; border-radius: 8px; border: 1px solid var(--border); font-size: 14px; outline: none; padding-right: 40px; background: #FAFAFA;" onkeypress="if(event.key === 'Enter') window.handleLogin()">
+                <span class="material-symbols-rounded" onclick="window.togglePassword()" id="togglePassIcon" style="position: absolute; right: 12px; top: 50%; transform: translateY(-50%); color: var(--text-muted); cursor: pointer; user-select: none;">visibility_off</span>
+            </div>
+
+            <div style="display: flex; align-items: center; justify-content: flex-start; margin-bottom: 24px; gap: 8px;">
+                <input type="checkbox" id="rememberMe" style="width: 16px; height: 16px; cursor: pointer; accent-color: var(--primary);">
+                <label for="rememberMe" style="font-size: 13px; color: var(--text-muted); cursor: pointer; user-select: none; font-weight: 500;">Remember me on this browser</label>
+            </div>
+
+            <button onclick="window.handleLogin()" style="width: 100%; background: var(--primary); color: white; border: none; padding: 14px; border-radius: 8px; font-weight: bold; cursor: pointer; font-size: 14px; transition: opacity 0.2s;">Access Dashboard</button>
             <div id="login-error" style="color: var(--danger); margin-top: 16px; display: none; font-size: 13px;">Invalid credentials!</div>
+        </div>
+
+        <!-- NEW: Bottom Link Logo -->
+        <div style="margin-top: 40px; text-align: center;">
+            <img src="assets/name-bizze.png" alt="Powered by bizze" style="max-width: 120px; height: auto; opacity: 0.7;">
         </div>
     </div>
 
+    <!-- APP WRAPPER: Hidden by default -->
     <div id="app-container" style="display: none; height: 100vh; width: 100vw; overflow: hidden;">
         
         <div id="sidebar-container"></div>
@@ -139,18 +157,18 @@
                         <span id="dash-error-text">Database connection failed.</span>
                     </div>
 
-<h2 style="font-size: 22px; margin-bottom: 4px; font-weight: 700;">
-    <span style="color: var(--text-main);">Welcome,</span> 
-    <span style="color: var(--primary);">Stra Care</span>
-</h2>
+                    <h2 style="font-size: 22px; margin-bottom: 4px; font-weight: 700;">
+                        <span style="color: var(--text-main);">Welcome,</span> 
+                        <span style="color: var(--primary);">Stra Care</span>
+                    </h2>
 
-<!-- NEW: Dynamic Branch Display -->
-<h3 style="font-size: 15px; font-weight: 600; color: var(--secondary); margin-bottom: 8px; display: flex; align-items: center; gap: 6px;">
-    <span class="material-symbols-rounded" style="font-size: 18px;">storefront</span>
-    <span id="dash-branch-text">Loading...</span>
-</h3>
+                    <!-- Dynamic Branch Display -->
+                    <h3 style="font-size: 15px; font-weight: 600; color: var(--secondary); margin-bottom: 8px; display: flex; align-items: center; gap: 6px;">
+                        <span class="material-symbols-rounded" style="font-size: 18px;">storefront</span>
+                        <span id="dash-branch-text">Loading...</span>
+                    </h3>
 
-<p style="color: var(--text-muted); font-size: 13px; font-weight: 500; margin-bottom: 24px;">Clinic Administration Overview.</p>
+                    <p style="color: var(--text-muted); font-size: 13px; font-weight: 500; margin-bottom: 24px;">Clinic Administration Overview.</p>
                     
                     <div class="dash-top-row">
                         
@@ -242,6 +260,7 @@
 
                 </div>
 
+                <!-- Dynamic Module Containers -->
                 <div id="view-patients" class="view-section"></div>
                 <div id="view-appointments" class="view-section"></div>
                 <div id="view-transaction" class="view-section"></div>
@@ -260,51 +279,95 @@
             </main>
             <div id="bottomnav-container"></div>
         </div>
-    </div> <script>
-    // Define your users and their branch access
-    window.appUsers = {
-        "admin": { password: "adminPassword123", role: "admin", branch: "ALL" },
-        "userB1": { password: "passwordB1", role: "user", branch: "Branch 1" },
-        "userB2": { password: "passwordB2", role: "user", branch: "Branch 2" },
-        "userB3": { password: "passwordB3", role: "user", branch: "Branch 3" },
-        "userB4": { password: "passwordB4", role: "user", branch: "Branch 4" },
-        "userB5": { password: "passwordB5", role: "user", branch: "Branch 5" },
-        "userB6": { password: "passwordB6", role: "user", branch: "Branch 6" }
-    };
+    </div> 
+    
+    <script>
+        // Define your users and their branch access
+        window.appUsers = {
+            "admin": { password: "adminPassword123", role: "admin", branch: "ALL" },
+            "userB1": { password: "passwordB1", role: "user", branch: "Branch 1" },
+            "userB2": { password: "passwordB2", role: "user", branch: "Branch 2" },
+            "userB3": { password: "passwordB3", role: "user", branch: "Branch 3" },
+            "userB4": { password: "passwordB4", role: "user", branch: "Branch 4" },
+            "userB5": { password: "passwordB5", role: "user", branch: "Branch 5" },
+            "userB6": { password: "passwordB6", role: "user", branch: "Branch 6" }
+        };
 
-    window.currentUser = null;
+        window.currentUser = null;
 
-    window.handleLogin = function() {
-        const userVal = document.getElementById('loginUsername').value.trim();
-        const passVal = document.getElementById('loginPassword').value.trim();
-        const errDiv = document.getElementById('login-error');
-
-        if (window.appUsers[userVal] && window.appUsers[userVal].password === passVal) {
-            // Successful Login
-            window.currentUser = window.appUsers[userVal];
-            document.getElementById('login-container').style.display = 'none';
-            document.getElementById('app-container').style.display = 'flex';
-            
-            // NEW: Update the Branch UI Text
-            const branchTextElement = document.getElementById('dash-branch-text');
-            if (window.currentUser.role === 'admin') {
-                branchTextElement.innerText = "Master Access (All Branches)";
-                branchTextElement.style.color = "var(--primary)";
+        // Toggle Password Visibility
+        window.togglePassword = function() {
+            const passInput = document.getElementById('loginPassword');
+            const passIcon = document.getElementById('togglePassIcon');
+            if (passInput.type === 'password') {
+                passInput.type = 'text';
+                passIcon.innerText = 'visibility';
             } else {
-                branchTextElement.innerText = window.currentUser.branch;
+                passInput.type = 'password';
+                passIcon.innerText = 'visibility_off';
             }
-            
-            // Trigger dashboard data fetch with the new user context
-            if(window.fetchDashboardData) window.fetchDashboardData();
-            
-            // Restrict UI for non-admins
-            if(window.currentUser.role !== 'admin') {
-                console.log("Logged in as standard user. Limited access applied.");
+        };
+
+        window.handleLogin = function(isAutoLogin = false) {
+            const userVal = document.getElementById('loginUsername').value.trim();
+            const passVal = document.getElementById('loginPassword').value.trim();
+            const rememberMe = document.getElementById('rememberMe').checked;
+            const errDiv = document.getElementById('login-error');
+
+            if (window.appUsers[userVal] && window.appUsers[userVal].password === passVal) {
+                // Successful Login
+                window.currentUser = window.appUsers[userVal];
+                
+                // Handle "Remember Me" logic
+                if (rememberMe) {
+                    localStorage.setItem('straCareUser', userVal);
+                    localStorage.setItem('straCarePass', passVal);
+                    localStorage.setItem('straCareRemember', 'true');
+                } else if (!isAutoLogin) {
+                    localStorage.removeItem('straCareUser');
+                    localStorage.removeItem('straCarePass');
+                    localStorage.setItem('straCareRemember', 'false');
+                }
+
+                document.getElementById('login-container').style.display = 'none';
+                document.getElementById('app-container').style.display = 'flex';
+                
+                // Update the Branch UI Text
+                const branchTextElement = document.getElementById('dash-branch-text');
+                if (window.currentUser.role === 'admin') {
+                    branchTextElement.innerText = "Master Access (All Branches)";
+                    branchTextElement.style.color = "var(--primary)";
+                } else {
+                    branchTextElement.innerText = window.currentUser.branch;
+                }
+                
+                // Trigger dashboard data fetch with the new user context
+                if(window.fetchDashboardData) window.fetchDashboardData();
+                
+                // Restrict UI for non-admins
+                if(window.currentUser.role !== 'admin') {
+                    console.log("Logged in as standard user. Limited access applied.");
+                }
+            } else {
+                if (!isAutoLogin) {
+                    errDiv.style.display = 'block';
+                }
             }
-        } else {
-            errDiv.style.display = 'block';
-        }
-    };
+        };
+
+        // Check if user previously ticked "Remember Me"
+        window.checkAutoLogin = function() {
+            const storedUser = localStorage.getItem('straCareUser');
+            const storedPass = localStorage.getItem('straCarePass');
+            const rememberState = localStorage.getItem('straCareRemember');
+
+            if (rememberState === 'true' && storedUser && storedPass) {
+                document.getElementById('loginUsername').value = storedUser;
+                document.getElementById('loginPassword').value = storedPass;
+                document.getElementById('rememberMe').checked = true;
+                window.handleLogin(true); // Attempt auto-login silently
+            }
+        };
 
         // Global UI State
         window.allApts = [];
@@ -534,6 +597,9 @@
         };
 
         document.addEventListener('DOMContentLoaded', () => {
+            // Attempt to log in automatically if "Remember Me" was checked previously
+            window.checkAutoLogin();
+            
             window.loadComponent('header-container', 'header.html');
             window.loadComponent('sidebar-container', 'sidebar.html');
             window.loadComponent('bottomnav-container', 'bottomnav.html');
@@ -560,7 +626,6 @@
 
         // Fetch Dashboard Data from Firebase
         window.fetchDashboardData = async function() {
-            // SECURITY CHECK: Ensure someone is logged in before fetching
             if (!window.currentUser) return; 
 
             try {
@@ -632,9 +697,6 @@
                 }
             }
         };
-
-        // Notice we REMOVED the automatic call to window.fetchDashboardData() here.
-        // It will only be called after a successful login now.
     </script>
 </body>
 </html>
