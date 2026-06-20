@@ -84,10 +84,12 @@
         .cal-day.empty { pointer-events: none; }
 
         .dash-table-wrapper { background: var(--surface); border-radius: 16px; box-shadow: var(--shadow); border: 1px solid var(--border); overflow: hidden; width: 100%; margin-bottom: 40px; }
+        
+        /* Table Responsive handles Google Sheets style scrolling */
         .table-responsive { width: 100%; overflow-x: auto; -webkit-overflow-scrolling: touch; }
         .saas-table { width: 100%; min-width: 800px; border-collapse: collapse; text-align: left; }
         .saas-table th { padding: 14px 20px; font-size: 11px; font-weight: 700; color: var(--text-muted); text-transform: uppercase; background: #FAFAFA; border-bottom: 1px solid var(--border); letter-spacing: 0.5px;}
-        .saas-table td { padding: 16px 20px; font-size: 13px; font-weight: 500; border-bottom: 1px solid var(--border); color: var(--text-main); vertical-align: middle;}
+        .saas-table td { padding: 16px 20px; font-size: 13px; font-weight: 500; border-bottom: 1px solid var(--border); color: var(--text-main); vertical-align: middle; white-space: nowrap;}
         .saas-table tr:last-child td { border-bottom: none; }
 
         .badge { padding: 4px 10px; border-radius: 6px; font-size: 11px; font-weight: 700; text-transform: uppercase; display: inline-block; white-space: nowrap;}
@@ -98,22 +100,18 @@
 
         .dash-error { display: none; background: #FEF2F2; border: 1px solid #FCA5A5; color: var(--danger); padding: 12px; border-radius: 8px; font-size: 13px; font-weight: 600; margin-bottom: 20px; align-items: center; gap: 8px; }
 
+        /* FIXED MOBILE CSS: Removed the code that breaks tables into cards */
         @media (max-width: 768px) {
             #sidebar-container { position: fixed; z-index: 1000; transform: translateX(-100%); width: 280px; box-shadow: 5px 0 15px rgba(0,0,0,0.1); }
             #sidebar-container.open { transform: translateX(0); }
             #bottomnav-container { display: block; }
             #main-content { padding: 16px; padding-bottom: 100px; }
-            .saas-table thead { display: none; }
-            .saas-table, .saas-table tbody, .saas-table tr, .saas-table td { display: block; width: 100%; }
-            .saas-table tr { padding: 16px; border-bottom: 1px solid var(--border); }
-            .saas-table td { padding: 6px 0; border: none; display: flex; justify-content: space-between; align-items: center; }
-            .saas-table td::before { content: attr(data-label); font-size: 11px; color: var(--text-muted); font-weight: 700; text-transform: uppercase; }
         }
     </style>
 </head>
 <body>
 
-    <!-- UPDATED: Login Screen -->
+    <!-- Login Screen -->
     <div id="login-container" style="display: flex; flex-direction: column; height: 100vh; width: 100vw; align-items: center; justify-content: center; background: var(--bg); z-index: 9999; position: fixed; top: 0; left: 0; padding: 20px;">
         <div style="background: var(--surface); padding: 40px; border-radius: 16px; box-shadow: var(--shadow); border: 1px solid var(--border); width: 100%; max-width: 400px; text-align: center;">
             <h2 style="color: var(--text-main); margin-bottom: 24px; font-weight: 800; line-height: 1.3;">Welcome Back<br><span style="color: var(--primary); font-size: 18px;">Stra Care Administration</span></h2>
@@ -134,7 +132,6 @@
             <div id="login-error" style="color: var(--danger); margin-top: 16px; display: none; font-size: 13px;">Invalid credentials!</div>
         </div>
 
-        <!-- NEW: Bottom Link Logo -->
         <div style="margin-top: 40px; text-align: center;">
             <img src="assets/name-bizze.png" alt="Powered by bizze" style="max-width: 120px; height: auto; opacity: 0.7;">
         </div>
@@ -260,7 +257,6 @@
 
                 </div>
 
-                <!-- Dynamic Module Containers -->
                 <div id="view-patients" class="view-section"></div>
                 <div id="view-appointments" class="view-section"></div>
                 <div id="view-transaction" class="view-section"></div>
@@ -295,7 +291,6 @@
 
         window.currentUser = null;
 
-        // Toggle Password Visibility
         window.togglePassword = function() {
             const passInput = document.getElementById('loginPassword');
             const passIcon = document.getElementById('togglePassIcon');
@@ -315,10 +310,8 @@
             const errDiv = document.getElementById('login-error');
 
             if (window.appUsers[userVal] && window.appUsers[userVal].password === passVal) {
-                // Successful Login
                 window.currentUser = window.appUsers[userVal];
                 
-                // Handle "Remember Me" logic
                 if (rememberMe) {
                     localStorage.setItem('straCareUser', userVal);
                     localStorage.setItem('straCarePass', passVal);
@@ -332,7 +325,6 @@
                 document.getElementById('login-container').style.display = 'none';
                 document.getElementById('app-container').style.display = 'flex';
                 
-                // Update the Branch UI Text
                 const branchTextElement = document.getElementById('dash-branch-text');
                 if (window.currentUser.role === 'admin') {
                     branchTextElement.innerText = "Master Access (All Branches)";
@@ -341,13 +333,7 @@
                     branchTextElement.innerText = window.currentUser.branch;
                 }
                 
-                // Trigger dashboard data fetch with the new user context
                 if(window.fetchDashboardData) window.fetchDashboardData();
-                
-                // Restrict UI for non-admins
-                if(window.currentUser.role !== 'admin') {
-                    console.log("Logged in as standard user. Limited access applied.");
-                }
             } else {
                 if (!isAutoLogin) {
                     errDiv.style.display = 'block';
@@ -355,7 +341,22 @@
             }
         };
 
-        // Check if user previously ticked "Remember Me"
+        // NEW: Fixed Logout Function included in main script
+        window.handleLogout = function() {
+            window.currentUser = null; // Clear session
+            
+            // Un-check remember me and wipe local storage immediately
+            localStorage.removeItem('straCareUser');
+            localStorage.removeItem('straCarePass');
+            localStorage.setItem('straCareRemember', 'false');
+            document.getElementById('rememberMe').checked = false;
+
+            // Hide App and Show Login
+            document.getElementById('app-container').style.display = 'none';
+            document.getElementById('login-container').style.display = 'flex';
+            document.getElementById('loginPassword').value = ''; 
+        };
+
         window.checkAutoLogin = function() {
             const storedUser = localStorage.getItem('straCareUser');
             const storedPass = localStorage.getItem('straCarePass');
@@ -365,7 +366,7 @@
                 document.getElementById('loginUsername').value = storedUser;
                 document.getElementById('loginPassword').value = storedPass;
                 document.getElementById('rememberMe').checked = true;
-                window.handleLogin(true); // Attempt auto-login silently
+                window.handleLogin(true); 
             }
         };
 
@@ -597,9 +598,7 @@
         };
 
         document.addEventListener('DOMContentLoaded', () => {
-            // Attempt to log in automatically if "Remember Me" was checked previously
             window.checkAutoLogin();
-            
             window.loadComponent('header-container', 'header.html');
             window.loadComponent('sidebar-container', 'sidebar.html');
             window.loadComponent('bottomnav-container', 'bottomnav.html');
