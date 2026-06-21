@@ -1,0 +1,563 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no, viewport-fit=cover">
+    <title>CMBooks - Daily Attendance</title>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Material+Symbols+Rounded:opsz,wght,FILL,GRAD@24,400,1,0"/>
+</head>
+<body>
+
+<div class="module-container" id="attendance-module">
+    
+    <style>
+        :root {
+            --primary: #e16349;
+            --primary-light: #fef5e8;
+            --bg: #F8F5F1;
+            --surface: #ffffff;
+            --text-main: #0a0a0a;
+            --text-muted: #777777;
+            --border: #E8E5E1;
+            --grey-med: #D9D9D9;
+            --shadow-sm: 0 2px 8px rgba(0, 0, 0, 0.03);
+            --success: #10B981; 
+            --danger: #ef4444;
+            --warning: #FB923C;
+        }
+
+        #attendance-module { font-family: 'Inter', sans-serif; width: 100%; max-width: 1120px; }
+        #attendance-module .section-title { font-size: 18px; font-weight: 700; margin-bottom: 16px; color: var(--text-main); display: flex; justify-content: space-between; align-items: center; flex-wrap: wrap; gap: 12px;}
+        
+        #attendance-module .form-card { background: var(--surface); border-radius: 20px; padding: 24px; box-shadow: var(--shadow-sm); border: 1px solid var(--border); margin-bottom: 24px; position: relative; }
+        #attendance-module .form-label { display: block; font-size: 11px; font-weight: 600; color: var(--text-muted); text-transform: uppercase; margin-bottom: 6px; letter-spacing: 0.5px; }
+        
+        #attendance-module .input-group { display: grid; grid-template-columns: 1fr; gap: 16px; margin-bottom: 16px; }
+        @media (min-width: 768px) { #attendance-module .input-group { grid-template-columns: 1fr 1fr; } }
+        @media (min-width: 1024px) { #attendance-module .input-group.three-cols { grid-template-columns: 1fr 1fr 1fr; } }
+
+        #attendance-module .form-input { width: 100%; padding: 14px 16px; border-radius: 12px; border: 1px solid var(--border); font-size: 14px; color: var(--text-main); background: #FAFAFA; outline: none; transition: border 0.2s; appearance: auto; }
+        #attendance-module .form-input:focus { border-color: var(--primary); background: var(--surface); }
+
+        #attendance-module .btn-primary { background: var(--primary); color: white; border: none; padding: 12px 24px; border-radius: 10px; font-size: 14px; font-weight: 600; cursor: pointer; transition: opacity 0.2s; display: inline-flex; align-items: center; gap: 6px;}
+        #attendance-module .btn-primary:active { opacity: 0.8; }
+        #attendance-module .btn-primary:disabled { background: var(--grey-med); cursor: not-allowed; }
+        #attendance-module .btn-outline { background: var(--surface); color: var(--text-main); border: 1px solid var(--border); padding: 10px 16px; border-radius: 10px; font-size: 13px; font-weight: 600; cursor: pointer; display: inline-flex; align-items: center; gap: 6px; }
+
+        /* Google Sheet Style Horizontal Scroll Table */
+        #attendance-module .table-container { background: var(--surface); border-radius: 20px; box-shadow: var(--shadow-sm); border: 1px solid var(--border); overflow: hidden; margin-bottom: 24px; }
+        #attendance-module .table-header { padding: 16px 20px; border-bottom: 1px solid var(--border); display: flex; flex-direction: column; gap: 16px; }
+        #attendance-module .table-responsive { width: 100%; overflow-x: auto; -webkit-overflow-scrolling: touch; }
+        #attendance-module .saas-table { width: 100%; min-width: 800px; border-collapse: collapse; text-align: left; }
+        #attendance-module .saas-table th { padding: 12px 20px; font-size: 12px; font-weight: 600; color: var(--text-muted); text-transform: uppercase; background: #FAFAFA; border-bottom: 1px solid var(--border); white-space: nowrap; }
+        #attendance-module .saas-table td { padding: 16px 20px; font-size: 14px; font-weight: 500; border-bottom: 1px solid var(--border); vertical-align: middle; white-space: nowrap; }
+        
+        /* Status Badges */
+        .badge { padding: 6px 12px; border-radius: 8px; font-size: 12px; font-weight: 700; text-transform: uppercase; display: inline-block; }
+        .badge-present { background: rgba(16, 185, 129, 0.1); color: var(--success); }
+        .badge-absent { background: rgba(239, 68, 68, 0.1); color: var(--danger); }
+        .badge-leave { background: rgba(251, 146, 60, 0.1); color: var(--warning); }
+
+        /* Summary Dashboard */
+        .summary-dashboard { display: flex; gap: 12px; flex-wrap: wrap; background: #FAFAFA; padding: 12px; border-radius: 12px; border: 1px solid var(--border); }
+        .summary-card { flex: 1; min-width: 120px; padding: 12px; border-radius: 8px; background: var(--surface); border: 1px solid var(--border); display: flex; flex-direction: column; align-items: center; justify-content: center; }
+        .summary-card span { font-size: 11px; font-weight: 600; color: var(--text-muted); text-transform: uppercase; margin-bottom: 4px; }
+        .summary-card strong { font-size: 20px; font-weight: 800; color: var(--text-main); }
+        .summary-card.present strong { color: var(--success); }
+        .summary-card.absent strong { color: var(--danger); }
+
+        @media print {
+            body { background: white; padding: 0; }
+            #sidebar-container, #header-container, #bottomnav-container, .form-card, .section-title, .no-print { display: none !important; }
+            .main-wrapper { flex: 1; display: block; overflow: visible; }
+            #main-content { padding: 0; overflow: visible; }
+            #attendance-module .table-container { box-shadow: none; border: none; margin: 0; }
+            #attendance-module .saas-table th { background: white; color: black; border-bottom: 1px solid #000; }
+            #attendance-module .saas-table td { border-bottom: 1px solid #E8E5E1; }
+        }
+    </style>
+
+    <div class="section-title">
+        <h2 style="margin: 0;">Daily Attendance Entry</h2>
+    </div>
+
+    <div class="form-card no-print">
+        <form id="attendance-form" onsubmit="event.preventDefault();">
+            <input type="hidden" id="attDocId" value="">
+
+            <div class="input-group three-cols">
+                <div>
+                    <label class="form-label">Date *</label>
+                    <input type="date" id="attDate" class="form-input" required>
+                </div>
+                <div>
+                    <label class="form-label">Select Staff / Therapist *</label>
+                    <select id="attEmployee" class="form-input" onchange="window.handleEmployeeSelect()" required>
+                        <option value="">Loading Directory...</option>
+                    </select>
+                </div>
+                <div>
+                    <label class="form-label">Branch *</label>
+                    <select id="attBranch" class="form-input" required>
+                        <option value="">Select Branch</option>
+                    </select>
+                </div>
+            </div>
+
+            <div class="input-group three-cols">
+                <div>
+                    <label class="form-label">Attendance Status *</label>
+                    <select id="attStatus" class="form-input" required>
+                        <option value="Present">Present</option>
+                        <option value="Absent">Absent</option>
+                        <option value="Leave">On Leave</option>
+                        <option value="Half-Day">Half-Day</option>
+                    </select>
+                </div>
+                <div style="grid-column: span 2;">
+                    <label class="form-label">Notes / Reason</label>
+                    <input type="text" id="attNotes" class="form-input" placeholder="Any specific remarks or reason for absence...">
+                </div>
+            </div>
+
+            <div style="text-align: right; margin-top: 16px;">
+                <button type="button" class="btn-outline" style="margin-right: 12px; padding: 12px 24px;" onclick="window.resetAttForm()">Clear Form</button>
+                <button type="button" class="btn-primary" id="saveAttBtn" onclick="window.saveAttendance()">
+                    <span class="material-symbols-rounded" style="font-size: 18px;">how_to_reg</span> Save Attendance
+                </button>
+            </div>
+        </form>
+    </div>
+
+    <div class="table-container">
+        <div class="table-header">
+            
+            <div style="display: flex; justify-content: space-between; align-items: center; width: 100%;">
+                <h4 style="margin: 0;">Attendance Log</h4>
+                <div style="display: flex; gap: 8px;">
+                    <button class="btn-outline no-print" onclick="window.exportAttCSV()" style="padding: 6px 12px; font-size: 12px;">
+                        <span class="material-symbols-rounded" style="font-size: 14px; color: var(--success);">description</span> CSV
+                    </button>
+                    <button class="btn-outline no-print" onclick="window.print()" style="padding: 6px 12px; font-size: 12px;">
+                        <span class="material-symbols-rounded" style="font-size: 14px; color: var(--primary);">picture_as_pdf</span> PDF
+                    </button>
+                </div>
+            </div>
+
+            <div class="summary-dashboard" id="summaryDashboard">
+                <div class="summary-card">
+                    <span>Total Logs</span>
+                    <strong id="countTotal">0</strong>
+                </div>
+                <div class="summary-card present">
+                    <span>Present / Half-Day</span>
+                    <strong id="countPresent">0</strong>
+                </div>
+                <div class="summary-card absent">
+                    <span>Absent / Leave</span>
+                    <strong id="countAbsent">0</strong>
+                </div>
+            </div>
+
+            <div class="no-print" style="display: flex; flex-wrap: wrap; gap: 10px; align-items: center; background: #fff; width: 100%;">
+                <input type="date" id="filterAttDate" class="form-input" onchange="window.filterAttTable()" style="padding: 8px; font-size: 12px; width: auto;" title="Filter by Date">
+                <button class="btn-outline" onclick="window.setAttFilterToday()" style="padding: 8px 12px; font-size: 12px;">Today</button>
+                
+                <select id="filterAttBranch" class="form-input" onchange="window.filterAttTable()" style="padding: 8px; font-size: 12px; width: auto;">
+                    <option value="">All Branches</option>
+                </select>
+
+                <select id="filterAttStatus" class="form-input" onchange="window.filterAttTable()" style="padding: 8px; font-size: 12px; width: auto;">
+                    <option value="">All Statuses</option>
+                    <option value="present">Present</option>
+                    <option value="absent">Absent</option>
+                    <option value="leave">On Leave</option>
+                    <option value="half-day">Half-Day</option>
+                </select>
+
+                <div style="display: flex; align-items: center; border: 1px solid var(--border); border-radius: 8px; padding: 4px 8px; flex: 1; min-width: 150px;">
+                    <span class="material-symbols-rounded" style="font-size: 16px; color: var(--text-muted);">search</span>
+                    <input type="text" id="attSearchInput" onkeyup="window.filterAttTable()" placeholder="Search Employee..." style="border: none; background: transparent; outline: none; font-size: 12px; width: 100%; margin-left: 6px;">
+                </div>
+                
+                <button class="btn-outline" onclick="window.clearAttFilters()" style="padding: 8px; font-size: 12px;" title="Clear Filters">
+                    <span class="material-symbols-rounded" style="font-size: 16px;">close</span>
+                </button>
+            </div>
+        </div>
+
+        <div class="table-responsive">
+            <table class="saas-table" id="attendanceTable">
+                <thead>
+                    <tr>
+                        <th>Date</th>
+                        <th>Employee Details</th>
+                        <th>Branch</th>
+                        <th>Status</th>
+                        <th>Notes</th>
+                        <th class="no-print" style="text-align: right;">Actions</th>
+                    </tr>
+                </thead>
+                <tbody id="attTableBody">
+                </tbody>
+            </table>
+        </div>
+    </div>
+
+    <script type="module">
+        import { initializeApp } from "https://www.gstatic.com/firebasejs/10.8.1/firebase-app.js";
+        import { getFirestore, collection, addDoc, getDocs, updateDoc, deleteDoc, doc, query, where, orderBy } from "https://www.gstatic.com/firebasejs/10.8.1/firebase-firestore.js";
+
+        // CMF001STRA Config
+        const firebaseConfig = {
+            apiKey: "AIzaSyAcO1L2Za7dzILxylmMkRTSx0FBVu_EEoM",
+            authDomain: "cmf001stra.firebaseapp.com",
+            projectId: "cmf001stra",
+            storageBucket: "cmf001stra.firebasestorage.app",
+            messagingSenderId: "763958641347",
+            appId: "1:763958641347:web:316876bc2340b26bd21876",
+            measurementId: "G-770FBR88LJ"
+        };
+
+        const app = initializeApp(firebaseConfig);
+        const db = getFirestore(app);
+        
+        window.attDataCache = {};
+        let allEmployees = [];
+
+        // Set Default Date to Today (Fixed Array format logic)
+        const todayString = new Date().toISOString().split('T')[0];
+        document.getElementById("attDate").value = todayString;
+        document.getElementById("filterAttDate").value = todayString;
+
+        // --- 1. LOAD DROPDOWNS (WITH RBAC) ---
+        window.loadDropdowns = async function() {
+            try {
+                // 1A. Load Branches (Restrict if Branch User)
+                const branchSelect = document.getElementById('attBranch');
+                const filterBranchSelect = document.getElementById('filterAttBranch');
+                
+                if (window.currentUser && window.currentUser.role !== 'admin') {
+                    const userBranch = window.currentUser.branch;
+                    branchSelect.innerHTML = `<option value="${userBranch}">${userBranch}</option>`;
+                    filterBranchSelect.innerHTML = `<option value="${userBranch}">${userBranch}</option>`;
+                    branchSelect.style.pointerEvents = 'none';
+                    branchSelect.style.background = 'var(--grey-med)';
+                } else {
+                    const bSnap = await getDocs(query(collection(db, "branches"), orderBy("name")));
+                    let bHtml = '<option value="">Select Branch</option>';
+                    let fHtml = '<option value="">All Branches</option>';
+                    bSnap.forEach(doc => {
+                        const bName = doc.data().name;
+                        bHtml += `<option value="${bName}">${bName}</option>`;
+                        fHtml += `<option value="${bName}">${bName}</option>`;
+                    });
+                    branchSelect.innerHTML = bHtml;
+                    filterBranchSelect.innerHTML = fHtml;
+                }
+
+                // 1B. Load Employees (Filter by Branch User)
+                allEmployees = [];
+                let tQuery = collection(db, "therapists");
+                let sQuery = collection(db, "staff");
+                
+                if (window.currentUser && window.currentUser.role !== 'admin') {
+                    tQuery = query(collection(db, "therapists"), where("branch", "==", window.currentUser.branch));
+                    sQuery = query(collection(db, "staff"), where("branch", "==", window.currentUser.branch));
+                }
+
+                const tSnap = await getDocs(tQuery);
+                tSnap.forEach(doc => allEmployees.push({ id: doc.id, name: doc.data().name, type: 'Therapist', branch: doc.data().branch }));
+                
+                const sSnap = await getDocs(sQuery);
+                sSnap.forEach(doc => allEmployees.push({ id: doc.id, name: doc.data().name, type: 'Staff', branch: doc.data().branch }));
+                
+                allEmployees.sort((a, b) => a.name.localeCompare(b.name));
+
+                let empHtml = '<option value="">Select Employee</option>';
+                allEmployees.forEach(emp => {
+                    empHtml += `<option value="${emp.id}" data-name="${emp.name}" data-type="${emp.type}" data-branch="${emp.branch}">${emp.name} (${emp.type})</option>`;
+                });
+                document.getElementById('attEmployee').innerHTML = empHtml;
+
+            } catch(e) { console.error("Error loading dropdowns:", e); }
+        };
+
+        window.loadDropdowns();
+
+        window.handleEmployeeSelect = function() {
+            const select = document.getElementById('attEmployee');
+            const selectedOption = select.options[select.selectedIndex];
+            // Only autofill if the user is an admin, otherwise branch is already locked
+            if(selectedOption && selectedOption.value && (!window.currentUser || window.currentUser.role === 'admin')) {
+                const empBranch = selectedOption.getAttribute('data-branch');
+                if(empBranch) document.getElementById('attBranch').value = empBranch;
+            }
+        };
+
+        // --- 2. LOAD ATTENDANCE LOG (WITH RBAC) ---
+        window.loadAttendanceLog = async function() {
+            const tableBody = document.getElementById('attTableBody');
+            tableBody.innerHTML = '<tr><td colspan="6" style="text-align:center; padding: 20px;">Loading records...</td></tr>';
+
+            try {
+                let q;
+                if (window.currentUser && window.currentUser.role !== 'admin') {
+                    q = query(collection(db, "daily_attendance"), where("branch", "==", window.currentUser.branch));
+                } else {
+                    q = collection(db, "daily_attendance");
+                }
+                
+                const querySnapshot = await getDocs(q);
+                
+                tableBody.innerHTML = ''; 
+                window.attDataCache = {};
+                
+                if (querySnapshot.empty) {
+                    tableBody.innerHTML = '<tr><td colspan="6" style="text-align:center; padding: 20px; color: var(--text-muted);">No attendance records found.</td></tr>';
+                    window.calculateTotals();
+                    return;
+                }
+
+                // Client-side sort to avoid index errors
+                let attList = [];
+                querySnapshot.forEach(docSnap => attList.push({ id: docSnap.id, data: docSnap.data() }));
+                attList.sort((a, b) => new Date(b.data.date || 0) - new Date(a.data.date || 0));
+
+                attList.forEach((item) => {
+                    const data = item.data;
+                    const docId = item.id;
+                    window.attDataCache[docId] = data;
+
+                    let badgeClass = 'badge-present';
+                    if (data.status === 'Absent') badgeClass = 'badge-absent';
+                    else if (data.status === 'Leave' || data.status === 'Half-Day') badgeClass = 'badge-leave';
+
+                    const tr = document.createElement('tr');
+                    tr.setAttribute("data-date", data.date);
+                    tr.setAttribute("data-branch", (data.branch || '').toLowerCase());
+                    tr.setAttribute("data-status", data.status.toLowerCase());
+                    tr.setAttribute("data-search", `${data.empName} ${data.empType}`.toLowerCase());
+
+                    tr.innerHTML = `
+                        <td data-label="Date"><strong>${data.date}</strong></td>
+                        <td data-label="Employee">
+                            <strong style="font-size: 15px;">${data.empName}</strong><br>
+                            <span style="font-size: 12px; color: var(--text-muted);">${data.empType}</span>
+                        </td>
+                        <td data-label="Branch">${data.branch || '--'}</td>
+                        <td data-label="Status"><span class="badge ${badgeClass}">${data.status}</span></td>
+                        <td data-label="Notes"><span style="font-size: 13px; color: var(--text-muted);">${data.notes || '--'}</span></td>
+                        <td class="no-print" data-label="Actions" style="text-align: right;">
+                            <span class="material-symbols-rounded" style="color: var(--text-muted); cursor: pointer; font-size: 20px; margin-right: 8px;" title="Edit" onclick="window.editAtt('${docId}')">edit</span>
+                            <span class="material-symbols-rounded" style="color: var(--danger); cursor: pointer; font-size: 20px;" title="Delete" onclick="window.deleteAtt('${docId}')">delete</span>
+                        </td>
+                    `;
+                    tableBody.appendChild(tr);
+                });
+                
+                window.filterAttTable();
+
+            } catch (error) {
+                console.error("Firebase Read Error:", error);
+                tableBody.innerHTML = '<tr><td colspan="6" style="text-align:center; padding: 20px; color: var(--danger);">Error loading data. Check Firestore rules.</td></tr>';
+            }
+        };
+
+        setTimeout(() => window.loadAttendanceLog(), 500);
+
+        // --- 3. DYNAMIC FILTERING & COUNT CALCULATION ---
+        window.filterAttTable = function() {
+            const dateQuery = document.getElementById("filterAttDate").value;
+            const branchQuery = document.getElementById("filterAttBranch").value.toLowerCase();
+            const statusQuery = document.getElementById("filterAttStatus").value.toLowerCase();
+            const textQuery = document.getElementById("attSearchInput").value.toLowerCase();
+            
+            const trs = document.getElementById("attTableBody").getElementsByTagName("tr");
+
+            for (let i = 0; i < trs.length; i++) {
+                if (trs[i].cells.length === 1) continue; 
+                
+                const rowDate = trs[i].getAttribute("data-date");
+                const rowBranch = trs[i].getAttribute("data-branch");
+                const rowStatus = trs[i].getAttribute("data-status");
+                const rowSearch = trs[i].getAttribute("data-search");
+
+                let show = true;
+                if (dateQuery && rowDate !== dateQuery) show = false;
+                if (branchQuery && rowBranch !== branchQuery) show = false;
+                if (statusQuery && rowStatus !== statusQuery) show = false;
+                if (textQuery && rowSearch.indexOf(textQuery) === -1) show = false;
+
+                trs[i].style.display = show ? "" : "none";
+            }
+            
+            window.calculateTotals();
+        }
+
+        window.calculateTotals = function() {
+            const trs = document.getElementById("attTableBody").getElementsByTagName("tr");
+            let total = 0, present = 0, absent = 0;
+
+            for (let i = 0; i < trs.length; i++) {
+                if (trs[i].style.display !== "none" && trs[i].cells.length > 1) {
+                    total++;
+                    const status = trs[i].getAttribute("data-status");
+                    if (status === 'present' || status === 'half-day') present++;
+                    if (status === 'absent' || status === 'leave') absent++;
+                }
+            }
+
+            document.getElementById('countTotal').innerText = total;
+            document.getElementById('countPresent').innerText = present;
+            document.getElementById('countAbsent').innerText = absent;
+        }
+
+        window.setAttFilterToday = function() {
+            document.getElementById("filterAttDate").value = new Date().toISOString().split('T')[0];
+            window.filterAttTable();
+        }
+
+        window.clearAttFilters = function() {
+            document.getElementById("filterAttDate").value = "";
+            if (window.currentUser && window.currentUser.role === 'admin') {
+                document.getElementById("filterAttBranch").value = "";
+            }
+            document.getElementById("filterAttStatus").value = "";
+            document.getElementById("attSearchInput").value = "";
+            window.filterAttTable();
+        }
+
+        // --- 4. CRUD OPERATIONS ---
+        window.saveAttendance = async function() {
+            const saveBtn = document.getElementById('saveAttBtn');
+            const docId = document.getElementById('attDocId').value;
+            
+            const date = document.getElementById('attDate').value;
+            const selectEmp = document.getElementById('attEmployee');
+            const empId = selectEmp.value;
+            const branch = document.getElementById('attBranch').value;
+            const status = document.getElementById('attStatus').value;
+            const notes = document.getElementById('attNotes').value;
+
+            if(!date || !empId || !branch || !status) {
+                return alert("Date, Employee, Branch, and Status are required!");
+            }
+
+            const empName = selectEmp.options[selectEmp.selectedIndex].getAttribute('data-name');
+            const empType = selectEmp.options[selectEmp.selectedIndex].getAttribute('data-type');
+
+            saveBtn.innerHTML = 'Saving...';
+            saveBtn.disabled = true;
+
+            const payload = {
+                date: date,
+                empId: empId,
+                empName: empName,
+                empType: empType,
+                branch: branch,
+                status: status,
+                notes: notes,
+                updatedAt: new Date()
+            };
+
+            try {
+                if(docId) {
+                    await updateDoc(doc(db, "daily_attendance", docId), payload);
+                    alert("Attendance record updated!");
+                } else {
+                    payload.createdAt = new Date();
+                    await addDoc(collection(db, "daily_attendance"), payload);
+                    alert("Attendance logged successfully!");
+                }
+
+                window.resetAttForm();
+                window.loadAttendanceLog(); 
+
+            } catch (error) {
+                console.error("Firebase Save Error:", error);
+                alert("Failed to save. Check database rules.");
+            }
+
+            saveBtn.innerHTML = '<span class="material-symbols-rounded" style="font-size: 18px;">how_to_reg</span> Save Attendance';
+            saveBtn.disabled = false;
+        }
+
+        window.editAtt = function(docId) {
+            const data = window.attDataCache[docId];
+            if(!data) return;
+
+            document.getElementById('attDocId').value = docId;
+            document.getElementById('attDate').value = data.date;
+            document.getElementById('attEmployee').value = data.empId;
+            document.getElementById('attBranch').value = data.branch;
+            document.getElementById('attStatus').value = data.status;
+            document.getElementById('attNotes').value = data.notes || '';
+
+            document.getElementById('saveAttBtn').innerHTML = '<span class="material-symbols-rounded" style="font-size: 18px;">update</span> Update Record';
+            
+            const mainContent = document.getElementById('main-content');
+            if(mainContent) mainContent.scrollTo({ top: 0, behavior: 'smooth' });
+            else window.scrollTo({ top: 0, behavior: 'smooth' });
+        }
+
+        window.deleteAtt = async function(docId) {
+            if(confirm("Are you sure you want to delete this attendance record?")) {
+                try {
+                    await deleteDoc(doc(db, "daily_attendance", docId));
+                    window.loadAttendanceLog();
+                } catch(e) {
+                    alert("Error deleting record.");
+                }
+            }
+        }
+
+        window.resetAttForm = function() {
+            document.getElementById('attendance-form').reset();
+            document.getElementById('attDocId').value = '';
+            document.getElementById('attDate').value = new Date().toISOString().split('T')[0];
+            document.getElementById('saveAttBtn').innerHTML = '<span class="material-symbols-rounded" style="font-size: 18px;">how_to_reg</span> Save Attendance';
+            
+            // Re-lock branch for standard users
+            if (window.currentUser && window.currentUser.role !== 'admin') {
+                document.getElementById('attBranch').value = window.currentUser.branch;
+            }
+        }
+
+        // --- 5. CSV EXPORT ---
+        window.exportAttCSV = function() {
+            const table = document.getElementById("attendanceTable");
+            let csvData = [];
+            
+            for (let i = 0; i < table.rows.length; i++) {
+                if (table.rows[i].style.display === "none") continue; // only export visible
+                
+                let rowData = [];
+                let cols = table.rows[i].querySelectorAll("td, th");
+                
+                // Skip the 'Actions' column (last column)
+                let colCount = i === 0 ? cols.length - 1 : cols.length - 1; 
+
+                for (let j = 0; j < colCount; j++) {
+                    let text = cols[j].innerText.replace(/(\r\n|\n|\r)/gm, " | ").trim();
+                    rowData.push('"' + text + '"');
+                }
+                csvData.push(rowData.join(","));
+            }
+            
+            let csvContent = "data:text/csv;charset=utf-8," + csvData.join("\n");
+            let encodedUri = encodeURI(csvContent);
+            let link = document.createElement("a");
+            link.setAttribute("href", encodedUri);
+            link.setAttribute("download", `Attendance_Log.csv`);
+            document.body.appendChild(link);
+            link.click();
+            document.body.removeChild(link);
+        }
+
+    </script>
+</div>
+
+</body>
+</html>
