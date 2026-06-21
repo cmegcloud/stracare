@@ -35,6 +35,31 @@
             justify-content: space-between;
             position: relative;
             margin-bottom: 24px;
+            overflow: hidden; /* Contains the watermark */
+        }
+
+        /* --- Center Watermark --- */
+        #letterhead-module .watermark {
+            position: absolute;
+            top: 50%;
+            left: 50%;
+            transform: translate(-50%, -50%);
+            width: 60%; /* Scales dynamically with the page */
+            max-width: 400px;
+            height: auto;
+            opacity: 0.08; /* Low opacity */
+            pointer-events: none; /* Prevents it from blocking clicks on the text area */
+            z-index: 0;
+        }
+
+        /* Elevate content above watermark */
+        #letterhead-module .letter-header,
+        #letterhead-module .meta-group,
+        #letterhead-module .letter-body,
+        #letterhead-module .footer-section,
+        #letterhead-module .a4-footer {
+            position: relative;
+            z-index: 1;
         }
 
         /* --- Header --- */
@@ -49,7 +74,7 @@
         }
         #letterhead-module .logo-img { max-width: 130px; height: auto; }
         #letterhead-module .company-info { text-align: right; font-size: 11px; color: var(--text-muted); line-height: 1.5; }
-        #letterhead-module .comp-title { font-size: 22px; font-weight: 800; color: var(--primary); text-transform: uppercase; letter-spacing: -0.5px; }
+        #letterhead-module .comp-title-img { max-width: 180px; height: auto; display: inline-block; margin-bottom: 4px; }
 
         #letterhead-module .branch-bar {
             font-size: 9px;
@@ -88,6 +113,7 @@
             width: 100%; height: 100%; min-height: 200px; 
             border: none; outline: none; resize: none; 
             font-size: 13px; line-height: 1.7; color: #111; 
+            background: transparent; /* Essential for watermark visibility */
         }
 
         /* --- Sign-off & Seal --- */
@@ -153,10 +179,14 @@
 
     <div class="a4-canvas">
         
+        <!-- NEW: Background Watermark Logo -->
+        <img src="assets/logo.png" class="watermark" alt="">
+        
         <div class="letter-header">
             <img src="assets/logo-company.png" class="logo-img" alt="Company Logo">
             <div class="company-info">
-                <div class="comp-title">STRA CARE</div>
+                <!-- NEW: Horizontal Text Logo -->
+                <img src="assets/name.png" class="comp-title-img" alt="STRA CARE">
                 <div style="font-weight: 500;">Rebuild Your Health</div>
                 <div style="margin-top: 4px; font-size: 10px;"><strong>Web:</strong> www.stracares.in | <strong>Email:</strong> info@stracares.in</div>
                 <div style="font-size: 10px;"><strong>Ph:</strong> +91 97449 02555 | +91 90612 07871</div>
@@ -206,7 +236,7 @@
     </div>
 
     <script>
-        // Set dynamic date to current context (June 21, 2026)
+        // Set dynamic date to current context
         document.getElementById("letterDate").value = new Date().toISOString().split('T')[0];
 
         window.generateSeal = function() {
