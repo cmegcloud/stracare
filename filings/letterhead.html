@@ -17,6 +17,7 @@
             --text-muted: #777777;
             --border: #CCCCCC;
             --bg-light: #FAFAFA;
+            --stamp-green: #007B5E; /* Authentic Rubber Stamp Green */
         }
 
         #letterhead-module { font-family: 'Inter', sans-serif; display: flex; flex-direction: column; align-items: center; width: 100%; max-width: 1120px;}
@@ -56,8 +57,7 @@
         #letterhead-module .letter-header,
         #letterhead-module .meta-group,
         #letterhead-module .letter-body,
-        #letterhead-module .footer-section,
-        #letterhead-module .a4-footer {
+        #letterhead-module .footer-section {
             position: relative;
             z-index: 1;
         }
@@ -103,7 +103,7 @@
             padding: 4px 0; 
             color: #111; 
             background: transparent;
-            appearance: auto;
+            font-family: inherit;
         }
         #letterhead-module .meta-input:focus { border-bottom-color: var(--primary); }
 
@@ -114,44 +114,50 @@
             border: none; outline: none; resize: none; 
             font-size: 13px; line-height: 1.7; color: #111; 
             background: transparent; /* Essential for watermark visibility */
+            font-family: inherit;
         }
 
         /* --- Sign-off & Seal --- */
-        #letterhead-module .footer-section { display: flex; justify-content: space-between; align-items: flex-end; gap: 16px; }
+        #letterhead-module .footer-section { display: flex; justify-content: space-between; align-items: flex-end; gap: 16px; min-height: 100px; }
         #letterhead-module .sign-block { font-size: 13px; color: var(--text-muted); line-height: 1.6; font-weight: 500; }
         
-        #letterhead-module .seal-trigger { 
-            padding: 10px 16px; background: var(--bg-light); color: var(--text-main); 
-            border: 1px solid var(--border); border-radius: 8px; cursor: pointer; 
-            font-size: 12px; font-weight: 600; 
+        /* --- Seal Integration Styles --- */
+        #letterhead-module .seal-control-wrapper { display: flex; flex-direction: column; align-items: flex-end; gap: 12px; }
+        
+        #letterhead-module .seal-box-company {
+            width: 63.5mm;
+            height: 25.4mm;
+            border: 2px solid var(--stamp-green);
+            border-radius: 4px;
+            background: transparent;
+            color: var(--stamp-green);
+            position: relative;
+            overflow: hidden;
+            font-family: "Times New Roman", serif;
+            display: none;
         }
-        #letterhead-module .seal-trigger:hover { background: #F0F0F0; }
+        #letterhead-module .seal-box-company .seal-name { text-align: center; font-size: 18px; font-weight: 900; letter-spacing: 1.5px; text-transform: uppercase; margin-top: 4mm; line-height: 1; }
+        #letterhead-module .seal-box-company .signature-line { position: absolute; left: 5mm; right: 5mm; bottom: 8mm; border-top: 1.5px solid var(--stamp-green); }
+        #letterhead-module .seal-box-company .seal-role { position: absolute; right: 5mm; bottom: 2.5mm; font-size: 9px; font-weight: 700; text-transform: uppercase; letter-spacing: 0.8px; color: var(--stamp-green); }
 
-        /* 2.5" x 1" Horizontal Seal Block (60mm x 24mm) */
-        #letterhead-module .seal-placement { 
-            width: 60mm; height: 24mm; 
-            border: 2px dashed var(--primary); border-radius: 8px; 
-            background: rgba(205, 92, 72, 0.03);
-            display: none; flex-direction: column; align-items: center; justify-content: center; 
-            gap: 4px; color: var(--primary); font-weight: 700; font-size: 11px; 
-            text-transform: uppercase; letter-spacing: 0.5px; text-align: center; padding: 4px; 
+        #letterhead-module .seal-box-doctor {
+            display: none;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            color: var(--stamp-green);
+            font-family: "Arial", "Helvetica", sans-serif;
+            text-align: center;
+            line-height: 1.4;
         }
-
-        /* --- Footer (25% smaller, 50% opacity) --- */
-        #letterhead-module .a4-footer { 
-            font-size: 9.75px; opacity: 0.5; color: var(--text-main); 
-            text-align: center; margin-top: 24px; border-top: 1px solid var(--border); padding-top: 12px; 
-        }
+        #letterhead-module .seal-box-doctor .doc-name { font-size: 17px; font-weight: 800; letter-spacing: 0.5px; }
+        #letterhead-module .seal-box-doctor .doc-qual { font-size: 15px; font-weight: 700; }
+        #letterhead-module .seal-box-doctor .doc-reg { font-size: 14px; font-weight: 700; margin-top: 2px; }
+        #letterhead-module .seal-box-doctor .doc-role { font-size: 14px; font-weight: 700; margin-top: 2px; }
 
         /* --- Screen Control Action --- */
-        #letterhead-module .print-ctrl { 
-            width: 100%; max-width: 800px; text-align: right; margin-bottom: 24px; 
-        }
-        #letterhead-module .print-btn { 
-            padding: 12px 32px; background: var(--primary); color: white; 
-            border: none; border-radius: 10px; font-weight: 600; cursor: pointer; 
-            font-size: 13px; box-shadow: 0 2px 4px rgba(0,0,0,0.1); 
-        }
+        #letterhead-module .print-ctrl { width: 100%; max-width: 800px; text-align: right; margin-bottom: 24px; }
+        #letterhead-module .print-btn { padding: 12px 32px; background: var(--primary); color: white; border: none; border-radius: 10px; font-weight: 600; cursor: pointer; font-size: 13px; box-shadow: 0 2px 4px rgba(0,0,0,0.1); }
         #letterhead-module .print-btn:hover { opacity: 0.9; }
 
         /* --- Strict Print Media Queries --- */
@@ -165,11 +171,14 @@
 
         @media print {
             body { background: #FFF !important; padding: 0 !important; display: block !important; }
-            #sidebar-container, #header-container, #bottomnav-container, .no-print, .seal-trigger { display: none !important; }
+            #sidebar-container, #header-container, #bottomnav-container, .no-print { display: none !important; }
             .main-wrapper { flex: 1; display: block; overflow: visible; }
             #main-content { padding: 0; overflow: visible; }
             #letterhead-module .a4-canvas { box-shadow: none !important; border: none !important; border-radius: 0 !important; padding: 0 !important; max-width: none !important; min-height: auto !important; height: auto !important; }
             #letterhead-module .meta-input { border-bottom: none !important; }
+            
+            /* Print colors accurately for the seal */
+            #letterhead-module .seal-box-company, #letterhead-module .seal-box-doctor { -webkit-print-color-adjust: exact; print-color-adjust: exact; }
         }
     </style>
 
@@ -179,15 +188,14 @@
 
     <div class="a4-canvas">
         
-        <!-- NEW: Background Watermark Logo -->
+        <!-- Background Watermark Logo -->
         <img src="assets/logo.png" class="watermark" alt="">
         
         <div class="letter-header">
             <img src="assets/logo-company.png" class="logo-img" alt="Company Logo">
             <div class="company-info">
-                <!-- NEW: Horizontal Text Logo -->
+                <!-- Horizontal Text Logo -->
                 <img src="assets/name.png" class="comp-title-img" alt="STRA CARE">
-                <div style="font-weight: 500;">Rebuild Your Health</div>
                 <div style="margin-top: 4px; font-size: 10px;"><strong>Web:</strong> www.stracares.in | <strong>Email:</strong> info@stracares.in</div>
                 <div style="font-size: 10px;"><strong>Ph:</strong> +91 97449 02555 | +91 90612 07871</div>
                 <div class="branch-bar">
@@ -199,7 +207,8 @@
         <div class="meta-group">
             <div class="meta-row">
                 <div class="meta-label">Date:*</div>
-                <input type="date" class="meta-input" id="letterDate" required>
+                <!-- Changed to text input to handle custom DD MMM YYYY format smoothly -->
+                <input type="text" class="meta-input" id="letterDate" required>
             </div>
             <div class="meta-row">
                 <div class="meta-label">To:*</div>
@@ -217,34 +226,56 @@
 
         <div class="footer-section">
             <div class="sign-block">
-                Sincerely,<br><br>
-                <strong>Administration Officer</strong><br>
+                Sincerely,<br><br><br>
+                <strong>Administration</strong><br>
                 STRA CARE
             </div>
             
-            <button type="button" class="seal-trigger no-print" id="btn-seal" onclick="window.generateSeal()">Generate Seal</button>
-            <div class="seal-placement" id="company-seal">
-                <span class="material-symbols-rounded" style="font-size: 16px;">verified_user</span>
-                DIGITAL SEAL <br>STRA CARE
+            <div class="seal-control-wrapper">
+                <!-- Seal Selection Dropdown (Hidden on Print) -->
+                <div class="no-print">
+                    <select onchange="window.toggleLetterheadSeal(this.value)" style="padding: 6px; border-radius: 6px; border: 1px solid var(--border); font-size: 11px; outline: none; cursor: pointer; color: var(--text-main);">
+                        <option value="none">No Seal</option>
+                        <option value="company">Company Seal</option>
+                        <option value="doctor">Doctor's Seal</option>
+                    </select>
+                </div>
+
+                <!-- SEAL 1: COMPANY -->
+                <div class="seal-box-company" id="lh-seal-company">
+                    <div class="seal-name">FOR STRA CARE</div>
+                    <div class="signature-line"></div>
+                    <div class="seal-role">Managing Partner</div>
+                </div>
+
+                <!-- SEAL 2: DOCTOR -->
+                <div class="seal-box-doctor" id="lh-seal-doctor">
+                    <div class="doc-name">Dr. THEJASWI M.K (PT)</div>
+                    <div class="doc-qual">BPT, MPT (Ortho)</div>
+                    <div class="doc-reg">MIAP Reg No. L.43616</div>
+                    <div class="doc-role">CEO, STRA CARE</div>
+                </div>
             </div>
         </div>
-
-        <div class="a4-footer">
-            Generated on <a href="https://books.cmfilings.com" target="_blank" style="color: var(--primary); text-decoration: none; font-weight: 600;">https://books.cmfilings.com</a>
-        </div>
-
     </div>
 
     <script>
-        // Set dynamic date to current context
-        document.getElementById("letterDate").value = new Date().toISOString().split('T')[0];
+        // 1. Set dynamic date to custom format (e.g. 11 Aug 2026)
+        const d = new Date();
+        const months = ["Jan", "Feb", "Mar", "Apr", "May", "Jun", "Jul", "Aug", "Sep", "Oct", "Nov", "Dec"];
+        const formattedDate = `${String(d.getDate()).padStart(2, '0')} ${months[d.getMonth()]} ${d.getFullYear()}`;
+        document.getElementById("letterDate").value = formattedDate;
 
-        window.generateSeal = function() {
-            const seal = document.getElementById('company-seal');
-            const btn = document.getElementById('btn-seal');
-            
-            seal.style.display = 'flex';
-            btn.style.display = 'none';
+        // 2. Logic to toggle the seals
+        window.toggleLetterheadSeal = function(sealType) {
+            document.getElementById('lh-seal-company').style.display = 'none';
+            document.getElementById('lh-seal-doctor').style.display = 'none';
+
+            if (sealType === 'company') {
+                document.getElementById('lh-seal-company').style.display = 'block';
+            } else if (sealType === 'doctor') {
+                document.getElementById('lh-seal-doctor').style.display = 'flex';
+            }
         }
     </script>
 </div>
