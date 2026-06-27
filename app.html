@@ -1,0 +1,577 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+    <title>STRA CARE - Booking App</title>
+    
+    <!-- Google Fonts -->
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Outfit:wght@300;400;500;600;700&family=Sora:wght@400;600;700&display=swap" rel="stylesheet">
+    
+    <!-- FontAwesome & Lucide Icons -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css"/>
+    <script src="https://unpkg.com/lucide@latest"></script>
+
+    <style>
+        :root {
+            /* Corporate Light Theme */
+            --bg-color: #F4F7F9;
+            --surface-color: #FFFFFF;
+            --text-main: #0B1121;
+            --text-muted: #64748B;
+            --primary-color: #0F766E;
+            --primary-hover: #0D9488;
+            --primary-light: #F0FDFA;
+            --border-color: #E2E8F0;
+            --nav-bg: rgba(255, 255, 255, 0.95);
+            --shadow: 0 4px 20px rgba(15, 118, 110, 0.06);
+            --shadow-strong: 0 8px 30px rgba(15, 118, 110, 0.15);
+            --glass-border: rgba(0, 0, 0, 0.05);
+        }
+
+        [data-theme="dark"] {
+            /* Corporate Dark Theme */
+            --bg-color: #0B1121;
+            --surface-color: #151E32;
+            --text-main: #F8FAFC;
+            --text-muted: #94A3B8;
+            --primary-color: #14B8A6;
+            --primary-hover: #0D9488;
+            --primary-light: rgba(20, 184, 166, 0.1);
+            --border-color: rgba(255, 255, 255, 0.08);
+            --nav-bg: rgba(21, 30, 50, 0.95);
+            --shadow: 0 4px 20px rgba(0, 0, 0, 0.4);
+            --shadow-strong: 0 8px 30px rgba(0, 0, 0, 0.6);
+            --glass-border: rgba(255, 255, 255, 0.05);
+        }
+
+        * {
+            margin: 0; padding: 0; box-sizing: border-box;
+            -webkit-tap-highlight-color: transparent;
+        }
+
+        body {
+            font-family: 'Outfit', sans-serif;
+            background-color: var(--bg-color);
+            color: var(--text-main);
+            transition: background-color 0.4s ease, color 0.4s ease;
+            overflow-x: hidden;
+        }
+
+        h1, h2, h3, h4, h5 { font-family: 'Sora', sans-serif; }
+
+        /* Animations */
+        @keyframes slideUp {
+            from { opacity: 0; transform: translateY(20px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+        .animate-slide-up { animation: slideUp 0.6s cubic-bezier(0.16, 1, 0.3, 1) forwards; opacity: 0; }
+        .delay-50 { animation-delay: 0.05s; }
+        .delay-100 { animation-delay: 0.1s; }
+        .delay-150 { animation-delay: 0.15s; }
+        
+        /* App Container */
+        .app-container {
+            max-width: 480px; margin: 0 auto; min-height: 100vh;
+            background-color: var(--bg-color); position: relative;
+            box-shadow: 0 0 40px rgba(0,0,0,0.1); display: flex; flex-direction: column;
+        }
+
+        /* Header */
+        .header {
+            position: sticky; top: 0;
+            background: var(--nav-bg); backdrop-filter: blur(16px); -webkit-backdrop-filter: blur(16px);
+            padding: 16px 20px; display: flex; justify-content: space-between; align-items: center;
+            z-index: 100; border-bottom: 1px solid var(--glass-border);
+        }
+
+        .header-left { display: flex; align-items: center; gap: 16px; }
+
+        .icon-btn {
+            background: var(--surface-color); border: 1px solid var(--border-color);
+            width: 42px; height: 42px; border-radius: 12px;
+            display: flex; align-items: center; justify-content: center;
+            color: var(--text-main); cursor: pointer;
+            box-shadow: 0 2px 8px rgba(0,0,0,0.02); transition: 0.3s ease;
+        }
+        .icon-btn:active { transform: scale(0.92); }
+
+        .brand img.logo { height: 32px; width: auto; object-fit: contain; }
+        .brand img.name { height: 18px; width: auto; margin-left: 6px; }
+        [data-theme="dark"] .brand img.name { filter: brightness(0) invert(1); }
+
+        /* Main Content */
+        .main-content { flex: 1; padding: 16px 20px 120px; }
+
+        .welcome-msg { margin-bottom: 24px; padding-top: 8px; }
+        .welcome-msg h1 { font-size: 24px; font-weight: 700; color: var(--text-main); letter-spacing: -0.5px; margin-bottom: 6px; }
+        .welcome-msg p { font-size: 14px; color: var(--text-muted); font-weight: 400; line-height: 1.5; }
+
+        .section-header { margin: 24px 0 16px; }
+        .section-header h2 { font-size: 18px; font-weight: 700; }
+
+        /* Services Grid */
+        .services-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 14px; }
+        
+        .service-card {
+            background: var(--surface-color); border-radius: 16px; overflow: hidden;
+            box-shadow: var(--shadow); border: 1px solid var(--border-color);
+            text-decoration: none; display: flex; flex-direction: column;
+            transition: transform 0.2s ease, box-shadow 0.2s ease;
+        }
+        .service-card:active { transform: scale(0.97); }
+
+        .service-photo { width: 100%; height: 110px; background-color: var(--primary-light); overflow: hidden; }
+        .service-photo img { width: 100%; height: 100%; object-fit: cover; transition: transform 0.5s ease; }
+        .service-card:hover .service-photo img { transform: scale(1.08); }
+
+        .service-info { padding: 12px; display: flex; align-items: center; justify-content: space-between; }
+        .service-info h3 { font-size: 13px; font-weight: 600; color: var(--text-main); font-family: 'Outfit'; }
+        .service-info i { font-size: 12px; color: var(--text-muted); }
+
+        /* Corporate Branches Modal View */
+        .branch-modal {
+            position: fixed; top: 0; left: 0; right: 0; bottom: 0;
+            margin: auto; max-width: 480px; background: var(--bg-color);
+            z-index: 1000; transform: translateY(100%);
+            transition: transform 0.4s cubic-bezier(0.16, 1, 0.3, 1);
+            display: flex; flex-direction: column;
+        }
+        .branch-modal.active { transform: translateY(0); }
+        
+        .modal-header {
+            padding: 20px; background: var(--surface-color);
+            display: flex; align-items: center; justify-content: space-between;
+            border-bottom: 1px solid var(--border-color);
+        }
+        .modal-header h2 { font-size: 18px; color: var(--text-main); display: flex; align-items: center; gap: 8px; }
+        
+        .modal-body {
+            padding: 20px; overflow-y: auto; flex: 1;
+            display: flex; flex-direction: column; gap: 16px;
+            padding-bottom: 120px;
+        }
+
+        /* Branch Corporate Cards */
+        .branch-card {
+            background: var(--surface-color); border: 1px solid var(--border-color);
+            border-radius: 20px; padding: 20px; box-shadow: var(--shadow);
+        }
+        .branch-card.premium { border: 1px solid var(--primary-color); background: var(--primary-light); }
+        
+        .branch-header { display: flex; align-items: flex-start; gap: 14px; margin-bottom: 16px; }
+        .branch-icon {
+            width: 48px; height: 48px; border-radius: 14px;
+            background: var(--bg-color); border: 1px solid var(--border-color);
+            display: flex; align-items: center; justify-content: center;
+            color: var(--primary-color); flex-shrink: 0;
+        }
+        .branch-card.premium .branch-icon { background: var(--primary-color); color: white; }
+        
+        .branch-card-info h3 { font-size: 16px; font-weight: 700; color: var(--text-main); margin-bottom: 4px; }
+        .branch-card-info p { font-size: 13px; color: var(--text-muted); font-family: 'Outfit'; }
+
+        .branch-actions {
+            display: grid; grid-template-columns: 1fr 1fr 1fr; gap: 10px;
+            border-top: 1px dashed var(--border-color); padding-top: 16px;
+        }
+        .b-btn {
+            display: flex; flex-direction: column; align-items: center; justify-content: center;
+            gap: 6px; padding: 10px 0; border-radius: 12px; font-size: 11px;
+            font-weight: 600; text-decoration: none; transition: 0.2s;
+        }
+        .b-btn i { font-size: 18px; margin-bottom: 2px; }
+        .b-btn.call { background: rgba(15, 118, 110, 0.08); color: var(--primary-color); }
+        .b-btn.wa { background: rgba(37, 211, 102, 0.1); color: #1EBE5D; }
+        .b-btn.map { background: rgba(66, 133, 244, 0.08); color: #4285F4; }
+
+        /* Modern Centered Bottom Navigation */
+        .bottom-nav {
+            position: fixed; bottom: 0; left: 0; right: 0; margin: auto; max-width: 480px;
+            background: var(--nav-bg); backdrop-filter: blur(20px); -webkit-backdrop-filter: blur(20px);
+            border-top: 1px solid var(--glass-border); border-radius: 24px 24px 0 0;
+            box-shadow: 0 -10px 30px rgba(0,0,0,0.04);
+            display: flex; justify-content: space-between; align-items: flex-end;
+            padding: 0 12px 20px; z-index: 900; height: 75px;
+        }
+        
+        .nav-item {
+            flex: 1; display: flex; flex-direction: column; align-items: center;
+            gap: 6px; color: var(--text-muted); text-decoration: none;
+            font-size: 11px; font-weight: 500; transition: color 0.3s;
+            padding-bottom: 8px;
+        }
+        .nav-item i.lucide { width: 22px; height: 22px; transition: transform 0.3s; }
+        
+        .nav-item.active { color: var(--primary-color); }
+        .nav-item.active i.lucide { transform: translateY(-3px); color: var(--primary-color); }
+
+        /* Centered FAB (Home) */
+        .nav-fab-wrapper {
+            position: relative; top: -20px; display: flex; flex-direction: column; align-items: center;
+        }
+        .nav-fab {
+            width: 62px; height: 62px; border-radius: 50%;
+            background: linear-gradient(135deg, var(--primary-color), var(--primary-hover));
+            color: white; display: flex; align-items: center; justify-content: center;
+            box-shadow: var(--shadow-strong);
+            border: 5px solid var(--bg-color); /* Cutout effect matching background */
+            transition: transform 0.2s ease;
+            text-decoration: none;
+        }
+        .nav-fab:active { transform: scale(0.94); }
+        .nav-fab i.lucide { width: 26px; height: 26px; }
+
+        /* Sidebar Menu */
+        .sidebar-overlay {
+            position: fixed; top: 0; left: 0; width: 100%; height: 100%;
+            background-color: rgba(11, 17, 33, 0.6); backdrop-filter: blur(4px);
+            z-index: 999; opacity: 0; visibility: hidden; transition: 0.3s ease;
+        }
+        .sidebar {
+            position: fixed; top: 0; left: -320px; width: 300px; height: 100%;
+            background-color: var(--surface-color); z-index: 1000;
+            box-shadow: 4px 0 24px rgba(0,0,0,0.15); transition: 0.4s cubic-bezier(0.16, 1, 0.3, 1);
+            display: flex; flex-direction: column;
+        }
+        .sidebar.active { left: 0; }
+        .sidebar-overlay.active { opacity: 1; visibility: visible; }
+
+        .sidebar-header {
+            padding: 24px 20px; border-bottom: 1px solid var(--border-color);
+            display: flex; justify-content: space-between; align-items: center; background: var(--primary-light);
+        }
+        .sidebar-menu { list-style: none; padding: 12px 0; overflow-y: auto; }
+        .sidebar-menu li a, .sidebar-menu li button {
+            display: flex; align-items: center; padding: 16px 24px;
+            color: var(--text-main); text-decoration: none; font-size: 15px;
+            font-weight: 500; gap: 16px; transition: background 0.2s;
+            width: 100%; border: none; background: transparent; text-align: left; font-family: 'Outfit';
+            cursor: pointer;
+        }
+        .sidebar-menu li a:active, .sidebar-menu li button:active { background-color: var(--bg-color); }
+        .sidebar-menu i.icon-main { width: 22px; height: 22px; color: var(--primary-color); opacity: 0.8; }
+        
+    </style>
+</head>
+<body>
+
+<div class="app-container">
+
+    <!-- Header -->
+    <header class="header">
+        <div class="header-left">
+            <button class="icon-btn" onclick="toggleSidebar()">
+                <i data-lucide="menu"></i>
+            </button>
+            <div class="brand flex items-center">
+                <img src="assets/logomain.png" alt="Logo" class="logo" onerror="this.style.display='none'">
+                <img src="assets/name1.png" alt="Stra Care" class="name" onerror="this.outerHTML='<h2 style=\'color:var(--primary-color); margin-left:8px; font-size:16px;\'>STRA CARE</h2>'">
+            </div>
+        </div>
+        <button class="icon-btn theme-toggle" onclick="toggleTheme()">
+            <i data-lucide="moon" id="theme-icon"></i>
+        </button>
+    </header>
+
+    <!-- Main Content -->
+    <main class="main-content">
+        
+        <!-- Welcome Message -->
+        <div class="welcome-msg animate-slide-up">
+            <h1>Good Health Awaits.</h1>
+            <p>Book your advanced physiotherapy session today with STRA CARE.</p>
+        </div>
+        
+        <div class="section-header animate-slide-up delay-50">
+            <h2>Our Specialized Care</h2>
+        </div>
+        
+        <!-- Corporate Services Photo Grid -->
+        <div class="services-grid">
+            
+            <a href="#service1" class="service-card animate-slide-up delay-50">
+                <div class="service-photo">
+                    <img src="photos/1.png" alt="Disc Prolapse" onerror="this.src='https://placehold.co/400x300/0F766E/FFF?text=Disc+Prolapse'">
+                </div>
+                <div class="service-info">
+                    <h3>Disc Prolapse</h3>
+                    <i data-lucide="chevron-right"></i>
+                </div>
+            </a>
+
+            <a href="#service2" class="service-card animate-slide-up delay-100">
+                <div class="service-photo">
+                    <img src="photos/2.jpg" alt="Low Back Ache" onerror="this.src='https://placehold.co/400x300/0F766E/FFF?text=Back+Ache'">
+                </div>
+                <div class="service-info">
+                    <h3>Low Back Ache</h3>
+                    <i data-lucide="chevron-right"></i>
+                </div>
+            </a>
+
+            <a href="#service3" class="service-card animate-slide-up delay-100">
+                <div class="service-photo">
+                    <img src="photos/3.jpg" alt="Cervical Pain" onerror="this.src='https://placehold.co/400x300/0F766E/FFF?text=Cervical'">
+                </div>
+                <div class="service-info">
+                    <h3>Cervical Pain</h3>
+                    <i data-lucide="chevron-right"></i>
+                </div>
+            </a>
+
+            <a href="#service4" class="service-card animate-slide-up delay-150">
+                <div class="service-photo">
+                    <img src="photos/4.jpg" alt="Knee Arthritis" onerror="this.src='https://placehold.co/400x300/0F766E/FFF?text=Knee+Pain'">
+                </div>
+                <div class="service-info">
+                    <h3>Knee Arthritis</h3>
+                    <i data-lucide="chevron-right"></i>
+                </div>
+            </a>
+
+            <a href="#service8" class="service-card animate-slide-up delay-150">
+                <div class="service-photo">
+                    <img src="photos/8.jpg" alt="Sports Injuries" onerror="this.src='https://placehold.co/400x300/0F766E/FFF?text=Sports'">
+                </div>
+                <div class="service-info">
+                    <h3>Sports Injuries</h3>
+                    <i data-lucide="chevron-right"></i>
+                </div>
+            </a>
+
+            <a href="#home-care" class="service-card animate-slide-up delay-150">
+                <div class="service-photo">
+                    <img src="photos/home.jpg" alt="Home Care" onerror="this.src='https://placehold.co/400x300/0F766E/FFF?text=Home+Care'">
+                </div>
+                <div class="service-info">
+                    <h3>Home Care</h3>
+                    <i data-lucide="chevron-right"></i>
+                </div>
+            </a>
+
+        </div>
+    </main>
+
+    <!-- Modern Centered Bottom Navigation -->
+    <nav class="bottom-nav">
+        <!-- Left Side -->
+        <a href="#appointment" class="nav-item" onclick="setActiveNav(this)">
+            <i data-lucide="calendar-plus"></i>
+            <span>Book</span>
+        </a>
+        <a href="#payment" class="nav-item" onclick="setActiveNav(this)">
+            <i data-lucide="credit-card"></i>
+            <span>Pay</span>
+        </a>
+        
+        <!-- Center Floating Action Button (Home/Health) -->
+        <div class="nav-fab-wrapper">
+            <a href="#home" class="nav-fab" onclick="closeModals(); setActiveNav(document.getElementById('nav-dummy-home'))">
+                <i data-lucide="heart-pulse"></i>
+            </a>
+            <!-- Dummy hidden item just to track active state visually if needed -->
+            <span id="nav-dummy-home" class="nav-item active" style="display:none;"></span>
+        </div>
+        
+        <!-- Right Side -->
+        <a href="javascript:void(0)" class="nav-item" onclick="toggleBranchModal(); setActiveNav(this)">
+            <i data-lucide="map-pin"></i>
+            <span>Branches</span>
+        </a>
+        <a href="tel:+919744902555" class="nav-item">
+            <i data-lucide="phone-call"></i>
+            <span>Call</span>
+        </a>
+    </nav>
+
+</div>
+
+<!-- Sidebar Menu -->
+<div class="sidebar-overlay" onclick="toggleSidebar()"></div>
+<div class="sidebar">
+    <div class="sidebar-header">
+        <h2 style="color: var(--primary-color); font-size: 18px; font-family: 'Sora', sans-serif;">Menu</h2>
+        <button class="icon-btn" onclick="toggleSidebar()" style="background: transparent; border: none; box-shadow: none;">
+            <i data-lucide="x"></i>
+        </button>
+    </div>
+    
+    <ul class="sidebar-menu">
+        <li><a href="#appointment" onclick="toggleSidebar()"><i data-lucide="calendar" class="icon-main"></i> Appointment</a></li>
+        <li><a href="#pay" onclick="toggleSidebar()"><i data-lucide="credit-card" class="icon-main"></i> Pay Online</a></li>
+        <li><a href="#services" onclick="toggleSidebar()"><i data-lucide="stethoscope" class="icon-main"></i> Services</a></li>
+        
+        <!-- Opens the Cardwise Branch Modal -->
+        <li>
+            <button onclick="toggleSidebar(); toggleBranchModal();">
+                <i data-lucide="building-2" class="icon-main"></i> Clinic Branches
+            </button>
+        </li>
+        
+        <li><a href="#review" onclick="toggleSidebar()"><i data-lucide="star" class="icon-main"></i> Google Review</a></li>
+        <li><a href="#privacy" onclick="toggleSidebar()"><i data-lucide="shield-check" class="icon-main"></i> Privacy & Policy</a></li>
+        <li><a href="#info" onclick="toggleSidebar()"><i data-lucide="info" class="icon-main"></i> App Info</a></li>
+    </ul>
+</div>
+
+<!-- Cardwise Branch Modal Overlay -->
+<div class="branch-modal" id="branch-modal">
+    <div class="modal-header">
+        <h2><i data-lucide="map"></i> Our Branches</h2>
+        <button class="icon-btn" onclick="toggleBranchModal()">
+            <i data-lucide="x"></i>
+        </button>
+    </div>
+    <div class="modal-body">
+        
+        <!-- Home Care Premium Card -->
+        <div class="branch-card premium">
+            <div class="branch-header">
+                <div class="branch-icon"><i data-lucide="home"></i></div>
+                <div class="branch-card-info">
+                    <h3>Home Care Service</h3>
+                    <p>Physiotherapy at your location</p>
+                </div>
+            </div>
+            <div class="branch-actions">
+                <a href="tel:+919744902555" class="b-btn call"><i data-lucide="phone"></i> Call</a>
+                <a href="https://wa.me/919744902555" target="_blank" class="b-btn wa"><i class="fa-brands fa-whatsapp"></i> Chat</a>
+                <a href="#appointment" onclick="toggleBranchModal()" class="b-btn map"><i data-lucide="calendar"></i> Book</a>
+            </div>
+        </div>
+
+        <!-- Mahe -->
+        <div class="branch-card">
+            <div class="branch-header">
+                <div class="branch-icon"><i data-lucide="map-pin"></i></div>
+                <div class="branch-card-info">
+                    <h3>Mahe Branch</h3>
+                    <p>Azhiyur, Kerala</p>
+                </div>
+            </div>
+            <div class="branch-actions">
+                <a href="tel:+919744902555" class="b-btn call"><i data-lucide="phone"></i> Call</a>
+                <a href="https://wa.me/919744902555" target="_blank" class="b-btn wa"><i class="fa-brands fa-whatsapp"></i> Chat</a>
+                <a href="https://maps.app.goo.gl/Ewr3Pk43cDduLNr28?g_st=aw" target="_blank" class="b-btn map"><i data-lucide="navigation"></i> Map</a>
+            </div>
+        </div>
+
+        <!-- Chokli -->
+        <div class="branch-card">
+            <div class="branch-header">
+                <div class="branch-icon"><i data-lucide="map-pin"></i></div>
+                <div class="branch-card-info">
+                    <h3>Chokli Branch</h3>
+                    <p>Pallikuni, Kerala</p>
+                </div>
+            </div>
+            <div class="branch-actions">
+                <a href="tel:+919744902555" class="b-btn call"><i data-lucide="phone"></i> Call</a>
+                <a href="https://wa.me/919744902555" target="_blank" class="b-btn wa"><i class="fa-brands fa-whatsapp"></i> Chat</a>
+                <a href="https://maps.app.goo.gl/Q5bnNawJc1zDLeuy8?g_st=aw" target="_blank" class="b-btn map"><i data-lucide="navigation"></i> Map</a>
+            </div>
+        </div>
+
+        <!-- Panoor -->
+        <div class="branch-card">
+            <div class="branch-header">
+                <div class="branch-icon"><i data-lucide="map-pin"></i></div>
+                <div class="branch-card-info">
+                    <h3>Panoor Branch</h3>
+                    <p>Arayakool, Kerala</p>
+                </div>
+            </div>
+            <div class="branch-actions">
+                <a href="tel:+919744902555" class="b-btn call"><i data-lucide="phone"></i> Call</a>
+                <a href="https://wa.me/919744902555" target="_blank" class="b-btn wa"><i class="fa-brands fa-whatsapp"></i> Chat</a>
+                <a href="https://maps.app.goo.gl/NtoTUGjPjA3Kct659?g_st=aw" target="_blank" class="b-btn map"><i data-lucide="navigation"></i> Map</a>
+            </div>
+        </div>
+
+        <!-- Kuthuparamba -->
+        <div class="branch-card">
+            <div class="branch-header">
+                <div class="branch-icon"><i data-lucide="map-pin"></i></div>
+                <div class="branch-card-info">
+                    <h3>Kuthuparamba Branch</h3>
+                    <p>Kottayampoyil, Kerala</p>
+                </div>
+            </div>
+            <div class="branch-actions">
+                <a href="tel:+919744902555" class="b-btn call"><i data-lucide="phone"></i> Call</a>
+                <a href="https://wa.me/919744902555" target="_blank" class="b-btn wa"><i class="fa-brands fa-whatsapp"></i> Chat</a>
+                <a href="https://maps.app.goo.gl/phk3RJKniXHDALCTA?g_st=aw" target="_blank" class="b-btn map"><i data-lucide="navigation"></i> Map</a>
+            </div>
+        </div>
+
+        <!-- Nadapuram -->
+        <div class="branch-card">
+            <div class="branch-header">
+                <div class="branch-icon"><i data-lucide="map-pin"></i></div>
+                <div class="branch-card-info">
+                    <h3>Nadapuram Branch</h3>
+                    <p>Thuneri, Kerala</p>
+                </div>
+            </div>
+            <div class="branch-actions">
+                <a href="tel:+919744902555" class="b-btn call"><i data-lucide="phone"></i> Call</a>
+                <a href="https://wa.me/919744902555" target="_blank" class="b-btn wa"><i class="fa-brands fa-whatsapp"></i> Chat</a>
+                <a href="javascript:void(0)" onclick="alert('Map routing under update.')" class="b-btn map"><i data-lucide="navigation"></i> Map</a>
+            </div>
+        </div>
+
+    </div>
+</div>
+
+<script>
+    // Initialize Lucide Icons
+    lucide.createIcons();
+
+    // Sidebar Toggle
+    function toggleSidebar() {
+        document.querySelector('.sidebar').classList.toggle('active');
+        document.querySelector('.sidebar-overlay').classList.toggle('active');
+    }
+
+    // Branch Full-Screen Modal Toggle
+    function toggleBranchModal() {
+        document.getElementById('branch-modal').classList.toggle('active');
+    }
+    
+    // Close Modals utility for Home FAB
+    function closeModals() {
+        document.getElementById('branch-modal').classList.remove('active');
+        document.querySelector('.sidebar').classList.remove('active');
+        document.querySelector('.sidebar-overlay').classList.remove('active');
+        window.scrollTo({ top: 0, behavior: 'smooth' });
+    }
+
+    // Light/Dark Theme Toggle
+    function toggleTheme() {
+        const body = document.body;
+        const icon = document.getElementById('theme-icon');
+        
+        if (body.getAttribute('data-theme') === 'dark') {
+            body.removeAttribute('data-theme');
+            icon.setAttribute('data-lucide', 'moon');
+        } else {
+            body.setAttribute('data-theme', 'dark');
+            icon.setAttribute('data-lucide', 'sun');
+        }
+        lucide.createIcons();
+    }
+
+    // Active Bottom Nav Logic
+    function setActiveNav(element) {
+        if(!element) return;
+        const navItems = document.querySelectorAll('.nav-item');
+        navItems.forEach(item => item.classList.remove('active'));
+        element.classList.add('active');
+    }
+</script>
+
+</body>
+</html>
