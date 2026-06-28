@@ -67,22 +67,83 @@
         .summary-card.present strong { color: var(--success); }
         .summary-card.absent strong { color: var(--danger); }
 
+        /* Monthly View Matrix Styling */
+        #monthTable { width: 100%; border-collapse: collapse; font-size: 11px; min-width: 1100px; }
+        #monthTable th { background: #FAFAFA; color: var(--text-muted); text-transform: uppercase; font-size: 10px; padding: 8px 4px; border: 1px solid var(--border); text-align: center; }
+        #monthTable td { border: 1px solid var(--border); padding: 6px 4px; text-align: center; font-weight: 600; }
+        #monthTable td:nth-child(1), #monthTable td:nth-child(2), #monthTable td:nth-child(3) { text-align: left; padding-left: 10px; }
+        .m-st-P { color: var(--success); }
+        .m-st-A { color: var(--danger); }
+        .m-st-L { color: var(--warning); }
+        .m-st-H { color: #3B82F6; }
+        .m-st-none { color: #ddd; font-weight: normal; }
+
         @media print {
+            @page { size: A4 landscape; margin: 10mm; }
             body { background: white; padding: 0; }
-            #sidebar-container, #header-container, #bottomnav-container, .form-card, .section-title, .no-print { display: none !important; }
+            #sidebar-container, #header-container, #bottomnav-container, .no-print { display: none !important; }
             .main-wrapper { flex: 1; display: block; overflow: visible; }
             #main-content { padding: 0; overflow: visible; }
+            
+            /* Logic for printing Monthly Matrix vs Daily Log */
+            body.printing-monthly #daily-entry-form, 
+            body.printing-monthly #daily-log-container { display: none !important; }
+            
+            body:not(.printing-monthly) #monthlyReportContainer { display: none !important; }
+
             #attendance-module .table-container { box-shadow: none; border: none; margin: 0; }
             #attendance-module .saas-table th { background: white; color: black; border-bottom: 1px solid #000; }
             #attendance-module .saas-table td { border-bottom: 1px solid #E8E5E1; }
+            
+            #monthTable th, #monthTable td { border: 1px solid #000; font-size: 9px; padding: 3px; }
+            #monthTable th { background: #f0f0f0 !important; -webkit-print-color-adjust: exact; print-color-adjust: exact; }
         }
     </style>
 
     <div class="section-title">
         <h2 style="margin: 0;">Daily Attendance Entry</h2>
+        <button class="btn-outline no-print" onclick="window.openMonthlyReport()" style="border-color: var(--primary); color: var(--primary);">
+            <span class="material-symbols-rounded" style="font-size: 18px;">calendar_month</span> View Monthly Matrix
+        </button>
     </div>
 
-    <div class="form-card no-print">
+    <!-- NEW: MONTHLY REPORT CONTAINER -->
+    <div class="table-container" id="monthlyReportContainer" style="display: none;">
+        <div class="table-header no-print">
+            <div style="display: flex; justify-content: space-between; align-items: center; width: 100%;">
+                <h4 style="margin: 0;">Monthly Attendance Report</h4>
+                <div style="display: flex; gap: 8px;">
+                    <button class="btn-primary no-print" onclick="window.printMonthlyReport()" style="padding: 6px 12px; font-size: 12px;">
+                        <span class="material-symbols-rounded" style="font-size: 14px;">print</span> Print A4 Report
+                    </button>
+                    <button class="btn-outline no-print" onclick="document.getElementById('monthlyReportContainer').style.display='none'" style="padding: 6px 12px; font-size: 12px;">Close</button>
+                </div>
+            </div>
+            
+            <div style="display: flex; flex-wrap: wrap; gap: 10px; align-items: center; background: #FAFAFA; padding: 12px; border-radius: 8px; border: 1px solid var(--border); width: 100%;">
+                <input type="month" id="reportMonth" class="form-input" style="padding: 8px; font-size: 12px; width: auto;" title="Select Month">
+                <select id="reportBranch" class="form-input" style="padding: 8px; font-size: 12px; width: auto;">
+                    <option value="">All Branches</option>
+                </select>
+                <button class="btn-outline" onclick="window.generateMonthlyReport()" style="padding: 8px 16px; font-size: 12px; background: var(--primary); color: white; border: none;">Generate Report</button>
+            </div>
+        </div>
+
+        <div style="padding: 16px 20px; font-weight: 700; color: var(--primary); font-size: 16px; display: none;" id="reportPrintTitle" class="print-only">
+            STRA CARE - Monthly Attendance (<span id="reportPrintMonthTxt"></span>)
+        </div>
+
+        <div class="table-responsive" style="padding: 0 20px 20px 20px;">
+            <table id="monthTable">
+                <thead id="monthlyHead"></thead>
+                <tbody id="monthlyBody"></tbody>
+            </table>
+            <div id="monthlyEmptyMsg" style="text-align: center; padding: 30px; color: var(--text-muted); font-size: 13px;">Select a month and click Generate Report to view matrix.</div>
+        </div>
+    </div>
+
+    <!-- DAILY ENTRY FORM -->
+    <div class="form-card no-print" id="daily-entry-form">
         <form id="attendance-form" onsubmit="event.preventDefault();">
             <input type="hidden" id="attDocId" value="">
 
@@ -130,7 +191,8 @@
         </form>
     </div>
 
-    <div class="table-container">
+    <!-- DAILY ATTENDANCE LOG TABLE -->
+    <div class="table-container" id="daily-log-container">
         <div class="table-header">
             
             <div style="display: flex; justify-content: space-between; align-items: center; width: 100%;">
@@ -140,7 +202,7 @@
                         <span class="material-symbols-rounded" style="font-size: 14px; color: var(--success);">description</span> CSV
                     </button>
                     <button class="btn-outline no-print" onclick="window.print()" style="padding: 6px 12px; font-size: 12px;">
-                        <span class="material-symbols-rounded" style="font-size: 14px; color: var(--primary);">picture_as_pdf</span> PDF
+                        <span class="material-symbols-rounded" style="font-size: 14px; color: var(--primary);">picture_as_pdf</span> PDF Log
                     </button>
                 </div>
             </div>
@@ -226,7 +288,7 @@
         window.attDataCache = {};
         let allEmployees = [];
 
-        // Set Default Date to Today (Fixed Array format logic)
+        // Set Default Date to Today
         const todayString = new Date().toISOString().split('T')[0];
         document.getElementById("attDate").value = todayString;
         document.getElementById("filterAttDate").value = todayString;
@@ -234,16 +296,21 @@
         // --- 1. LOAD DROPDOWNS (WITH RBAC) ---
         window.loadDropdowns = async function() {
             try {
-                // 1A. Load Branches (Restrict if Branch User)
+                // Load Branches (Restrict if Branch User)
                 const branchSelect = document.getElementById('attBranch');
                 const filterBranchSelect = document.getElementById('filterAttBranch');
+                const reportBranchSelect = document.getElementById('reportBranch');
                 
                 if (window.currentUser && window.currentUser.role !== 'admin') {
                     const userBranch = window.currentUser.branch;
                     branchSelect.innerHTML = `<option value="${userBranch}">${userBranch}</option>`;
                     filterBranchSelect.innerHTML = `<option value="${userBranch}">${userBranch}</option>`;
+                    reportBranchSelect.innerHTML = `<option value="${userBranch}">${userBranch}</option>`;
+                    
                     branchSelect.style.pointerEvents = 'none';
                     branchSelect.style.background = 'var(--grey-med)';
+                    reportBranchSelect.style.pointerEvents = 'none';
+                    reportBranchSelect.style.background = 'var(--grey-med)';
                 } else {
                     const bSnap = await getDocs(query(collection(db, "branches"), orderBy("name")));
                     let bHtml = '<option value="">Select Branch</option>';
@@ -255,9 +322,10 @@
                     });
                     branchSelect.innerHTML = bHtml;
                     filterBranchSelect.innerHTML = fHtml;
+                    reportBranchSelect.innerHTML = fHtml;
                 }
 
-                // 1B. Load Employees (Filter by Branch User)
+                // Load Employees (Filter by Branch User)
                 allEmployees = [];
                 let tQuery = collection(db, "therapists");
                 let sQuery = collection(db, "staff");
@@ -289,14 +357,120 @@
         window.handleEmployeeSelect = function() {
             const select = document.getElementById('attEmployee');
             const selectedOption = select.options[select.selectedIndex];
-            // Only autofill if the user is an admin, otherwise branch is already locked
             if(selectedOption && selectedOption.value && (!window.currentUser || window.currentUser.role === 'admin')) {
                 const empBranch = selectedOption.getAttribute('data-branch');
                 if(empBranch) document.getElementById('attBranch').value = empBranch;
             }
         };
 
-        // --- 2. LOAD ATTENDANCE LOG (WITH RBAC) ---
+        // --- NEW: MONTHLY REPORT LOGIC ---
+        window.openMonthlyReport = function() {
+            document.getElementById('monthlyReportContainer').style.display = 'block';
+            
+            // Set input to current month
+            const d = new Date();
+            const yyyy = d.getFullYear();
+            const mm = String(d.getMonth() + 1).padStart(2, '0');
+            document.getElementById('reportMonth').value = `${yyyy}-${mm}`;
+        }
+
+        window.generateMonthlyReport = async function() {
+            const monthVal = document.getElementById('reportMonth').value; // YYYY-MM
+            const branchFilter = document.getElementById('reportBranch').value.toLowerCase();
+            
+            if(!monthVal) return alert("Please select a month first.");
+
+            const [year, month] = monthVal.split('-');
+            const daysInMonth = new Date(year, month, 0).getDate();
+            
+            const monthNames = ["January", "February", "March", "April", "May", "June", "July", "August", "September", "October", "November", "December"];
+            document.getElementById('reportPrintMonthTxt').innerText = `${monthNames[parseInt(month)-1]} ${year}`;
+
+            document.getElementById('monthlyEmptyMsg').style.display = 'none';
+
+            // Build Header
+            let headHtml = `<tr><th style="width: 150px;">Branch</th><th style="width: 150px;">Name</th><th>Role</th>`;
+            for(let i=1; i<=daysInMonth; i++) {
+                headHtml += `<th>${i}</th>`;
+            }
+            headHtml += `<th>Total P</th></tr>`;
+            document.getElementById('monthlyHead').innerHTML = headHtml;
+
+            // Fetch Month Data
+            let q;
+            if (window.currentUser && window.currentUser.role !== 'admin') {
+                q = query(collection(db, "daily_attendance"), where("branch", "==", window.currentUser.branch));
+            } else {
+                q = collection(db, "daily_attendance");
+            }
+            const snap = await getDocs(q);
+            const attData = [];
+            snap.forEach(d => attData.push(d.data()));
+
+            // Filter Employees and Sort by Branch, then Name
+            let filteredEmps = allEmployees;
+            if (branchFilter) {
+                filteredEmps = filteredEmps.filter(e => (e.branch || '').toLowerCase() === branchFilter);
+            }
+            filteredEmps.sort((a, b) => {
+                const branchCompare = (a.branch || '').localeCompare(b.branch || '');
+                if (branchCompare !== 0) return branchCompare;
+                return (a.name || '').localeCompare(b.name || '');
+            });
+
+            // Build Rows
+            let bodyHtml = '';
+            filteredEmps.forEach(emp => {
+                let presentCount = 0;
+                let rowHtml = `<tr>
+                    <td>${emp.branch || '--'}</td>
+                    <td>${emp.name}</td>
+                    <td><span style="font-size:9px; color:#888;">${emp.type}</span></td>`;
+                
+                for(let i=1; i<=daysInMonth; i++) {
+                    let dStr = `${year}-${month}-${String(i).padStart(2, '0')}`;
+                    let record = attData.find(a => a.empId === emp.id && a.date === dStr);
+                    
+                    let mark = '-';
+                    let cls = 'm-st-none';
+                    
+                    if(record) {
+                        if(record.status === 'Present') { mark = 'P'; cls = 'm-st-P'; presentCount++; }
+                        else if(record.status === 'Half-Day') { mark = 'H'; cls = 'm-st-H'; presentCount += 0.5; }
+                        else if(record.status === 'Absent') { mark = 'A'; cls = 'm-st-A'; }
+                        else if(record.status === 'Leave') { mark = 'L'; cls = 'm-st-L'; }
+                    }
+                    rowHtml += `<td class="${cls}">${mark}</td>`;
+                }
+                rowHtml += `<td style="color:var(--primary); font-weight:800;">${presentCount}</td></tr>`;
+                bodyHtml += rowHtml;
+            });
+
+            if (filteredEmps.length === 0) {
+                bodyHtml = `<tr><td colspan="${daysInMonth + 4}" style="padding: 20px; color: var(--text-muted);">No employees found for this branch.</td></tr>`;
+            }
+
+            document.getElementById('monthlyBody').innerHTML = bodyHtml;
+        }
+
+        window.printMonthlyReport = function() {
+            const tableBody = document.getElementById('monthlyBody').innerHTML;
+            if(!tableBody) return alert("Please generate the report first before printing.");
+            
+            // Add a class to body to trigger specific print CSS rules
+            document.body.classList.add('printing-monthly');
+            document.getElementById('reportPrintTitle').style.display = 'block';
+            
+            window.print();
+            
+            // Cleanup after print dialog closes
+            setTimeout(() => {
+                document.body.classList.remove('printing-monthly');
+                document.getElementById('reportPrintTitle').style.display = 'none';
+            }, 1000);
+        }
+
+        // --- 2. LOAD ATTENDANCE LOG ---
         window.loadAttendanceLog = async function() {
             const tableBody = document.getElementById('attTableBody');
             tableBody.innerHTML = '<tr><td colspan="6" style="text-align:center; padding: 20px;">Loading records...</td></tr>';
@@ -320,7 +494,6 @@
                     return;
                 }
 
-                // Client-side sort to avoid index errors
                 let attList = [];
                 querySnapshot.forEach(docSnap => attList.push({ id: docSnap.id, data: docSnap.data() }));
                 attList.sort((a, b) => new Date(b.data.date || 0) - new Date(a.data.date || 0));
@@ -519,7 +692,6 @@
             document.getElementById('attDate').value = new Date().toISOString().split('T')[0];
             document.getElementById('saveAttBtn').innerHTML = '<span class="material-symbols-rounded" style="font-size: 18px;">how_to_reg</span> Save Attendance';
             
-            // Re-lock branch for standard users
             if (window.currentUser && window.currentUser.role !== 'admin') {
                 document.getElementById('attBranch').value = window.currentUser.branch;
             }
@@ -531,12 +703,11 @@
             let csvData = [];
             
             for (let i = 0; i < table.rows.length; i++) {
-                if (table.rows[i].style.display === "none") continue; // only export visible
+                if (table.rows[i].style.display === "none") continue; 
                 
                 let rowData = [];
                 let cols = table.rows[i].querySelectorAll("td, th");
                 
-                // Skip the 'Actions' column (last column)
                 let colCount = i === 0 ? cols.length - 1 : cols.length - 1; 
 
                 for (let j = 0; j < colCount; j++) {
