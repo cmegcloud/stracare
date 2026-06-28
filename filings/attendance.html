@@ -10,23 +10,9 @@
 <body>
 
 <div class="module-container" id="attendance-module">
-    
     <style>
-        :root {
-            --primary: #e16349;
-            --primary-light: #fef5e8;
-            --bg: #F8F5F1;
-            --surface: #ffffff;
-            --text-main: #0a0a0a;
-            --text-muted: #777777;
-            --border: #E8E5E1;
-            --grey-med: #D9D9D9;
-            --shadow-sm: 0 2px 8px rgba(0, 0, 0, 0.03);
-            --success: #10B981; 
-            --danger: #ef4444;
-            --warning: #FB923C;
-        }
-
+        :root { --primary: #e16349; --primary-light: #fef5e8; --bg: #F8F5F1; --surface: #ffffff; --text-main: #0a0a0a; --text-muted: #777777; --border: #E8E5E1; --grey-med: #D9D9D9; --shadow-sm: 0 2px 8px rgba(0, 0, 0, 0.03); --success: #10B981; --danger: #ef4444; --warning: #FB923C; }
+        
         #attendance-module { font-family: 'Inter', sans-serif; width: 100%; max-width: 1120px; }
         #attendance-module .section-title { font-size: 18px; font-weight: 700; margin-bottom: 16px; color: var(--text-main); display: flex; justify-content: space-between; align-items: center; flex-wrap: wrap; gap: 12px;}
         
@@ -101,18 +87,22 @@
     </style>
 
     <div class="section-title">
-        <h2 style="margin: 0;">Daily Attendance Entry</h2>
+        <h2 style="margin: 0;">Attendance Management</h2>
         <button class="btn-outline no-print" onclick="window.openMonthlyReport()" style="border-color: var(--primary); color: var(--primary);">
             <span class="material-symbols-rounded" style="font-size: 18px;">calendar_month</span> View Monthly Matrix
         </button>
     </div>
 
-    <!-- NEW: MONTHLY REPORT CONTAINER -->
+    <!-- MONTHLY REPORT CONTAINER -->
     <div class="table-container" id="monthlyReportContainer" style="display: none;">
-        <div class="table-header no-print">
+        <div class="table-header no-print" style="flex-direction: row; flex-wrap: wrap;">
             <div style="display: flex; justify-content: space-between; align-items: center; width: 100%;">
                 <h4 style="margin: 0;">Monthly Attendance Report</h4>
                 <div style="display: flex; gap: 8px;">
+                    <!-- Monthly CSV Export Button -->
+                    <button class="btn-outline no-print" onclick="window.exportMonthlyCSV()" style="padding: 6px 12px; font-size: 12px; color: var(--success); border-color: rgba(16, 185, 129, 0.5);">
+                        <span class="material-symbols-rounded" style="font-size: 14px;">description</span> Export CSV
+                    </button>
                     <button class="btn-primary no-print" onclick="window.printMonthlyReport()" style="padding: 6px 12px; font-size: 12px;">
                         <span class="material-symbols-rounded" style="font-size: 14px;">print</span> Print A4 Report
                     </button>
@@ -196,9 +186,9 @@
         <div class="table-header">
             
             <div style="display: flex; justify-content: space-between; align-items: center; width: 100%;">
-                <h4 style="margin: 0;">Attendance Log</h4>
+                <h4 style="margin: 0;">Daily Attendance Log</h4>
                 <div style="display: flex; gap: 8px;">
-                    <button class="btn-outline no-print" onclick="window.exportAttCSV()" style="padding: 6px 12px; font-size: 12px;">
+                    <button class="btn-outline no-print" onclick="window.exportDailyAttCSV()" style="padding: 6px 12px; font-size: 12px;">
                         <span class="material-symbols-rounded" style="font-size: 14px; color: var(--success);">description</span> CSV
                     </button>
                     <button class="btn-outline no-print" onclick="window.print()" style="padding: 6px 12px; font-size: 12px;">
@@ -288,6 +278,18 @@
         window.attDataCache = {};
         let allEmployees = [];
 
+        // Global Format Function for DD MMM YYYY
+        window.formatDateToDDMMMYYYY = function(dateStr) {
+            if(!dateStr) return '';
+            const parts = dateStr.split('-');
+            if(parts.length !== 3) return dateStr;
+            const months = ["Jan", "Feb", "Mar", "Apr", "May", "Jun", "Jul", "Aug", "Sep", "Oct", "Nov", "Dec"];
+            const day = parts[2];
+            const month = months[parseInt(parts[1], 10) - 1];
+            const year = parts[0];
+            return `${day} ${month} ${year}`;
+        }
+
         // Set Default Date to Today
         const todayString = new Date().toISOString().split('T')[0];
         document.getElementById("attDate").value = todayString;
@@ -296,7 +298,7 @@
         // --- 1. LOAD DROPDOWNS (WITH RBAC) ---
         window.loadDropdowns = async function() {
             try {
-                // Load Branches (Restrict if Branch User)
+                // 1A. Load Branches
                 const branchSelect = document.getElementById('attBranch');
                 const filterBranchSelect = document.getElementById('filterAttBranch');
                 const reportBranchSelect = document.getElementById('reportBranch');
@@ -325,7 +327,7 @@
                     reportBranchSelect.innerHTML = fHtml;
                 }
 
-                // Load Employees (Filter by Branch User)
+                // 1B. Load Employees
                 allEmployees = [];
                 let tQuery = collection(db, "therapists");
                 let sQuery = collection(db, "staff");
@@ -363,11 +365,9 @@
             }
         };
 
-        // --- NEW: MONTHLY REPORT LOGIC ---
+        // --- MONTHLY REPORT LOGIC ---
         window.openMonthlyReport = function() {
             document.getElementById('monthlyReportContainer').style.display = 'block';
-            
-            // Set input to current month
             const d = new Date();
             const yyyy = d.getFullYear();
             const mm = String(d.getMonth() + 1).padStart(2, '0');
@@ -409,7 +409,7 @@
 
             // Filter Employees and Sort by Branch, then Name
             let filteredEmps = allEmployees;
-            if (branchFilter) {
+            if (branchFilter && branchFilter !== 'all branches') {
                 filteredEmps = filteredEmps.filter(e => (e.branch || '').toLowerCase() === branchFilter);
             }
             filteredEmps.sort((a, b) => {
@@ -447,7 +447,7 @@
             });
 
             if (filteredEmps.length === 0) {
-                bodyHtml = `<tr><td colspan="${daysInMonth + 4}" style="padding: 20px; color: var(--text-muted);">No employees found for this branch.</td></tr>`;
+                bodyHtml = `<tr><td colspan="${daysInMonth + 4}" style="padding: 20px; color: var(--text-muted);">No employees found.</td></tr>`;
             }
 
             document.getElementById('monthlyBody').innerHTML = bodyHtml;
@@ -457,20 +457,48 @@
             const tableBody = document.getElementById('monthlyBody').innerHTML;
             if(!tableBody) return alert("Please generate the report first before printing.");
             
-            // Add a class to body to trigger specific print CSS rules
             document.body.classList.add('printing-monthly');
             document.getElementById('reportPrintTitle').style.display = 'block';
             
             window.print();
             
-            // Cleanup after print dialog closes
             setTimeout(() => {
                 document.body.classList.remove('printing-monthly');
                 document.getElementById('reportPrintTitle').style.display = 'none';
             }, 1000);
         }
 
-        // --- 2. LOAD ATTENDANCE LOG ---
+        // CSV Export for Monthly Report Matrix
+        window.exportMonthlyCSV = function() {
+            const table = document.getElementById("monthTable");
+            if (!table || table.rows.length === 0 || table.rows[0].cells.length === 0) {
+                return alert("Please generate the monthly report first before exporting.");
+            }
+            
+            let csvData = [];
+            for (let i = 0; i < table.rows.length; i++) {
+                let rowData = [];
+                let cols = table.rows[i].querySelectorAll("td, th");
+                
+                for (let j = 0; j < cols.length; j++) {
+                    let text = cols[j].innerText.replace(/(\r\n|\n|\r)/gm, " ").trim();
+                    rowData.push('"' + text + '"');
+                }
+                csvData.push(rowData.join(","));
+            }
+            
+            let monthLabel = document.getElementById('reportMonth').value || "Report";
+            let csvContent = "data:text/csv;charset=utf-8," + csvData.join("\n");
+            let encodedUri = encodeURI(csvContent);
+            let link = document.createElement("a");
+            link.setAttribute("href", encodedUri);
+            link.setAttribute("download", `Monthly_Attendance_Matrix_${monthLabel}.csv`);
+            document.body.appendChild(link);
+            link.click();
+            document.body.removeChild(link);
+        }
+
+        // --- 2. LOAD DAILY ATTENDANCE LOG ---
         window.loadAttendanceLog = async function() {
             const tableBody = document.getElementById('attTableBody');
             tableBody.innerHTML = '<tr><td colspan="6" style="text-align:center; padding: 20px;">Loading records...</td></tr>';
@@ -513,8 +541,11 @@
                     tr.setAttribute("data-status", data.status.toLowerCase());
                     tr.setAttribute("data-search", `${data.empName} ${data.empType}`.toLowerCase());
 
+                    // APPLYING DD MMM YYYY FORMAT TO THE VIEW
+                    const formattedDate = window.formatDateToDDMMMYYYY(data.date);
+
                     tr.innerHTML = `
-                        <td data-label="Date"><strong>${data.date}</strong></td>
+                        <td data-label="Date"><strong>${formattedDate}</strong></td>
                         <td data-label="Employee">
                             <strong style="font-size: 15px;">${data.empName}</strong><br>
                             <span style="font-size: 12px; color: var(--text-muted);">${data.empType}</span>
@@ -697,8 +728,8 @@
             }
         }
 
-        // --- 5. CSV EXPORT ---
-        window.exportAttCSV = function() {
+        // --- 5. CSV EXPORT FOR DAILY LOG ---
+        window.exportDailyAttCSV = function() {
             const table = document.getElementById("attendanceTable");
             let csvData = [];
             
@@ -721,7 +752,7 @@
             let encodedUri = encodeURI(csvContent);
             let link = document.createElement("a");
             link.setAttribute("href", encodedUri);
-            link.setAttribute("download", `Attendance_Log.csv`);
+            link.setAttribute("download", `Attendance_Daily_Log.csv`);
             document.body.appendChild(link);
             link.click();
             document.body.removeChild(link);
