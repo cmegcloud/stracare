@@ -5,17 +5,21 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
     <title>STRA CARE - Booking App</title>
     
+    <!-- App Icons & Favicons -->
     <link rel="icon" type="image/png" href="assets/logo-app.png">
     <link rel="apple-touch-icon" href="assets/logo-app.png">
     <meta name="theme-color" content="#0F766E">
     
+    <!-- Google Fonts -->
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
     <link href="https://fonts.googleapis.com/css2?family=Outfit:wght@300;400;500;600;700&family=Sora:wght@400;600;700&display=swap" rel="stylesheet">
     
+    <!-- FontAwesome & Lucide Icons -->
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css"/>
     <script src="https://unpkg.com/lucide@latest"></script>
     
+    <!-- html2canvas for JPEG Download -->
     <script src="https://cdnjs.cloudflare.com/ajax/libs/html2canvas/1.4.1/html2canvas.min.js"></script>
 
     <style>
@@ -80,9 +84,10 @@
             box-shadow: 0 0 40px rgba(0,0,0,0.1); display: flex; flex-direction: column; overflow-x: hidden;
         }
 
-        /* Header (Sticky & Gradient) */
+        /* Header (Fixed & Gradient) */
         .header {
-            position: sticky; top: 0; background: var(--health-gradient); 
+            position: fixed; top: 0; left: 0; right: 0; margin: 0 auto; max-width: 480px;
+            background: var(--health-gradient); 
             backdrop-filter: blur(16px); -webkit-backdrop-filter: blur(16px);
             padding: 16px 20px; display: flex; justify-content: space-between; align-items: center; 
             z-index: 100; border-bottom: 1px solid rgba(255, 255, 255, 0.1); box-shadow: 0 4px 15px rgba(15, 118, 110, 0.15);
@@ -98,7 +103,7 @@
         .brand img.name { height: 18px; width: auto; margin-left: 6px; filter: brightness(0) invert(1); } /* Always white on gradient */
 
         /* Main Content */
-        .main-content { flex: 1; padding: 16px 0 120px; }
+        .main-content { flex: 1; padding: 90px 0 120px; } /* Added 90px padding-top to account for fixed header */
         .welcome-msg { margin-bottom: 24px; padding: 8px 20px 0; }
         .welcome-msg h1 { font-size: 24px; font-weight: 700; color: var(--text-main); letter-spacing: -0.5px; margin-bottom: 6px; }
         .welcome-msg p { font-size: 14px; color: var(--text-muted); font-weight: 400; line-height: 1.5; }
@@ -259,12 +264,14 @@
 </head>
 <body>
 
+<!-- Splash Screen (Linked Full Image) -->
 <div id="splash-screen">
     <img src="1000777295.png" alt="Stra Care Splash Screen" onerror="this.src='assets/logo-splash.png'">
 </div>
 
 <div class="app-container">
 
+    <!-- Header (Fixed & Gradient) -->
     <header class="header">
         <div class="header-left">
             <button class="icon-btn" onclick="toggleSidebar()">
@@ -280,6 +287,7 @@
         </button>
     </header>
 
+    <!-- Main Content -->
     <main class="main-content">
         <div class="welcome-msg animate-slide-up">
             <h1>Good Health Awaits.</h1>
@@ -290,6 +298,7 @@
             <h2>Our Specialized Care</h2>
         </div>
         
+        <!-- Services Carousel -->
         <div class="services-wrapper animate-slide-up delay-50">
             <button class="carousel-btn left" onclick="scrollCarousel(-1)"><i data-lucide="chevron-left"></i></button>
             <div class="services-carousel" id="servicesCarousel">
@@ -328,6 +337,7 @@
         </div>
     </main>
 
+    <!-- Bottom Nav (Fixed & Gradient) -->
     <nav class="bottom-nav">
         <a onclick="openModal('appointment-modal'); setActiveNav(this)" class="nav-item">
             <i data-lucide="calendar-plus"></i><span>Book</span>
@@ -350,6 +360,7 @@
     </nav>
 </div>
 
+<!-- Sidebar Menu -->
 <div class="sidebar-overlay" onclick="toggleSidebar()"></div>
 <div class="sidebar">
     <div class="sidebar-header">
@@ -368,6 +379,7 @@
     </ul>
 </div>
 
+<!-- Service Details Popup Overlay -->
 <div class="popup-overlay" id="service-popup" onclick="closeServicePopup(event)">
     <div class="popup-content">
         <img src="" id="sp-img" class="popup-img" alt="Service Image">
@@ -381,6 +393,9 @@
     </div>
 </div>
 
+<!-- ================= MODALS ================= -->
+
+<!-- 1. Patient Appointment Form Modal -->
 <div class="fs-modal" id="appointment-modal">
     <div class="modal-header">
         <h2><i data-lucide="file-text"></i> Appointment Form</h2>
@@ -487,6 +502,7 @@
     </div>
 </div>
 
+<!-- Success Booking Ticket Popup -->
 <div class="popup-overlay" id="success-popup">
     <div class="popup-content" style="background: transparent; box-shadow: none;">
         <div id="capture-ticket" style="background: white; padding: 24px; border-radius: 16px;">
@@ -513,6 +529,7 @@
     </div>
 </div>
 
+<!-- 2. Payment Modal -->
 <div class="fs-modal" id="payment-modal">
     <div class="modal-header">
         <h2><i data-lucide="credit-card"></i> Pay Advance & Confirm Booking</h2>
@@ -537,6 +554,7 @@
     </div>
 </div>
 
+<!-- 3. App Info Modal -->
 <div class="fs-modal" id="app-info-modal">
     <div class="modal-header">
         <h2><i data-lucide="info"></i> App Info</h2>
@@ -544,6 +562,7 @@
     </div>
     <div class="modal-body" style="padding: 0; display: flex; flex-direction: column;">
         
+        <!-- App Details (Centered) -->
         <div style="flex: 1; display: flex; flex-direction: column; align-items: center; justify-content: center; padding: 40px 20px;">
             <div class="brand" style="flex-direction: column; gap: 12px; margin-bottom: 16px;">
                 <img src="assets/logo.png" alt="Logo" style="height: 65px; object-fit: contain;" onerror="this.style.display='none'">
@@ -552,6 +571,7 @@
             <p style="color: var(--text-muted); font-size: 15px;">Booking App Version 2.0</p>
         </div>
         
+        <!-- Dev Footer (Bottom) -->
         <div style="padding: 24px; text-align: center; background: var(--bg-color); border-top: 1px solid var(--border-color); padding-bottom: max(24px, env(safe-area-inset-bottom));">
             <p style="font-size: 10px; font-weight: 600; text-transform: uppercase; letter-spacing: 0.5px; color: var(--text-muted); margin-bottom: 12px;">Designed & Developed by</p>
             <div style="display: flex; align-items: center; justify-content: center; gap: 12px;">
@@ -564,6 +584,7 @@
     </div>
 </div>
 
+<!-- 4. Branch Modal -->
 <div class="fs-modal" id="branch-modal">
     <div class="modal-header">
         <h2><i data-lucide="map"></i> Our Branches</h2>
@@ -571,6 +592,7 @@
     </div>
     <div class="modal-body">
         
+        <!-- Home Care -->
         <div class="branch-card premium">
             <div class="branch-header">
                 <div class="branch-icon"><i data-lucide="home"></i></div>
@@ -586,6 +608,7 @@
             </div>
         </div>
         
+        <!-- Mahe -->
         <div class="branch-card">
             <div class="branch-header">
                 <div class="branch-icon"><i data-lucide="map-pin"></i></div>
@@ -601,6 +624,7 @@
             </div>
         </div>
 
+        <!-- Pallikkuni -->
         <div class="branch-card">
             <div class="branch-header">
                 <div class="branch-icon"><i data-lucide="map-pin"></i></div>
@@ -616,6 +640,7 @@
             </div>
         </div>
         
+        <!-- Panoor -->
         <div class="branch-card">
             <div class="branch-header">
                 <div class="branch-icon"><i data-lucide="map-pin"></i></div>
@@ -631,6 +656,7 @@
             </div>
         </div>
         
+        <!-- Stracare -->
         <div class="branch-card">
             <div class="branch-header">
                 <div class="branch-icon"><i data-lucide="map-pin"></i></div>
@@ -646,6 +672,7 @@
             </div>
         </div>
 
+        <!-- Thuneri -->
         <div class="branch-card">
             <div class="branch-header">
                 <div class="branch-icon"><i data-lucide="map-pin"></i></div>
@@ -688,7 +715,7 @@
     document.addEventListener("DOMContentLoaded", () => {
         const dateInput = document.getElementById("pat_date");
         if (dateInput) {
-            const today = new Date().toISOString().split('T');
+            const today = new Date().toISOString().split('T')[0];
             dateInput.setAttribute('min', today);
         }
         
@@ -711,7 +738,7 @@
         try {
             const pSnap = await getDocs(query(collection(db, "patients"), where("mobile", "==", mobile)));
             if (!pSnap.empty) {
-                const pData = pSnap.docs.data();
+                const pData = pSnap.docs[0].data();
                 document.getElementById('pat_name').value = pData.name || '';
                 document.getElementById('pat_age').value = pData.age || '';
                 document.getElementById('pat_address').value = pData.location || '';
