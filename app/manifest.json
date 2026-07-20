@@ -1,0 +1,24 @@
+{
+  "name": "STRA CARE - Booking App",
+  "short_name": "STRA CARE",
+  "description": "Advanced physiotherapy booking and home care services.",
+  "start_url": "/",
+  "display": "standalone",
+  "orientation": "portrait",
+  "background_color": "#F4F7F9",
+  "theme_color": "#0369A1",
+  "icons": [
+    {
+      "src": "assets/logo-app.png",
+      "sizes": "192x192",
+      "type": "image/png",
+      "purpose": "any maskable"
+    },
+    {
+      "src": "assets/logo-app.png",
+      "sizes": "512x512",
+      "type": "image/png",
+      "purpose": "any maskable"
+    }
+  ]
+}
