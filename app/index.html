@@ -9,6 +9,23 @@
     <link rel="apple-touch-icon" href="assets/logo-app.png">
     <meta name="theme-color" content="#0369A1">
     
+    <!-- 1. PASTE THE MANIFEST LINK HERE -->
+    <link rel="manifest" href="manifest.json">
+    <!-- 2. PASTE THE SERVICE WORKER SCRIPT HERE -->
+    <script>
+      if ('serviceWorker' in navigator) {
+        window.addEventListener('load', () => {
+          navigator.serviceWorker.register('sw.js')
+            .then(registration => {
+              console.log('ServiceWorker registered successfully');
+            })
+            .catch(error => {
+              console.log('ServiceWorker registration failed: ', error);
+            });
+        });
+      }
+    </script>
+    
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
     <link href="https://fonts.googleapis.com/css2?family=Outfit:wght@300;400;500;600;700&family=Sora:wght@400;600;700&display=swap" rel="stylesheet">
