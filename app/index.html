@@ -127,7 +127,7 @@
         .service-photo img { width: 100%; height: 100%; object-fit: cover; transition: transform 0.5s ease; }
         .service-card:hover .service-photo img { transform: scale(1.08); }
         .service-info { padding: 16px; display: flex; align-items: center; justify-content: space-between; }
-        .service-info h3 { font-size: 15px; font-weight: 600; color: var(--text-main); font-family: 'Outfit'; }
+        .service-info h3 { font-size: 14px; font-weight: 600; color: var(--text-main); font-family: 'Outfit'; line-height: 1.2; padding-right: 8px; }
         
         .carousel-btn {
             position: absolute; top: 40%; transform: translateY(-50%); width: 36px; height: 36px; border-radius: 50%;
@@ -317,21 +317,61 @@
         <div class="services-wrapper animate-slide-up delay-50">
             <button class="carousel-btn left" onclick="scrollCarousel(-1)"><i data-lucide="chevron-left"></i></button>
             <div class="services-carousel" id="servicesCarousel">
-                <div class="service-card" onclick="openServiceDetails('disc', 'Disc Prolapse', 'photos/1.png', 'Advanced physiotherapy solutions focusing on spinal decompression, targeted core strengthening, and nerve mobilization to effectively relieve pressure and alleviate pain caused by disc prolapse.')">
+                
+                <!-- FULL SERVICE LIST CARDS -->
+                <div class="service-card" onclick="openServiceDetails('disc', 'Intervertebral Disc Prolapse', 'photos/1.png', 'Specialized care for spinal disc issues, focusing on pain relief and restoring spine health.')">
                     <div class="service-photo"><img src="photos/1.png" onerror="this.src='https://placehold.co/400x300/0369A1/FFF?text=Disc+Prolapse'"></div>
-                    <div class="service-info"><h3>Disc Prolapse</h3><i data-lucide="info" style="color:var(--primary-color);"></i></div>
+                    <div class="service-info"><h3>Intervertebral Disc Prolapse</h3><i data-lucide="info" style="color:var(--primary-color);"></i></div>
                 </div>
-                <div class="service-card" onclick="openServiceDetails('back', 'Low Back Ache', 'photos/2.jpg', 'Comprehensive postural assessments and personalized rehabilitation plans designed to treat acute or chronic lower back pain, restoring function and preventing future occurrences.')">
+                
+                <div class="service-card" onclick="openServiceDetails('back', 'Low Back Ache', 'photos/2.jpg', 'Targeted physiotherapy to alleviate chronic and acute lower back pain effectively.')">
                     <div class="service-photo"><img src="photos/2.jpg" onerror="this.src='https://placehold.co/400x300/0369A1/FFF?text=Back+Ache'"></div>
                     <div class="service-info"><h3>Low Back Ache</h3><i data-lucide="info" style="color:var(--primary-color);"></i></div>
                 </div>
-                <div class="service-card" onclick="openServiceDetails('cervical', 'Cervical Pain', 'photos/3.jpg', 'Expert manual therapy and ergonomic corrections to reduce neck stiffness, alleviate radiating arm pain, and restore healthy cervical spine mobility.')">
-                    <div class="service-photo"><img src="photos/3.jpg" onerror="this.src='https://placehold.co/400x300/0369A1/FFF?text=Cervical'"></div>
-                    <div class="service-info"><h3>Cervical Pain</h3><i data-lucide="info" style="color:var(--primary-color);"></i></div>
+
+                <div class="service-card" onclick="openServiceDetails('cervical', 'Cervical Spondylosis', 'photos/3.jpg', 'Comprehensive neck pain management and posture correction techniques.')">
+                    <div class="service-photo"><img src="photos/3.jpg" onerror="this.src='https://placehold.co/400x300/0369A1/FFF?text=Cervical+Spondylosis'"></div>
+                    <div class="service-info"><h3>Cervical Spondylosis</h3><i data-lucide="info" style="color:var(--primary-color);"></i></div>
                 </div>
-                <div class="service-card" onclick="openServiceDetails('knee', 'Knee Arthritis', 'photos/4.jpg', 'Tailored joint mobilization, pain management techniques, and strengthening protocols to improve knee function, reduce inflammation, and enhance the quality of daily life.')">
-                    <div class="service-photo"><img src="photos/4.jpg" onerror="this.src='https://placehold.co/400x300/0369A1/FFF?text=Knee+Pain'"></div>
-                    <div class="service-info"><h3>Knee Arthritis</h3><i data-lucide="info" style="color:var(--primary-color);"></i></div>
+
+                <div class="service-card" onclick="openServiceDetails('knee', 'Osteoarthritis of Knee', 'photos/4.jpg', 'Mobility improvement and pain reduction for knee joint degeneration.')">
+                    <div class="service-photo"><img src="photos/4.jpg" onerror="this.src='https://placehold.co/400x300/0369A1/FFF?text=Osteoarthritis+Knee'"></div>
+                    <div class="service-info"><h3>Osteoarthritis of Knee</h3><i data-lucide="info" style="color:var(--primary-color);"></i></div>
+                </div>
+
+                <div class="service-card" onclick="openServiceDetails('shoulder', 'Periarthritis of Shoulder', 'photos/5.jpg', 'Therapies designed to restore range of motion and treat frozen shoulder.')">
+                    <div class="service-photo"><img src="photos/5.jpg" onerror="this.src='https://placehold.co/400x300/0369A1/FFF?text=Periarthritis+Shoulder'"></div>
+                    <div class="service-info"><h3>Periarthritis of Shoulder</h3><i data-lucide="info" style="color:var(--primary-color);"></i></div>
+                </div>
+
+                <div class="service-card" onclick="openServiceDetails('elbow', 'Tennis Elbow', 'photos/6.jpg', 'Effective rehabilitation for elbow joint inflammation and strain injuries.')">
+                    <div class="service-photo"><img src="photos/6.jpg" onerror="this.src='https://placehold.co/400x300/0369A1/FFF?text=Tennis+Elbow'"></div>
+                    <div class="service-info"><h3>Tennis Elbow</h3><i data-lucide="info" style="color:var(--primary-color);"></i></div>
+                </div>
+
+                <div class="service-card" onclick="openServiceDetails('heel', 'Plantar Fasciitis', 'photos/7.jpg', 'Advanced care for heel pain to help you walk comfortably again.')">
+                    <div class="service-photo"><img src="photos/7.jpg" onerror="this.src='https://placehold.co/400x300/0369A1/FFF?text=Plantar+Fasciitis'"></div>
+                    <div class="service-info"><h3>Plantar Fasciitis</h3><i data-lucide="info" style="color:var(--primary-color);"></i></div>
+                </div>
+
+                <div class="service-card" onclick="openServiceDetails('sports', 'Sports Injuries', 'photos/8.jpg', 'Dedicated sports rehabilitation to get athletes back to their peak performance.')">
+                    <div class="service-photo"><img src="photos/8.jpg" onerror="this.src='https://placehold.co/400x300/0369A1/FFF?text=Sports+Injuries'"></div>
+                    <div class="service-info"><h3>Sports Injuries</h3><i data-lucide="info" style="color:var(--primary-color);"></i></div>
+                </div>
+
+                <div class="service-card" onclick="openServiceDetails('stroke', 'Stroke Rehabilitation', 'photos/9.jpg', 'Neurological physiotherapy to aid in balance, mobility, and motor recovery.')">
+                    <div class="service-photo"><img src="photos/9.jpg" onerror="this.src='https://placehold.co/400x300/0369A1/FFF?text=Stroke+Rehab'"></div>
+                    <div class="service-info"><h3>Stroke Rehabilitation</h3><i data-lucide="info" style="color:var(--primary-color);"></i></div>
+                </div>
+
+                <div class="service-card" onclick="openServiceDetails('cp', 'Cerebral Palsy', 'photos/10.jpg', 'Paediatric therapy ensuring physical development and muscle control.')">
+                    <div class="service-photo"><img src="photos/10.jpg" onerror="this.src='https://placehold.co/400x300/0369A1/FFF?text=Cerebral+Palsy'"></div>
+                    <div class="service-info"><h3>Cerebral Palsy</h3><i data-lucide="info" style="color:var(--primary-color);"></i></div>
+                </div>
+
+                <div class="service-card" onclick="openServiceDetails('bells', 'Bell\'s Palsy', 'photos/11.jpg', 'Facial nerve rehabilitation utilizing specialized stimulation and exercises.')">
+                    <div class="service-photo"><img src="photos/11.jpg" onerror="this.src='https://placehold.co/400x300/0369A1/FFF?text=Bells+Palsy'"></div>
+                    <div class="service-info"><h3>Bell's Palsy</h3><i data-lucide="info" style="color:var(--primary-color);"></i></div>
                 </div>
             </div>
             <button class="carousel-btn right" onclick="scrollCarousel(1)"><i data-lucide="chevron-right"></i></button>
@@ -479,15 +519,21 @@
 
             <div class="form-section-title">Treatment Details</div>
             
-            <!-- NEW: Symptom/Services Dropdown -->
             <div class="form-group">
                 <label>Symptoms / Service Needed <span style="color:red">*</span></label>
                 <select id="pat_symptom" class="form-control" required onchange="toggleCustomSymptom()">
                     <option value="" disabled selected>Select an issue or service...</option>
-                    <option value="Disc Prolapse">Disc Prolapse</option>
+                    <option value="Intervertebral Disc Prolapse">Intervertebral Disc Prolapse</option>
                     <option value="Low Back Ache">Low Back Ache</option>
-                    <option value="Cervical Pain">Cervical Pain</option>
-                    <option value="Knee Arthritis">Knee Arthritis</option>
+                    <option value="Cervical Spondylosis">Cervical Spondylosis</option>
+                    <option value="Osteoarthritis of Knee">Osteoarthritis of Knee</option>
+                    <option value="Periarthritis of Shoulder">Periarthritis of Shoulder</option>
+                    <option value="Tennis Elbow">Tennis Elbow</option>
+                    <option value="Plantar Fasciitis">Plantar Fasciitis</option>
+                    <option value="Sports Injuries">Sports Injuries</option>
+                    <option value="Stroke Rehabilitation">Stroke Rehabilitation</option>
+                    <option value="Cerebral Palsy">Cerebral Palsy</option>
+                    <option value="Bell's Palsy">Bell's Palsy</option>
                     <option value="Home Care Physiotherapy">Home Care Physiotherapy</option>
                     <option value="Other">Other (Type manually)</option>
                 </select>
@@ -588,7 +634,7 @@
         <div style="padding: 24px; text-align: center; background: var(--bg-color); border-top: 1px solid var(--border-color); padding-bottom: max(24px, env(safe-area-inset-bottom));">
             <p style="font-size: 10px; font-weight: 600; text-transform: uppercase; letter-spacing: 0.5px; color: var(--text-muted); margin-bottom: 12px;">Designed & Developed by</p>
             <div style="display: flex; align-items: center; justify-content: center; gap: 12px;">
-                <img src="assets/logo-dark-cm.svg" alt="CM" style="height: 22px; object-fit: contain;" onerror="this.outerHTML='<strong style=\'font-size:13px; color:var(--text-main);\'>CM Filings</strong>'">
+                <img src="assets/name-cm.png" alt="CM" style="height: 22px; object-fit: contain;" onerror="this.outerHTML='<strong style=\'font-size:13px; color:var(--text-main);\'>CM Filings</strong>'">
                 <span style="color: var(--text-muted); opacity: 0.4; font-size: 14px;">|</span>
                 <a href="https://www.cmfilings.com" target="_blank" style="color: var(--primary-color); text-decoration: none; font-size: 13px; font-weight: 600; font-family: 'Outfit';">www.cmfilings.com</a>
             </div>
@@ -715,7 +761,7 @@
 
     window.lucide.createIcons();
     
-    // NEW: Fetch Branches from Firestore dynamically
+    // Fetch Branches from Firestore dynamically
     async function loadBranches() {
         const branchSelect = document.getElementById('pat_branch');
         try {
@@ -762,7 +808,7 @@
 
     // Initialize Listeners & Fix Bugs
     document.addEventListener("DOMContentLoaded", () => {
-        // Prevent Past Dates in Date Picker (Bug fix: split('T')[0])
+        // Prevent Past Dates in Date Picker
         const dateInput = document.getElementById("pat_date");
         const timeInput = document.getElementById("pat_time");
         if (dateInput) {
@@ -777,7 +823,7 @@
         // Load Dynamic Branches
         loadBranches();
         
-        // Remove Splash (Bug Fix: Add null check)
+        // Remove Splash
         setTimeout(() => { 
             const splash = document.getElementById('splash-screen');
             if (splash) {
@@ -829,7 +875,7 @@
         const branch = document.getElementById('pat_branch').value;
         const notes = document.getElementById('pat_notes').value;
         
-        // Handle new Symptom mapping
+        // Handle Symptom mapping
         const symptomVal = document.getElementById('pat_symptom').value;
         const customSymptomVal = document.getElementById('pat_symptom_custom').value;
         const finalSymptom = (symptomVal === 'Other') ? customSymptomVal : symptomVal;
@@ -851,6 +897,7 @@
             balance: 0,
             prevDues: 0,
             notes: "Booked via App",
+            "#TimeStamp": new Date().toISOString(),
             createdAt: new Date(),
             updatedAt: new Date()
         };
@@ -911,7 +958,7 @@
         document.getElementById('btn-back').style.display = 'flex';
     }
 
-    // NEW: Function to toggle manual symptom input
+    // Function to toggle manual symptom input
     window.toggleCustomSymptom = function() {
         const select = document.getElementById('pat_symptom');
         const customInput = document.getElementById('pat_symptom_custom');
