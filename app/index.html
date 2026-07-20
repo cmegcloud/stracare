@@ -425,6 +425,8 @@
         <li><button onclick="toggleSidebar(); openModal('appointment-modal');"><i data-lucide="calendar" class="icon-main"></i> Appointment</button></li>
         <li><button onclick="toggleSidebar(); openModal('payment-modal');"><i data-lucide="credit-card" class="icon-main"></i> Pay Online</button></li>
         <li><button onclick="toggleSidebar(); openModal('branch-modal');"><i data-lucide="building-2" class="icon-main"></i> Clinic Branches</button></li>
+        <!-- PWA Install App Button Added Here -->
+        <li><button class="pwa-install-btn"><i data-lucide="download" class="icon-main"></i> Install App</button></li>
         <li><a href="https://share.google/lyiPHUz6CFLNwzPyC" target="_blank"><i data-lucide="star" class="icon-main"></i> Google Review</a></li>
         <li><a href="policy.html"><i data-lucide="shield-check" class="icon-main"></i> Privacy & Policy</a></li>
         <li><button onclick="toggleSidebar(); openModal('app-info-modal');"><i data-lucide="info" class="icon-main"></i> App Info</button></li>
@@ -629,6 +631,10 @@
                 <h2 style="color:var(--primary-color); font-size: 26px; font-family:'Sora'; font-weight: 700;">STRA CARE</h2>
             </div>
             <p style="color: var(--text-muted); font-size: 15px;">Booking App Version 1.0</p>
+            <!-- Secondary PWA Install App Button Added Here -->
+            <button class="btn-primary pwa-install-btn" style="margin-top: 24px; max-width: 220px;">
+                <i data-lucide="download"></i> Install Booking App
+            </button>
         </div>
         
         <div style="padding: 24px; text-align: center; background: var(--bg-color); border-top: 1px solid var(--border-color); padding-bottom: max(24px, env(safe-area-inset-bottom));">
@@ -1096,6 +1102,45 @@
             link.click();
         });
     }
+
+    // --- PWA Installation Script ---
+    let deferredPrompt;
+    
+    // Capture the install prompt
+    window.addEventListener('beforeinstallprompt', (e) => {
+        e.preventDefault();
+        deferredPrompt = e;
+    });
+
+    // Attach click listener to all buttons with 'pwa-install-btn' class
+    const installButtons = document.querySelectorAll('.pwa-install-btn');
+    installButtons.forEach(btn => {
+        btn.addEventListener('click', async (e) => {
+            e.preventDefault();
+            if (deferredPrompt) {
+                deferredPrompt.prompt();
+                const { outcome } = await deferredPrompt.userChoice;
+                if (outcome === 'accepted') {
+                    console.log('User accepted the install prompt');
+                }
+                deferredPrompt = null;
+            } else {
+                // Fallback for iOS users or already installed
+                alert('To install on iOS: tap the Share button (square with arrow) at the bottom and select "Add to Home Screen".');
+            }
+            // Close sidebar if clicked from there
+            if(document.querySelector('.sidebar').classList.contains('active')) {
+                toggleSidebar();
+            }
+        });
+    });
+
+    // Hide install buttons if the app is already successfully installed
+    window.addEventListener('appinstalled', () => {
+        console.log('App was installed');
+        installButtons.forEach(btn => btn.style.display = 'none');
+    });
+
 </script>
 
 </body>
