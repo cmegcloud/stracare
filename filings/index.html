@@ -20,24 +20,26 @@
         };
     </script>
     
+   <style>
     :root {
-    --primary: #2563EB;
-    --primary-light: #EFF6FF;
-
-    --bg: #F8FAFC;
-    --surface: #FFFFFF;
-
-    --text-main: #0F172A;
-    --text-muted: #64748B;
-
-    --border: #E2E8F0;
-    --shadow: 0 4px 12px rgba(15, 23, 42, 0.06);
-
-    --success: #22C55E;
-    --warning: #F59E0B;
-    --secondary: #64748B;
-    --danger: #EF4444;
-}
+        /* Zoho Blue Variant */
+        --primary: #0062FF;        /* Main Zoho Blue */
+        --primary-light: #EAF2FF;  /* Very soft blue for active states/backgrounds */
+        
+        /* Cool-toned neutrals to match the blue */
+        --bg: #F4F6F8;             /* Cool light gray for app background */
+        --surface: #ffffff;        /* Crisp white for cards/panels */
+        --text-main: #0F172A;      /* Deep slate for high readability */
+        --text-muted: #64748B;     /* Muted slate for secondary text */
+        --border: #E2E8F0;         /* Cool, clean border color */
+        
+        /* Preserved shadow and semantic colors */
+        --shadow: 0 4px 12px rgba(0, 0, 0, 0.04);
+        --success: #10B981;
+        --warning: #F59E0B; 
+        --secondary: #475569;      /* Adjusted to cool slate to match theme */
+        --danger: #EF4444; 
+    }
 
         * { margin: 0; padding: 0; box-sizing: border-box; font-family: 'Inter', sans-serif; -webkit-tap-highlight-color: transparent; }
         body { display: flex; height: 100vh; width: 100vw; overflow: hidden; background: var(--bg); color: var(--text-main); }
