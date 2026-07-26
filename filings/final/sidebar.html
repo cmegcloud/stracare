@@ -1,0 +1,98 @@
+<style>
+    /* Wrapper to manage full height and push footer to the bottom */
+    .sidebar-inner-wrapper { display: flex; flex-direction: column; min-height: 100%; }
+    
+    .sidebar-header { padding: 24px; border-bottom: 1px solid var(--border); display: flex; align-items: center; justify-content: space-between; }
+    
+    /* Top Logo Styling - Automatically scales the 2000px image down to fit the sidebar */
+    .sidebar-logo { max-width: 160px; height: auto; object-fit: contain; display: block; } 
+    
+    /* The nav menu takes up the remaining space (flex: 1) to push the footer down */
+    .nav-menu { padding: 16px 12px; list-style: none; margin: 0; flex: 1; } 
+    .nav-item { display: flex; align-items: center; padding: 14px 16px; margin-bottom: 6px; border-radius: 12px; color: var(--text-muted); text-decoration: none; font-weight: 600; font-size: 14px; transition: all 0.2s; cursor: pointer; }
+    .nav-item:hover { background: var(--bg); color: var(--primary); }
+    .nav-item.active { background: var(--primary-light); color: var(--primary); }
+    .nav-icon { margin-right: 12px; font-size: 22px; }
+    .nav-divider { border-top: 1px solid var(--border); margin: 16px 0; }
+    
+    /* Sidebar Footer Styling */
+    .sidebar-footer { padding: 20px 24px; border-top: 1px solid var(--border); display: flex; flex-direction: column; align-items: center; justify-content: center; background: #FAFAFA; margin-top: auto; }
+    .footer-logo { width: 90px; height: auto; margin-bottom: 6px; object-fit: contain; }
+    .footer-version { font-size: 11px; font-weight: 600; color: var(--text-muted); text-transform: uppercase; letter-spacing: 0.5px; }
+
+    /* Hide close button on desktop */
+    .close-menu-btn { display: none; background: none; border: none; color: var(--text-main); cursor: pointer; }
+    @media (max-width: 768px) { .close-menu-btn { display: block; } }
+</style>
+
+<div class="sidebar-inner-wrapper">
+    
+    <div class="sidebar-header">
+        <!-- Replaced "Stra Care" text with Top Logo Image -->
+        <img src="assets/name.png" alt="Stra Care" class="sidebar-logo">
+        <button onclick="window.toggleMenu()" class="close-menu-btn">
+            <span class="material-symbols-rounded">close</span>
+        </button>
+    </div>
+
+    <ul class="nav-menu">
+        <li class="nav-item active" onclick="window.switchView('view-dashboard', this)">
+            <span class="material-symbols-rounded nav-icon">dashboard</span> Dashboard
+        </li>
+        <li class="nav-item" onclick="window.switchView('view-patients', this)">
+            <span class="material-symbols-rounded nav-icon">group</span> Patient Data
+        </li>
+        <li class="nav-item" onclick="window.switchView('view-appointments', this)">
+            <span class="material-symbols-rounded nav-icon">calendar_month</span> Appointments
+        </li>
+        
+        <li class="nav-item" onclick="window.switchView('view-transaction', this)">
+            <span class="material-symbols-rounded nav-icon">account_balance_wallet</span> Transactions
+        </li>
+        <li class="nav-item" onclick="window.switchView('view-billing', this)">
+            <span class="material-symbols-rounded nav-icon">receipt_long</span> Billing
+        </li>
+        <li class="nav-item" onclick="window.switchView('view-branches', this)">
+            <span class="material-symbols-rounded nav-icon">store</span> Branches
+        </li>
+        
+        <li class="nav-item" onclick="window.switchView('view-therapist', this)">
+            <span class="material-symbols-rounded nav-icon">medical_services</span> Doctors/Therapists
+        </li>
+        
+        <li class="nav-item" onclick="window.switchView('view-staff', this)">
+            <span class="material-symbols-rounded nav-icon">badge</span> Staffs
+        </li>
+        <li class="nav-item" onclick="window.switchView('view-attendance', this)">
+            <span class="material-symbols-rounded nav-icon">how_to_reg</span> Attendance
+        </li>
+        
+        <div class="nav-divider"></div>
+        
+        <li class="nav-item" onclick="window.switchView('view-company', this)">
+            <span class="material-symbols-rounded nav-icon">business</span> Company Profile
+        </li>
+        <li class="nav-item" onclick="window.switchView('view-letterhead', this)">
+            <span class="material-symbols-rounded nav-icon">description</span> Letterhead
+        </li>
+        <li class="nav-item" onclick="window.switchView('view-seal', this)">
+            <span class="material-symbols-rounded nav-icon">verified</span> Digital Seal
+        </li>
+        
+        <div class="nav-divider"></div>
+
+        <li class="nav-item" onclick="window.switchView('view-users', this)">
+            <span class="material-symbols-rounded nav-icon">manage_accounts</span> Users
+        </li>
+        <li class="nav-item" onclick="window.switchView('view-clinic-details', this)">
+            <span class="material-symbols-rounded nav-icon">settings</span> Settings
+        </li>
+    </ul>
+
+    <!-- New Bottom Footer with bizze Logo -->
+    <div class="sidebar-footer">
+        <img src="assets/name-bizze.png" alt="bizze" class="footer-logo">
+        <span class="footer-version">App Version 1.0</span>
+    </div>
+    
+</div>
