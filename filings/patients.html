@@ -12,22 +12,27 @@
 <div class="module-container" id="patient-module">
     
     <style>
-        /* --- Core Theme Variables --- */
-        :root {
-            --primary: #e16349;
-            --primary-light: #fef5e8;
-            --bg: #F8F5F1;
-            --surface: #ffffff;
-            --text-main: #0a0a0a;
-            --text-muted: #777777;
-            --border: #E8E5E1;
-            --grey-light: #F4F4F4;
-            --grey-med: #D9D9D9;
-            --shadow-sm: 0 2px 8px rgba(0, 0, 0, 0.03);
-            --success: #10B981;
-            --danger: #FB923C;
-            --secondary: #64748B;
-        }
+    /* --- Core Theme Variables --- */
+    :root {
+        --primary: #2563EB;
+        --primary-light: #EFF6FF;
+
+        --bg: #F8FAFC;
+        --surface: #FFFFFF;
+
+        --text-main: #0F172A;
+        --text-muted: #64748B;
+
+        --border: #E2E8F0;
+        --grey-light: #F1F5F9;
+        --grey-med: #CBD5E1;
+
+        --shadow-sm: 0 2px 8px rgba(15, 23, 42, 0.05);
+
+        --success: #10B981;
+        --danger: #EF4444;
+        --secondary: #64748B;
+    }
 
         #patient-module { font-family: 'Inter', sans-serif; }
         
@@ -39,6 +44,7 @@
         #patient-module .input-group { display: grid; grid-template-columns: 1fr; gap: 16px; margin-bottom: 16px; }
         @media (min-width: 768px) { #patient-module .input-group { grid-template-columns: 1fr 1fr; } }
         @media (min-width: 1024px) { #patient-module .input-group.three-cols { grid-template-columns: 1fr 1fr 1fr; } }
+        @media (min-width: 1024px) { #patient-module .input-group.four-cols { grid-template-columns: 1fr 1fr 1fr 1fr; } }
 
         #patient-module .form-input { width: 100%; padding: 14px 16px; border-radius: 12px; border: 1px solid var(--border); font-size: 14px; color: var(--text-main); background: #FAFAFA; outline: none; transition: border 0.2s; appearance: auto; }
         #patient-module .form-input:focus { border-color: var(--primary); background: var(--surface); }
@@ -55,9 +61,15 @@
         #patient-module .validation-msg.success { color: var(--success); display: block; }
         #patient-module .validation-msg.error { color: var(--danger); display: block; }
 
+        /* --- Badges --- */
+        .badge { padding: 4px 10px; border-radius: 6px; font-size: 11px; font-weight: 700; text-transform: uppercase; display: inline-block; white-space: nowrap; margin-bottom: 4px; }
+        .badge-normal { background: #F1F5F9; color: #475569; border: 1px solid #CBD5E1; }
+        .badge-regular { background: #EFF6FF; color: #2563EB; border: 1px solid #BFDBFE; }
+        .badge-both { background: #FEF2F2; color: #DC2626; border: 1px solid #FECACA; }
+
         /* --- Table Styling --- */
         #patient-module .table-container { background: var(--surface); border-radius: 20px; box-shadow: var(--shadow-sm); border: 1px solid var(--border); overflow: hidden; margin-bottom: 24px; }
-        #patient-module .table-header { padding: 16px 20px; border-bottom: 1px solid var(--border); display: flex; justify-content: space-between; align-items: center; flex-wrap: wrap; gap: 12px; }
+        #patient-module .table-header { padding: 16px 20px; border-bottom: 1px solid var(--border); display: flex; flex-direction: column; gap: 16px; }
         #patient-module .table-header h4 { font-size: 16px; font-weight: 600; margin: 0; }
         #patient-module .saas-table { width: 100%; border-collapse: collapse; text-align: left; }
         #patient-module .saas-table th { padding: 12px 20px; font-size: 12px; font-weight: 600; color: var(--text-muted); text-transform: uppercase; background: #FAFAFA; border-bottom: 1px solid var(--border); }
@@ -70,7 +82,7 @@
         .cta-link { display: inline-flex; align-items: center; justify-content: center; width: 28px; height: 28px; border-radius: 6px; background: #FAFAFA; border: 1px solid var(--border); transition: 0.2s; text-decoration: none; }
         .cta-link:hover { background: var(--surface); transform: translateY(-2px); box-shadow: 0 2px 4px rgba(0,0,0,0.05); }
 
-        /* --- UPDATED MOBILE TABLE FIX --- */
+        /* --- Mobile Table Fix --- */
         @media (max-width: 767px) {
             #patient-module .saas-table thead { display: none; }
             #patient-module .saas-table, #patient-module .saas-table tbody, #patient-module .saas-table tr, #patient-module .saas-table td { display: block; width: 100%; }
@@ -149,7 +161,8 @@
             </div>
 
             <fieldset id="patientDetailsFieldset" style="border: none; padding: 0; margin: 0;" disabled>
-                <div class="input-group three-cols">
+                
+                <div class="input-group four-cols">
                     <div style="grid-column: span 2;">
                         <label class="form-label">Patient Name *</label>
                         <input type="text" id="patientName" class="form-input" placeholder="Full Name" required>
@@ -157,6 +170,14 @@
                     <div>
                         <label class="form-label">Age</label>
                         <input type="number" id="patientAge" class="form-input" placeholder="Years" min="1" max="120">
+                    </div>
+                    <div>
+                        <label class="form-label">Category *</label>
+                        <select id="patientCategory" class="form-input" required>
+                            <option value="Normal">Normal</option>
+                            <option value="Regular">Regular</option>
+                            <option value="Both">Both (Admin Mark)</option>
+                        </select>
                     </div>
                 </div>
 
@@ -187,7 +208,7 @@
                 </div>
 
                 <div style="text-align: right; margin-top: 16px;">
-                    <button type="reset" class="btn-outline no-print" style="display: inline-flex; margin-right: 12px; padding: 14px 24px;" onclick="window.resetForm()">Clear Form</button>
+                    <button type="button" class="btn-outline no-print" style="display: inline-flex; margin-right: 12px; padding: 14px 24px;" onclick="window.resetForm()">Clear Form</button>
                     <button type="button" class="btn-primary no-print" id="saveBtn" onclick="window.savePatient()">Save Patient</button>
                 </div>
             </fieldset>
@@ -195,21 +216,50 @@
     </div>
 
     <div class="table-container">
+        
         <div class="table-header">
-            <h4>Patient Directory</h4>
-            <div style="display: flex; gap: 8px; align-items: center; flex-wrap: wrap;">
-                
+            
+            <div style="display: flex; justify-content: space-between; align-items: center; width: 100%;">
+                <h4>Patient Directory</h4>
                 <button class="btn-outline no-print" onclick="window.exportPatientsPDF()">
                     <span class="material-symbols-rounded" style="font-size: 16px; color: var(--primary);">picture_as_pdf</span> Export
                 </button>
+            </div>
 
-                <div class="no-print" style="background: #FAFAFA; border: 1px solid var(--border); border-radius: 8px; padding: 6px 12px; display: flex; align-items: center; gap: 6px;">
+            <!-- Advanced Sorting & Filtering Bar -->
+            <div class="no-print" style="display: flex; flex-wrap: wrap; gap: 10px; align-items: center; background: #FAFAFA; padding: 12px; border-radius: 8px; border: 1px solid var(--border); width: 100%;">
+                
+                <select id="filterBranch" class="form-input" onchange="window.filterAndSortTable()" style="padding: 8px; font-size: 12px; width: auto;">
+                    <option value="">All Branches</option>
+                </select>
+
+                <select id="filterCategory" class="form-input" onchange="window.filterAndSortTable()" style="padding: 8px; font-size: 12px; width: auto;">
+                    <option value="">All Categories</option>
+                    <option value="normal">Normal</option>
+                    <option value="regular">Regular</option>
+                    <option value="both">Both</option>
+                </select>
+
+                <select id="sortOption" class="form-input" onchange="window.filterAndSortTable()" style="padding: 8px; font-size: 12px; width: auto;">
+                    <option value="newest">Newest First</option>
+                    <option value="oldest">Oldest First</option>
+                    <option value="name_asc">Name (A-Z)</option>
+                    <option value="name_desc">Name (Z-A)</option>
+                </select>
+
+                <div style="display: flex; align-items: center; background: #fff; border: 1px solid var(--border); border-radius: 8px; padding: 4px 8px; flex: 1; min-width: 200px;">
                     <span class="material-symbols-rounded" style="font-size: 16px; color: var(--text-muted);">search</span>
-                    <input type="text" id="patientSearchInput" onkeyup="window.searchTable()" placeholder="Search directory..." style="border: none; background: transparent; outline: none; font-size: 13px; width: 130px;">
+                    <input type="text" id="patientSearchInput" onkeyup="window.filterAndSortTable()" placeholder="Search Name, Mobile, ID..." style="border: none; background: transparent; outline: none; font-size: 12px; width: 100%; margin-left: 6px;">
                 </div>
 
+                <button class="btn-outline" onclick="window.clearFilters()" style="padding: 8px; font-size: 12px;" title="Clear Filters">
+                    <span class="material-symbols-rounded" style="font-size: 16px;">close</span>
+                </button>
+
             </div>
+            
         </div>
+        
         <table class="saas-table">
             <thead>
                 <tr>
@@ -246,6 +296,7 @@
         // --- 0. LOAD BRANCHES (UPDATED FOR ROLE BASED ACCESS) ---
         window.loadBranchesForPatient = async function() {
             const select = document.getElementById('patientBranch');
+            const filterSelect = document.getElementById('filterBranch');
             
             // SECURITY: If standard user, lock the dropdown to their branch only
             if (window.currentUser && window.currentUser.role !== 'admin') {
@@ -253,6 +304,10 @@
                 select.innerHTML = `<option value="${userBranch}">${userBranch}</option>`;
                 select.style.pointerEvents = 'none';
                 select.style.background = 'var(--grey-med)';
+                
+                filterSelect.innerHTML = `<option value="${userBranch}">${userBranch}</option>`;
+                filterSelect.style.pointerEvents = 'none';
+                filterSelect.style.background = 'var(--grey-med)';
                 return; // Stop executing
             }
 
@@ -268,34 +323,76 @@
 
                 branchList.sort();
                 select.innerHTML = '<option value="">Select Branch</option>';
+                filterSelect.innerHTML = '<option value="">All Branches</option>';
                 
                 branchList.forEach(bName => {
-                    const option = document.createElement('option');
-                    option.value = bName;
-                    option.text = bName;
-                    select.appendChild(option);
+                    select.appendChild(new Option(bName, bName));
+                    filterSelect.appendChild(new Option(bName, bName));
                 });
             } catch(e) {
                 console.error("Error loading branches", e);
-                select.innerHTML = '<option value="">Select Branch</option><option value="Mahe">Mahe</option><option value="Chokli">Chokli</option><option value="Panoor">Panoor</option><option value="Koothuparamba">Koothuparamba</option><option value="Nadapuram">Nadapuram</option><option value="Home Care">Home Care</option>';
+                select.innerHTML = '<option value="">Select Branch</option><option value="Mahe">Mahe</option>';
             }
         };
 
         window.loadBranchesForPatient();
 
-        // --- 1. LIVE SEARCH FUNCTION ---
-        window.searchTable = function() {
-            const input = document.getElementById("patientSearchInput").value.toUpperCase();
-            const table = document.getElementById("patientTableBody");
-            const tr = table.getElementsByTagName("tr");
+        // --- 1. FILTER AND SORT FUNCTION ---
+        window.filterAndSortTable = function() {
+            const branchQuery = document.getElementById("filterBranch").value.toLowerCase();
+            const categoryQuery = document.getElementById("filterCategory").value.toLowerCase();
+            const sortQuery = document.getElementById("sortOption").value;
+            const textQuery = document.getElementById("patientSearchInput").value.toLowerCase();
+
+            const tableBody = document.getElementById("patientTableBody");
+            const rows = Array.from(tableBody.getElementsByTagName("tr"));
             
-            for (let i = 0; i < tr.length; i++) {
-                if (tr[i].innerText.toUpperCase().indexOf(input) > -1) {
-                    tr[i].style.display = "";
+            // 1. First, apply filters (display: '' or display: 'none')
+            rows.forEach(row => {
+                if (row.cells.length === 1) return; // Skip "loading/empty" status rows
+                
+                const rowBranch = (row.getAttribute("data-branch") || "").toLowerCase();
+                const rowCategory = (row.getAttribute("data-category") || "").toLowerCase();
+                const rowSearch = (row.getAttribute("data-search") || "").toLowerCase();
+
+                let show = true;
+                if (branchQuery && rowBranch !== branchQuery) show = false;
+                if (categoryQuery && rowCategory !== categoryQuery) show = false;
+                if (textQuery && rowSearch.indexOf(textQuery) === -1) show = false;
+
+                row.style.display = show ? "" : "none";
+            });
+
+            // 2. Second, execute sorting logic
+            rows.sort((a, b) => {
+                if (a.cells.length === 1 || b.cells.length === 1) return 0;
+
+                if (sortQuery === 'name_asc' || sortQuery === 'name_desc') {
+                    const nameA = a.getAttribute('data-name').toLowerCase();
+                    const nameB = b.getAttribute('data-name').toLowerCase();
+                    if (nameA < nameB) return sortQuery === 'name_asc' ? -1 : 1;
+                    if (nameA > nameB) return sortQuery === 'name_asc' ? 1 : -1;
+                    return 0;
                 } else {
-                    tr[i].style.display = "none";
+                    // Time based sorting
+                    const timeA = parseInt(a.getAttribute('data-time') || 0);
+                    const timeB = parseInt(b.getAttribute('data-time') || 0);
+                    return sortQuery === 'newest' ? timeB - timeA : timeA - timeB;
                 }
+            });
+
+            // 3. Re-append sorted rows to the DOM
+            rows.forEach(row => tableBody.appendChild(row));
+        }
+
+        window.clearFilters = function() {
+            if (window.currentUser && window.currentUser.role === 'admin') {
+                document.getElementById("filterBranch").value = "";
             }
+            document.getElementById("filterCategory").value = "";
+            document.getElementById("sortOption").value = "newest";
+            document.getElementById("patientSearchInput").value = "";
+            window.filterAndSortTable();
         }
 
         // --- 2. EXPORT PDF FUNCTION ---
@@ -325,14 +422,26 @@
                     return;
                 }
 
-                // Sort client side
+                // Initial fetch array mapped so sorting can be done inside filterAndSortTable naturally.
                 let pList = [];
                 querySnapshot.forEach(doc => pList.push({ id: doc.id, data: doc.data() }));
-                pList.sort((a, b) => new Date(b.data.createdAt || 0) - new Date(a.data.createdAt || 0));
 
                 pList.forEach((item) => {
                     const data = item.data;
+                    const catLower = (data.category || 'Normal').toLowerCase();
+                    const createdAtTime = data.createdAt ? (data.createdAt.toMillis ? data.createdAt.toMillis() : new Date(data.createdAt).getTime()) : 0;
+                    
+                    let badgeClass = 'badge-normal';
+                    if(catLower === 'regular') badgeClass = 'badge-regular';
+                    if(catLower === 'both') badgeClass = 'badge-both';
+
                     const tr = document.createElement('tr');
+                    tr.setAttribute("data-branch", data.branch || '');
+                    tr.setAttribute("data-category", data.category || 'Normal');
+                    tr.setAttribute("data-name", data.name || '');
+                    tr.setAttribute("data-time", createdAtTime);
+                    tr.setAttribute("data-search", `${data.name || ''} ${data.mobile || ''} ${data.patientId || ''}`.toLowerCase());
+
                     tr.innerHTML = `
                         <td data-label="Patient"><div class="patient-info"><strong>${data.name}</strong><span class="pid">${data.patientId}</span></div></td>
                         <td data-label="Mobile">
@@ -343,6 +452,7 @@
                             </div>
                         </td>
                         <td data-label="Demographics">
+                            <span class="badge ${badgeClass}">${data.category || 'Normal'}</span><br>
                             ${data.age || '--'} Yrs / ${data.gender || '--'}<br>
                             <span style="font-size:12px; color:var(--primary); font-weight:600;">${data.branch || 'Unassigned'}</span>
                         </td>
@@ -356,6 +466,10 @@
                     `;
                     tableBody.appendChild(tr);
                 });
+
+                // Apply default Sort (Newest) and current filter states on load
+                window.filterAndSortTable();
+
             } catch (error) {
                 console.error("Firebase Read Error:", error);
                 tableBody.innerHTML = '<tr><td colspan="5" style="text-align:center; padding: 20px; color: var(--danger);">Error loading data.</td></tr>';
@@ -364,7 +478,7 @@
 
         window.loadPatients();
 
-        // --- 4. SMART VERIFY (CROSS-CHECKS BOTH DATABASES) ---
+        // --- 4. SMART VERIFY (CROSS-CHECKS DATABASE) ---
         window.verifyMobile = async function() {
             const mobileInput = document.getElementById('mobileInput').value;
             const validationMsg = document.getElementById('mobileValidationMsg');
@@ -384,11 +498,10 @@
             verifyBtn.disabled = true;
 
             try {
-                // First: Check if they are already in the PATIENTS database
+                // Check if they are already in the PATIENTS database
                 const pSnap = await getDocs(query(collection(db, "patients"), where("mobile", "==", mobileInput)));
 
                 if (!pSnap.empty) {
-                    // BUG FIX: Must access .docs[0] before .data()
                     let existingName = pSnap.docs[0].data().name; 
                     validationMsg.innerHTML = `Patient already registered as <strong>${existingName}</strong>! Directory filtered below.`;
                     validationMsg.classList.add('error');
@@ -396,32 +509,17 @@
                     
                     // Auto-search the table to show them the duplicate
                     document.getElementById('patientSearchInput').value = mobileInput;
-                    window.searchTable();
+                    window.filterAndSortTable();
                 } else {
-                    // Second: Check if they are in the APPOINTMENTS database but not registered
-                    const aSnap = await getDocs(query(collection(db, "appointments"), where("mobile", "==", mobileInput)));
-
-                    if (!aSnap.empty) {
-                        // BUG FIX: Must access .docs[0] before .data()
-                        let aptName = aSnap.docs[0].data().name;
-                        validationMsg.innerHTML = `Found an appointment for <strong>${aptName}</strong>. You may save them as a registered patient now.`;
-                        validationMsg.classList.add('success');
-                        fieldset.disabled = false;
-                        
-                        // Auto-fill the patient name from the appointment!
-                        document.getElementById('patientName').value = aptName;
-                        document.getElementById('patientName').focus();
-                    } else {
-                        // Brand new number
-                        validationMsg.innerText = "Number is available. Please fill out the details.";
-                        validationMsg.classList.add('success');
-                        fieldset.disabled = false;
-                        document.getElementById('patientName').focus();
-                    }
+                    // Brand new number
+                    validationMsg.innerText = "Number is available. Please fill out the details.";
+                    validationMsg.classList.add('success');
+                    fieldset.disabled = false;
+                    document.getElementById('patientName').focus();
                     
                     // Clear search if it was previously active
                     document.getElementById('patientSearchInput').value = "";
-                    window.searchTable();
+                    window.filterAndSortTable();
                 }
             } catch (error) {
                 console.error("Firebase Error:", error);
@@ -439,13 +537,14 @@
             const mobile = document.getElementById('mobileInput').value;
             const name = document.getElementById('patientName').value;
             const age = document.getElementById('patientAge').value;
+            const category = document.getElementById('patientCategory').value;
             const gender = document.getElementById('patientGender').value;
             const branch = document.getElementById('patientBranch').value;
             const address = document.getElementById('patientAddress').value;
             const notes = document.getElementById('patientNotes').value;
 
-            if (!name || !mobile) {
-                alert("Patient Name and Mobile Number are required!");
+            if (!name || !mobile || !category) {
+                alert("Patient Name, Mobile Number, and Category are required!");
                 return;
             }
 
@@ -459,6 +558,7 @@
                     mobile: mobile,
                     name: name,
                     age: age,
+                    category: category,
                     gender: gender,
                     branch: branch,
                     address: address,
@@ -467,7 +567,6 @@
                 });
 
                 alert(`Success! Patient saved with ID: ${generatedId}`);
-                document.getElementById('add-patient-form').reset();
                 window.resetForm();
                 window.loadPatients();
 
@@ -480,13 +579,22 @@
             saveBtn.disabled = false;
         }
 
+        // --- 6. RESET FORM ---
         window.resetForm = function() {
-            document.getElementById('mobileValidationMsg').className = 'validation-msg';
-            document.getElementById('patientDetailsFieldset').disabled = true;
+            // Hard reset the form HTML logic
+            document.getElementById('add-patient-form').reset();
             
-            // Ensure branch stays locked if user is not admin
+            // UI specific reset overrides
+            document.getElementById('mobileValidationMsg').className = 'validation-msg';
+            document.getElementById('mobileValidationMsg').innerText = '';
+            document.getElementById('patientDetailsFieldset').disabled = true;
+            document.getElementById('patientCategory').value = 'Normal';
+            
+            // Ensure branch stays locked to standard user branch if applicable
             if (window.currentUser && window.currentUser.role !== 'admin') {
                 document.getElementById('patientBranch').value = window.currentUser.branch;
+            } else {
+                document.getElementById('patientBranch').value = "";
             }
         }
     </script>
