@@ -22,22 +22,19 @@
     
    <style>
     :root {
-        /* Zoho Blue Variant */
-        --primary: #0062FF;        /* Main Zoho Blue */
-        --primary-light: #EAF2FF;  /* Very soft blue for active states/backgrounds */
+        --primary: #0062FF;
+        --primary-light: #EAF2FF;
         
-        /* Cool-toned neutrals to match the blue */
-        --bg: #F4F6F8;             /* Cool light gray for app background */
-        --surface: #ffffff;        /* Crisp white for cards/panels */
-        --text-main: #0F172A;      /* Deep slate for high readability */
-        --text-muted: #64748B;     /* Muted slate for secondary text */
-        --border: #E2E8F0;         /* Cool, clean border color */
+        --bg: #F4F6F8;
+        --surface: #ffffff;
+        --text-main: #0F172A;
+        --text-muted: #64748B;
+        --border: #E2E8F0;
         
-        /* Preserved shadow and semantic colors */
         --shadow: 0 4px 12px rgba(0, 0, 0, 0.04);
         --success: #10B981;
         --warning: #F59E0B; 
-        --secondary: #475569;      /* Adjusted to cool slate to match theme */
+        --secondary: #475569;
         --danger: #EF4444; 
     }
 
@@ -61,12 +58,15 @@
         .fin-stat-container { display: flex; flex-direction: column; gap: 16px; flex: 1; justify-content: center; }
         .fin-stat { padding: 16px; border-radius: 12px; background: #FAFAFA; border: 1px solid var(--border); display: flex; align-items: center; justify-content: space-between;}
         .fin-stat.alert { background: #fff5f5; border-color: #fecaca; }
+        .fin-stat.success-box { background: #ECFDF5; border-color: #A7F3D0; }
         .fin-stat-info { display: flex; flex-direction: column; }
         .fin-label { font-size: 11px; font-weight: 700; color: var(--text-muted); text-transform: uppercase; margin-bottom: 4px; letter-spacing: 0.5px;}
         .fin-amount { font-size: 24px; font-weight: 800; color: var(--text-main); }
-        .fin-stat.alert .fin-amount { color: var(--primary); }
+        .fin-stat.alert .fin-amount { color: var(--danger); }
+        .fin-stat.success-box .fin-amount { color: var(--success); }
         .fin-icon { font-size: 32px; color: var(--border); }
         .fin-stat.alert .fin-icon { color: #fca5a5; }
+        .fin-stat.success-box .fin-icon { color: #6EE7B7; }
 
         .chart-container { position: relative; height: 180px; width: 100%; display: flex; justify-content: center; align-items: center; margin-bottom: 16px;}
         .mini-stats-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 8px; }
@@ -83,14 +83,13 @@
         .cal-day-name { font-size: 10px; font-weight: 700; color: var(--text-muted); padding-bottom: 8px; text-transform: uppercase;}
         .cal-day { padding: 8px 0; border-radius: 8px; font-size: 13px; font-weight: 600; cursor: pointer; transition: 0.2s; border: 1px solid transparent; position: relative;}
         .cal-day:hover { background: #FAFAFA; border-color: var(--border); }
-        .cal-day.active { background: var(--primary); color: white; font-weight: 700; box-shadow: 0 4px 10px rgba(225, 99, 73, 0.3);}
+        .cal-day.active { background: var(--primary); color: white; font-weight: 700; box-shadow: 0 4px 10px rgba(0, 98, 255, 0.3);}
         .cal-day.has-event::after { content: ''; position: absolute; bottom: 4px; left: 50%; transform: translateX(-50%); width: 4px; height: 4px; border-radius: 50%; background: var(--text-main); }
         .cal-day.active.has-event::after { background: white; }
         .cal-day.empty { pointer-events: none; }
 
         .dash-table-wrapper { background: var(--surface); border-radius: 16px; box-shadow: var(--shadow); border: 1px solid var(--border); overflow: hidden; width: 100%; margin-bottom: 40px; }
         
-        /* Table Responsive handles Google Sheets style scrolling */
         .table-responsive { width: 100%; overflow-x: auto; -webkit-overflow-scrolling: touch; }
         .saas-table { width: 100%; min-width: 800px; border-collapse: collapse; text-align: left; }
         .saas-table th { padding: 14px 20px; font-size: 11px; font-weight: 700; color: var(--text-muted); text-transform: uppercase; background: #FAFAFA; border-bottom: 1px solid var(--border); letter-spacing: 0.5px;}
@@ -105,7 +104,6 @@
 
         .dash-error { display: none; background: #FEF2F2; border: 1px solid #FCA5A5; color: var(--danger); padding: 12px; border-radius: 8px; font-size: 13px; font-weight: 600; margin-bottom: 20px; align-items: center; gap: 8px; }
 
-        /* FIXED MOBILE CSS: Removed the code that breaks tables into cards */
         @media (max-width: 768px) {
             #sidebar-container { position: fixed; z-index: 1000; transform: translateX(-100%); width: 280px; box-shadow: 5px 0 15px rgba(0,0,0,0.1); }
             #sidebar-container.open { transform: translateX(0); }
@@ -121,7 +119,7 @@
         <div style="background: var(--surface); padding: 40px; border-radius: 16px; box-shadow: var(--shadow); border: 1px solid var(--border); width: 100%; max-width: 400px; text-align: center;">
             <h2 style="color: var(--text-main); margin-bottom: 24px; font-weight: 800; line-height: 1.3;">Welcome Back<br><span style="color: var(--primary); font-size: 18px;">Stra Care Administration</span></h2>
             
-            <input type="text" id="loginUsername" placeholder="Username (e.g., admin, userB1)" style="width: 100%; padding: 14px; margin-bottom: 16px; border-radius: 8px; border: 1px solid var(--border); font-size: 14px; outline: none; background: #FAFAFA;">
+            <input type="email" id="loginEmail" placeholder="Email Address" style="width: 100%; padding: 14px; margin-bottom: 16px; border-radius: 8px; border: 1px solid var(--border); font-size: 14px; outline: none; background: #FAFAFA;">
             
             <div style="position: relative; margin-bottom: 16px;">
                 <input type="password" id="loginPassword" placeholder="Password" style="width: 100%; padding: 14px; border-radius: 8px; border: 1px solid var(--border); font-size: 14px; outline: none; padding-right: 40px; background: #FAFAFA;" onkeypress="if(event.key === 'Enter') window.handleLogin()">
@@ -133,8 +131,8 @@
                 <label for="rememberMe" style="font-size: 13px; color: var(--text-muted); cursor: pointer; user-select: none; font-weight: 500;">Remember me on this browser</label>
             </div>
 
-            <button onclick="window.handleLogin()" style="width: 100%; background: var(--primary); color: white; border: none; padding: 14px; border-radius: 8px; font-weight: bold; cursor: pointer; font-size: 14px; transition: opacity 0.2s;">Access Dashboard</button>
-            <div id="login-error" style="color: var(--danger); margin-top: 16px; display: none; font-size: 13px;">Invalid credentials!</div>
+            <button onclick="window.handleLogin()" id="loginBtn" style="width: 100%; background: var(--primary); color: white; border: none; padding: 14px; border-radius: 8px; font-weight: bold; cursor: pointer; font-size: 14px; transition: opacity 0.2s;">Access Dashboard</button>
+            <div id="login-error" style="color: var(--danger); margin-top: 16px; display: none; font-size: 13px;">Authentication Failed.</div>
         </div>
 
         <div style="margin-top: 40px; text-align: center;">
@@ -142,7 +140,7 @@
         </div>
     </div>
 
-    <!-- APP WRAPPER: Hidden by default -->
+    <!-- APP WRAPPER -->
     <div id="app-container" style="display: none; height: 100vh; width: 100vw; overflow: hidden;">
         
         <div id="sidebar-container"></div>
@@ -175,21 +173,21 @@
                     <div class="dash-top-row">
                         
                         <div class="dash-card">
-                            <div class="card-title">Financial Summary</div>
+                            <div class="card-title">Today's Attendance Overview</div>
                             <div class="fin-stat-container">
+                                <div class="fin-stat success-box">
+                                    <div class="fin-stat-info">
+                                        <div class="fin-label">Present / Half-Day</div>
+                                        <div class="fin-amount" id="dashPresent">0</div>
+                                    </div>
+                                    <span class="material-symbols-rounded fin-icon">how_to_reg</span>
+                                </div>
                                 <div class="fin-stat alert">
                                     <div class="fin-stat-info">
-                                        <div class="fin-label">Unpaid Dues (Pending)</div>
-                                        <div class="fin-amount" id="dashUnpaidBills">₹ 0</div>
+                                        <div class="fin-label">On Leave / Absent</div>
+                                        <div class="fin-amount" id="dashAbsent">0</div>
                                     </div>
-                                    <span class="material-symbols-rounded fin-icon">account_balance_wallet</span>
-                                </div>
-                                <div class="fin-stat">
-                                    <div class="fin-stat-info">
-                                        <div class="fin-label">Total Volume (All Time)</div>
-                                        <div class="fin-amount" id="dashTotalApts">0 <span style="font-size: 12px; color: var(--text-muted); font-weight: 600;">Bookings</span></div>
-                                    </div>
-                                    <span class="material-symbols-rounded fin-icon">monitoring</span>
+                                    <span class="material-symbols-rounded fin-icon">event_busy</span>
                                 </div>
                             </div>
                         </div>
@@ -282,20 +280,40 @@
         </div>
     </div> 
     
-    <script>
-        // Define your users and their branch access
-        window.appUsers = {
-            "admin": { password: "admin", role: "admin", branch: "ALL" },
-            "userB1": { password: "passwordB1", role: "user", branch: "Branch 1" },
-            "userB2": { password: "passwordB2", role: "user", branch: "Branch 2" },
-            "userB3": { password: "passwordB3", role: "user", branch: "Branch 3" },
-            "userB4": { password: "passwordB4", role: "user", branch: "Branch 4" },
-            "userB5": { password: "passwordB5", role: "user", branch: "Branch 5" },
-            "userB6": { password: "passwordB6", role: "user", branch: "Branch 6" }
+    <script type="module">
+        import { initializeApp, getApps, getApp } from "https://www.gstatic.com/firebasejs/10.8.1/firebase-app.js";
+        import { getFirestore, collection, getDocs, query, where } from "https://www.gstatic.com/firebasejs/10.8.1/firebase-firestore.js";
+        import { getAuth, signInWithEmailAndPassword, onAuthStateChanged, signOut, setPersistence, browserLocalPersistence, browserSessionPersistence } from "https://www.gstatic.com/firebasejs/10.8.1/firebase-auth.js";
+
+        const firebaseConfig = {
+            apiKey: "AIzaSyAcO1L2Za7dzILxylmMkRTSx0FBVu_EEoM",
+            authDomain: "cmf001stra.firebaseapp.com",
+            projectId: "cmf001stra",
+            storageBucket: "cmf001stra.firebasestorage.app",
+            messagingSenderId: "763958641347",
+            appId: "1:763958641347:web:316876bc2340b26bd21876",
+            measurementId: "G-770FBR88LJ"
+        };
+
+        const app = !getApps().length ? initializeApp(firebaseConfig) : getApp();
+        const db = getFirestore(app);
+        const auth = getAuth(app);
+
+        // Role Mapping Object Based on Explicit Emails
+        const userRolesMap = {
+            "shanicm@gmail.com": { role: "admin", branch: "ALL" },
+            "shain609@gmail.com": { role: "admin", branch: "ALL" },
+            "stracp2@gmail.com": { role: "user", branch: "Mahe" },
+            "theracare555physio@gmail.com": { role: "user", branch: "Chokli" },
+            "stracp1@gmail.com": { role: "user", branch: "Panoor" },
+            "stracare555@gmail.com": { role: "user", branch: "Koothuparamba" },
+            "stracare1@gmail.com": { role: "user", branch: "Nadapuram" },
+            "stracarephysiotherapy@gmail.com": { role: "user", branch: "Home Care" }
         };
 
         window.currentUser = null;
 
+        // Toggle Password Visibility
         window.togglePassword = function() {
             const passInput = document.getElementById('loginPassword');
             const passIcon = document.getElementById('togglePassIcon');
@@ -308,25 +326,74 @@
             }
         };
 
-        window.handleLogin = function(isAutoLogin = false) {
-            const userVal = document.getElementById('loginUsername').value.trim();
-            const passVal = document.getElementById('loginPassword').value.trim();
+        // Handle Login using Firebase Auth
+        window.handleLogin = async function() {
+            const email = document.getElementById('loginEmail').value.trim();
+            const password = document.getElementById('loginPassword').value.trim();
             const rememberMe = document.getElementById('rememberMe').checked;
             const errDiv = document.getElementById('login-error');
+            const loginBtn = document.getElementById('loginBtn');
 
-            if (window.appUsers[userVal] && window.appUsers[userVal].password === passVal) {
-                window.currentUser = window.appUsers[userVal];
-                
-                if (rememberMe) {
-                    localStorage.setItem('straCareUser', userVal);
-                    localStorage.setItem('straCarePass', passVal);
-                    localStorage.setItem('straCareRemember', 'true');
-                } else if (!isAutoLogin) {
-                    localStorage.removeItem('straCareUser');
-                    localStorage.removeItem('straCarePass');
-                    localStorage.setItem('straCareRemember', 'false');
-                }
+            if (!email || !password) {
+                errDiv.innerText = "Please enter both email and password.";
+                errDiv.style.display = 'block';
+                return;
+            }
 
+            loginBtn.innerText = "Authenticating...";
+            loginBtn.disabled = true;
+            errDiv.style.display = 'none';
+
+            try {
+                // Set persistence based on "Remember Me" checkbox
+                const persistenceType = rememberMe ? browserLocalPersistence : browserSessionPersistence;
+                await setPersistence(auth, persistenceType);
+
+                // Sign in
+                await signInWithEmailAndPassword(auth, email, password);
+                // The onAuthStateChanged listener will handle the UI transition
+
+            } catch (error) {
+                errDiv.innerText = "Invalid credentials or user not found.";
+                errDiv.style.display = 'block';
+                loginBtn.innerText = "Access Dashboard";
+                loginBtn.disabled = false;
+            }
+        };
+
+        // Handle Logout
+        window.handleLogout = async function() {
+            try {
+                await signOut(auth);
+                window.currentUser = null;
+                document.getElementById('app-container').style.display = 'none';
+                document.getElementById('login-container').style.display = 'flex';
+                document.getElementById('loginPassword').value = ''; 
+            } catch (error) {
+                console.error("Error signing out: ", error);
+            }
+        };
+
+        // Global Auth State Observer (The Gatekeeper)
+        onAuthStateChanged(auth, (user) => {
+            const loginBtn = document.getElementById('loginBtn');
+            if (loginBtn) {
+                loginBtn.innerText = "Access Dashboard";
+                loginBtn.disabled = false;
+            }
+
+            if (user) {
+                // User is signed in. Extract Role from map
+                const emailLower = user.email.toLowerCase();
+                const mappedProfile = userRolesMap[emailLower] || { role: "user", branch: "Unknown" };
+
+                window.currentUser = {
+                    email: user.email,
+                    role: mappedProfile.role,
+                    branch: mappedProfile.branch
+                };
+
+                // Show App Wrapper
                 document.getElementById('login-container').style.display = 'none';
                 document.getElementById('app-container').style.display = 'flex';
                 
@@ -339,41 +406,15 @@
                 }
                 
                 if(window.fetchDashboardData) window.fetchDashboardData();
+
             } else {
-                if (!isAutoLogin) {
-                    errDiv.style.display = 'block';
-                }
+                // User is signed out.
+                window.currentUser = null;
+                document.getElementById('app-container').style.display = 'none';
+                document.getElementById('login-container').style.display = 'flex';
             }
-        };
+        });
 
-        // NEW: Fixed Logout Function included in main script
-        window.handleLogout = function() {
-            window.currentUser = null; // Clear session
-            
-            // Un-check remember me and wipe local storage immediately
-            localStorage.removeItem('straCareUser');
-            localStorage.removeItem('straCarePass');
-            localStorage.setItem('straCareRemember', 'false');
-            document.getElementById('rememberMe').checked = false;
-
-            // Hide App and Show Login
-            document.getElementById('app-container').style.display = 'none';
-            document.getElementById('login-container').style.display = 'flex';
-            document.getElementById('loginPassword').value = ''; 
-        };
-
-        window.checkAutoLogin = function() {
-            const storedUser = localStorage.getItem('straCareUser');
-            const storedPass = localStorage.getItem('straCarePass');
-            const rememberState = localStorage.getItem('straCareRemember');
-
-            if (rememberState === 'true' && storedUser && storedPass) {
-                document.getElementById('loginUsername').value = storedUser;
-                document.getElementById('loginPassword').value = storedPass;
-                document.getElementById('rememberMe').checked = true;
-                window.handleLogin(true); 
-            }
-        };
 
         // Global UI State
         window.allApts = [];
@@ -602,64 +643,33 @@
             document.getElementById('min-arc').style.strokeDashoffset = circumference - (circumference * (now.getMinutes() / 60));
         };
 
-        document.addEventListener('DOMContentLoaded', () => {
-            window.checkAutoLogin();
-            window.loadComponent('header-container', 'header.html');
-            window.loadComponent('sidebar-container', 'sidebar.html');
-            window.loadComponent('bottomnav-container', 'bottomnav.html');
-            setInterval(window.updateGlobalClock, 1000);
-        });
-    </script>
-
-    <script type="module">
-        import { initializeApp, getApps, getApp } from "https://www.gstatic.com/firebasejs/10.8.1/firebase-app.js";
-        import { getFirestore, collection, getDocs, query, where } from "https://www.gstatic.com/firebasejs/10.8.1/firebase-firestore.js";
-
-        const firebaseConfig = {
-            apiKey: "AIzaSyAcO1L2Za7dzILxylmMkRTSx0FBVu_EEoM",
-            authDomain: "cmf001stra.firebaseapp.com",
-            projectId: "cmf001stra",
-            storageBucket: "cmf001stra.firebasestorage.app",
-            messagingSenderId: "763958641347",
-            appId: "1:763958641347:web:316876bc2340b26bd21876",
-            measurementId: "G-770FBR88LJ"
-        };
-
-        const app = !getApps().length ? initializeApp(firebaseConfig) : getApp();
-        const db = getFirestore(app);
-
         // Fetch Dashboard Data from Firebase
         window.fetchDashboardData = async function() {
             if (!window.currentUser) return; 
 
             try {
-                let q;
-                // ADMIN gets everything. USERS get only their branch.
+                const errBanner = document.getElementById('dash-error-banner');
+                if(errBanner) errBanner.style.display = 'none';
+
+                // --- 1. APPOINTMENTS DATA ---
+                let qApt;
                 if (window.currentUser.role === 'admin') {
-                    q = query(collection(db, "appointments"));
+                    qApt = query(collection(db, "appointments"));
                 } else {
-                    q = query(collection(db, "appointments"), where("branch", "==", window.currentUser.branch));
+                    qApt = query(collection(db, "appointments"), where("branch", "==", window.currentUser.branch));
                 }
 
-                const snap = await getDocs(q);
-                
-                let unpaidTotal = 0;
+                const snapApt = await getDocs(qApt);
                 let cPending = 0, cCompleted = 0, cRescheduled = 0, cCancelled = 0;
 
                 window.allApts = [];
                 window.aptDatesSet.clear();
-                
-                const errBanner = document.getElementById('dash-error-banner');
-                if(errBanner) errBanner.style.display = 'none';
 
-                snap.forEach(doc => {
+                snapApt.forEach(doc => {
                     const data = doc.data();
                     window.allApts.push(data);
                     
                     if(data.date) window.aptDatesSet.add(data.date);
-
-                    let bal = parseFloat(data.balance) || 0;
-                    if(bal > 0) unpaidTotal += bal;
 
                     const status = (data.status || '').toLowerCase();
                     if(status === 'pending') cPending++;
@@ -670,12 +680,6 @@
 
                 window.allApts.sort((a, b) => new Date(b.date || 0) - new Date(a.date || 0));
 
-                const uBillObj = document.getElementById('dashUnpaidBills');
-                if(uBillObj) uBillObj.innerText = `₹ ${unpaidTotal.toLocaleString('en-IN')}`;
-                
-                const tAptObj = document.getElementById('dashTotalApts');
-                if(tAptObj) tAptObj.innerHTML = `${window.allApts.length} <span style="font-size: 12px; color: var(--text-muted); font-weight: 600;">Bookings</span>`;
-                
                 const dPend = document.getElementById('dashPending');
                 if(dPend) dPend.innerText = cPending;
                 
@@ -692,6 +696,30 @@
                 if(window.renderCalendar) window.renderCalendar();
                 if(window.renderLiveTable) window.renderLiveTable();
 
+                // --- 2. TODAY'S ATTENDANCE SUMMARY ---
+                const todayStr = new Date().toISOString().split('T')[0];
+                let qAtt;
+                if (window.currentUser.role === 'admin') {
+                    qAtt = query(collection(db, "daily_attendance"), where("date", "==", todayStr));
+                } else {
+                    qAtt = query(collection(db, "daily_attendance"), where("date", "==", todayStr), where("branch", "==", window.currentUser.branch));
+                }
+                
+                const snapAtt = await getDocs(qAtt);
+                let attPresent = 0, attAbsent = 0;
+                
+                snapAtt.forEach(doc => {
+                    const status = (doc.data().status || '').toLowerCase();
+                    if(status === 'present' || status === 'half-day') attPresent++;
+                    else if(status === 'absent' || status === 'leave') attAbsent++;
+                });
+
+                const dAttPresent = document.getElementById('dashPresent');
+                if(dAttPresent) dAttPresent.innerText = attPresent;
+
+                const dAttAbsent = document.getElementById('dashAbsent');
+                if(dAttAbsent) dAttAbsent.innerText = attAbsent;
+
             } catch (error) {
                 console.error("Dashboard Load Error:", error);
                 const errorBanner = document.getElementById('dash-error-banner');
@@ -701,6 +729,14 @@
                 }
             }
         };
+
+        // Bootstrap Application
+        document.addEventListener('DOMContentLoaded', () => {
+            window.loadComponent('header-container', 'header.html');
+            window.loadComponent('sidebar-container', 'sidebar.html');
+            window.loadComponent('bottomnav-container', 'bottomnav.html');
+            setInterval(window.updateGlobalClock, 1000);
+        });
     </script>
 </body>
 </html>
