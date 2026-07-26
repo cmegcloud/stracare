@@ -41,6 +41,7 @@
         #appointment-module .input-group { display: grid; grid-template-columns: 1fr; gap: 16px; margin-bottom: 16px; }
         @media (min-width: 768px) { #appointment-module .input-group { grid-template-columns: 1fr 1fr; } }
         @media (min-width: 1024px) { #appointment-module .input-group.three-cols { grid-template-columns: 1fr 1fr 1fr; } }
+        @media (min-width: 1024px) { #appointment-module .input-group.four-cols { grid-template-columns: 1fr 1fr 1fr 1fr; } }
 
         #appointment-module .form-input { width: 100%; padding: 14px 16px; border-radius: 12px; border: 1px solid var(--border); font-size: 14px; color: var(--text-main); background: #FAFAFA; outline: none; transition: border 0.2s; appearance: auto; }
         #appointment-module .form-input:focus { border-color: var(--primary); background: var(--surface); }
@@ -59,11 +60,13 @@
         #appointment-module .saas-table th { padding: 12px 16px; font-size: 12px; font-weight: 600; color: var(--text-muted); text-transform: uppercase; background: #FAFAFA; border-bottom: 1px solid var(--border); white-space: nowrap;}
         #appointment-module .saas-table td { padding: 16px; font-size: 14px; font-weight: 500; border-bottom: 1px solid var(--border); vertical-align: middle; white-space: nowrap;}
         
-        .badge { padding: 4px 10px; border-radius: 6px; font-size: 11px; font-weight: 700; text-transform: uppercase; display: inline-block; white-space: nowrap; }
+        .badge { padding: 4px 10px; border-radius: 6px; font-size: 11px; font-weight: 700; text-transform: uppercase; display: inline-block; white-space: nowrap; margin-right: 4px; }
         .badge-pending { background: rgba(251, 146, 60, 0.1); color: var(--danger); }
         .badge-reported { background: rgba(59, 130, 246, 0.1); color: #3B82F6; } 
         .badge-completed { background: rgba(16, 185, 129, 0.1); color: var(--success); }
         .badge-rescheduled { background: rgba(100, 116, 139, 0.1); color: var(--secondary); }
+        .badge-cancelled { background: rgba(239, 68, 68, 0.1); color: #EF4444; }
+        .badge-category { background: rgba(15, 23, 42, 0.05); color: var(--text-main); border: 1px solid var(--border); }
 
         .cta-link { display: inline-flex; align-items: center; justify-content: center; width: 28px; height: 28px; border-radius: 6px; background: #FAFAFA; border: 1px solid var(--border); transition: 0.2s; text-decoration: none; }
         .cta-link:hover { background: var(--surface); transform: translateY(-2px); box-shadow: 0 2px 4px rgba(0,0,0,0.05); }
@@ -100,7 +103,7 @@
             
             <h4 style="color: var(--primary); margin: 0 0 16px 0; border-bottom: 1px solid var(--border); padding-bottom: 8px;">1. Patient Details</h4>
             
-            <div class="input-group three-cols">
+            <div class="input-group four-cols">
                 <div>
                     <label class="form-label">Patient Mobile (Auto-Fill) *</label>
                     <div style="display: flex; gap: 8px;">
@@ -115,6 +118,14 @@
                 <div>
                     <label class="form-label">Age</label>
                     <input type="number" id="aptAge" class="form-input" placeholder="Years" min="1" max="120">
+                </div>
+                <div>
+                    <label class="form-label">Patient Category *</label>
+                    <select id="aptCategory" class="form-input" required>
+                        <option value="Normal">Normal</option>
+                        <option value="Regular">Regular</option>
+                        <option value="Both">Both (Admin Mark)</option>
+                    </select>
                 </div>
             </div>
             
@@ -166,6 +177,7 @@
                         <option value="Reported">Reported</option>
                         <option value="Completed">Completed</option>
                         <option value="Rescheduled">Rescheduled</option>
+                        <option value="Cancelled">Cancelled</option>
                     </select>
                 </div>
                 <div id="reschedule-container">
@@ -174,7 +186,7 @@
                 </div>
                 <div style="grid-column: 1 / -1;">
                     <label class="form-label">Administrative Notes / Symptoms</label>
-                    <textarea id="aptNotes" class="form-input" rows="2" placeholder="Record symptoms or log reschedule history here..."></textarea>
+                    <textarea id="aptNotes" class="form-input" rows="2" placeholder="Record symptoms or log reschedule/cancellation history here..."></textarea>
                 </div>
             </div>
 
@@ -229,6 +241,9 @@
             <div style="display: flex; justify-content: space-between; align-items: center; width: 100%;">
                 <h4>Schedule Directory</h4>
                 <div style="display: flex; gap: 8px;">
+                    <button class="btn-outline no-print" onclick="window.executeBulkDelete()" style="border-color: var(--danger); color: var(--danger); padding: 6px 12px; font-size: 12px;" title="Delete Cancelled or Pending Bookings">
+                        <span class="material-symbols-rounded" style="font-size: 14px;">delete</span> Bulk Delete
+                    </button>
                     <button class="btn-outline no-print" onclick="window.openBulkReschedule()" style="border-color: var(--primary); color: var(--primary); padding: 6px 12px; font-size: 12px;">
                         <span class="material-symbols-rounded" style="font-size: 14px;">event_repeat</span> Move to Next Schedule
                     </button>
@@ -253,6 +268,14 @@
                     <option value="reported">Reported</option>
                     <option value="completed">Completed</option>
                     <option value="rescheduled">Rescheduled</option>
+                    <option value="cancelled">Cancelled</option>
+                </select>
+
+                <select id="filterCategory" class="form-input" onchange="window.filterTable()" style="padding: 8px; font-size: 12px; width: auto;">
+                    <option value="">All Categories</option>
+                    <option value="normal">Normal</option>
+                    <option value="regular">Regular</option>
+                    <option value="both">Both</option>
                 </select>
 
                 <select id="filterPayment" class="form-input" onchange="window.filterTable()" style="padding: 8px; font-size: 12px; width: auto;">
@@ -305,7 +328,7 @@
 
     <script type="module">
         import { initializeApp, getApps, getApp } from "https://www.gstatic.com/firebasejs/10.8.1/firebase-app.js";
-        import { getFirestore, collection, addDoc, query, where, getDocs, orderBy, updateDoc, doc } from "https://www.gstatic.com/firebasejs/10.8.1/firebase-firestore.js";
+        import { getFirestore, collection, addDoc, query, where, getDocs, orderBy, updateDoc, doc, deleteDoc } from "https://www.gstatic.com/firebasejs/10.8.1/firebase-firestore.js";
 
         const firebaseConfig = {
             apiKey: "AIzaSyAcO1L2Za7dzILxylmMkRTSx0FBVu_EEoM",
@@ -320,6 +343,10 @@
         const app = !getApps().length ? initializeApp(firebaseConfig) : getApp();
         const db = getFirestore(app);
 
+        // Make deleteDoc globally accessible for the bulk delete function
+        window.deleteDoc = deleteDoc;
+        window.doc = doc;
+
         window.appointmentsDataCache = {};
         window.allBranchesString = "";
 
@@ -328,6 +355,22 @@
             const p = dateStr.split('-');
             if(p.length !== 3) return dateStr;
             return `${p[2]}/${p[1]}/${p[0]}`;
+        }
+
+        function setMinBookingDate() {
+            const today = new Date();
+            const yyyy = today.getFullYear();
+            const mm = String(today.getMonth() + 1).padStart(2, '0');
+            const dd = String(today.getDate()).padStart(2, '0');
+            const dateStr = `${yyyy}-${mm}-${dd}`;
+            
+            const aptDateEl = document.getElementById('aptDate');
+            const bulkDateEl = document.getElementById('bulkDateInput');
+            const rescheduleDateEl = document.getElementById('aptRescheduleDate');
+            
+            if(aptDateEl) aptDateEl.min = dateStr;
+            if(bulkDateEl) bulkDateEl.min = dateStr;
+            if(rescheduleDateEl) rescheduleDateEl.min = dateStr;
         }
 
         // --- LOCATION HELPERS ---
@@ -385,7 +428,6 @@
                 });
                 branchList.sort();
                 
-                // Store global branch list for invoice printing
                 window.allBranchesString = branchList.join(" | ");
 
                 let bHtml = '<option value="">Select Branch</option>';
@@ -423,6 +465,7 @@
 
         window.loadBranchesForApt();
         window.loadTherapistsForApt();
+        setMinBookingDate();
 
         // --- 1. FORM UI LOGIC ---
         window.toggleReschedule = function(select) {
@@ -450,6 +493,8 @@
             document.getElementById('reschedule-container').classList.remove('active');
             document.getElementById('aptPrevDues').value = '';
             document.getElementById('aptLocation').value = '';
+            document.getElementById('aptCategory').value = 'Normal';
+            setMinBookingDate();
             
             if (window.currentUser && window.currentUser.role !== 'admin') {
                 document.getElementById('aptBranch').value = window.currentUser.branch;
@@ -458,8 +503,23 @@
 
         function isPastDateTime(dateStr, timeStr) {
             if(!dateStr) return false;
-            const target = new Date(dateStr + 'T' + (timeStr || '00:00'));
+            
+            // Build target date properly using local timezone
+            const targetParts = dateStr.split('-');
+            const year = parseInt(targetParts[0]);
+            const month = parseInt(targetParts[1]) - 1;
+            const day = parseInt(targetParts[2]);
+            
+            let hours = 0, minutes = 0;
+            if(timeStr) {
+                const timeParts = timeStr.split(':');
+                hours = parseInt(timeParts[0]);
+                minutes = parseInt(timeParts[1]);
+            }
+            
+            const target = new Date(year, month, day, hours, minutes);
             const now = new Date();
+            
             return target < now;
         }
 
@@ -479,12 +539,14 @@
                     document.getElementById('aptAge').value = pData.age || '';
                     document.getElementById('aptPatientNotes').value = pData.notes || '';
                     document.getElementById('aptLocation').value = pData.location || '';
+                    document.getElementById('aptCategory').value = pData.category || 'Normal';
                     alert("Patient Found! Details auto-filled.");
                 } else {
                     document.getElementById('aptName').value = '';
                     document.getElementById('aptAge').value = '';
                     document.getElementById('aptPatientNotes').value = '';
                     document.getElementById('aptLocation').value = '';
+                    document.getElementById('aptCategory').value = 'Normal';
                     alert("No patient found. Details will be auto-registered upon saving.");
                 }
 
@@ -533,11 +595,11 @@
                     aptsList.push({ id: docSnap.id, data: docSnap.data() });
                 });
 
-                // MAIN SORT: By Branch, then Date
+                // MAIN SORT: By Date (Descending), then Branch
                 aptsList.sort((a, b) => {
-                    const branchCompare = (a.data.branch || '').localeCompare(b.data.branch || '');
-                    if (branchCompare !== 0) return branchCompare;
-                    return new Date(b.data.date || 0) - new Date(a.data.date || 0); // Date Descending
+                    const dateCompare = new Date(b.data.date || 0) - new Date(a.data.date || 0);
+                    if (dateCompare !== 0) return dateCompare;
+                    return (a.data.branch || '').localeCompare(b.data.branch || '');
                 });
 
                 // GROUP BY THERAPIST
@@ -574,9 +636,11 @@
                         if(data.status === 'Completed') statusBadge = '<span class="badge badge-completed">Completed</span>';
                         else if(data.status === 'Reported') statusBadge = '<span class="badge badge-reported">Reported</span>';
                         else if(data.status === 'Rescheduled') statusBadge = `<span class="badge badge-rescheduled">Rescheduled</span>`;
+                        else if(data.status === 'Cancelled') statusBadge = `<span class="badge badge-cancelled">Cancelled</span>`;
                         else statusBadge = '<span class="badge badge-pending">Pending</span>';
 
                         let noteSnippet = data.notes ? `<div style="margin-top: 6px; font-size: 11px; color: var(--secondary); background: #FAFAFA; padding: 4px; border-radius: 4px; line-height: 1.4;">${data.notes}</div>` : '';
+                        let categoryBadge = data.category ? `<span class="badge badge-category">${data.category}</span>` : '';
                         
                         const indDate = window.formatIndianDate(data.date);
                         const waText = encodeURIComponent(`Hello ${data.name}, your appointment at STRA CARE (${data.branch}) is booked for ${indDate}. Total Fee: ₹${data.fee||0}, Advance: ₹${data.advance||0}, Balance: ₹${data.balance||0}.`);
@@ -587,6 +651,7 @@
                         tr.className = "apt-row"; 
                         tr.setAttribute("data-branch", (data.branch || '').toLowerCase());
                         tr.setAttribute("data-status", (data.status || '').toLowerCase());
+                        tr.setAttribute("data-category", (data.category || '').toLowerCase());
                         tr.setAttribute("data-date", data.date || '');
                         tr.setAttribute("data-balance", data.balance || 0);
                         tr.setAttribute("data-search", `${data.name || ''} ${data.mobile || ''} ${data.therapist || ''} ${indDate}`.toLowerCase());
@@ -598,7 +663,8 @@
                             <td data-label="Date/Time"><strong>${indDate}</strong><br><span style="font-size:12px; color:var(--text-muted);">${data.time}</span></td>
                             <td data-label="Patient">
                                 <span style="font-weight: 700; font-size: 15px;">${data.name}</span> <span style="font-size:11px; color:var(--text-muted);">(${data.age || '--'} Yrs)</span><br>
-                                <span style="font-size: 13px; color: var(--text-muted);">${data.mobile}</span>
+                                <span style="font-size: 13px; color: var(--text-muted); margin-bottom: 4px; display:inline-block;">${data.mobile}</span><br>
+                                ${categoryBadge}
                                 <div class="no-print" style="display: flex; gap: 8px; margin-top: 6px;">
                                     <a href="tel:${data.mobile}" class="cta-link" title="Call"><span class="material-symbols-rounded" style="font-size: 16px; color: var(--secondary);">call</span></a>
                                     <a href="https://wa.me/91${data.mobile}?text=${waText}" class="cta-link" target="_blank" title="WhatsApp"><span class="material-symbols-rounded" style="font-size: 16px; color: var(--success);">chat</span></a>
@@ -628,14 +694,29 @@
             }
         };
 
-        window.loadAppointments();
+        // Initialize today filter on load
+        window.setFilterToday = function() {
+            const today = new Date();
+            const yyyy = today.getFullYear();
+            const mm = String(today.getMonth() + 1).padStart(2, '0');
+            const dd = String(today.getDate()).padStart(2, '0');
+            const todayStr = `${yyyy}-${mm}-${dd}`;
+            
+            document.getElementById("filterDateFrom").value = todayStr;
+            document.getElementById("filterDateTo").value = todayStr;
+            window.filterTable();
+        }
+
+        window.loadAppointments().then(() => {
+            window.setFilterToday();
+        });
 
         // --- NOTES MODAL LOGIC ---
         window.viewNotes = function(docId) {
             const data = window.appointmentsDataCache[docId];
             if(!data) return;
             document.getElementById('modalPatientName').innerText = data.name;
-            document.getElementById('modalPatientMeta').innerText = `Mobile: +91 ${data.mobile} | Scheduled: ${window.formatIndianDate(data.date)}`;
+            document.getElementById('modalPatientMeta').innerText = `Mobile: +91 ${data.mobile} | Scheduled: ${window.formatIndianDate(data.date)} | Category: ${data.category || 'Normal'}`;
             
             let fullNotes = "";
             if(data.patientNotes) fullNotes += `[Medical History]\n${data.patientNotes}\n\n`;
@@ -664,6 +745,7 @@
         window.filterTable = function() {
             const branchQuery = document.getElementById("filterBranch").value.toLowerCase();
             const statusQuery = document.getElementById("filterStatus").value.toLowerCase();
+            const categoryQuery = document.getElementById("filterCategory").value.toLowerCase();
             const paymentQuery = document.getElementById("filterPayment").value;
             const dateFromQuery = document.getElementById("filterDateFrom").value;
             const dateToQuery = document.getElementById("filterDateTo").value;
@@ -689,6 +771,7 @@
                 
                 const rowBranch = trs[i].getAttribute("data-branch");
                 const rowStatus = trs[i].getAttribute("data-status");
+                const rowCategory = trs[i].getAttribute("data-category");
                 const rowDate = trs[i].getAttribute("data-date");
                 const rowBalance = parseFloat(trs[i].getAttribute("data-balance"));
                 const rowSearch = trs[i].getAttribute("data-search");
@@ -696,6 +779,7 @@
                 let show = true;
                 if (branchQuery && rowBranch !== branchQuery) show = false;
                 if (statusQuery && rowStatus !== statusQuery) show = false;
+                if (categoryQuery && rowCategory !== categoryQuery) show = false;
                 if (dateFromQuery && rowDate < dateFromQuery) show = false;
                 if (dateToQuery && rowDate > dateToQuery) show = false;
                 if (paymentQuery === "pending" && rowBalance <= 0) show = false;
@@ -715,18 +799,12 @@
             }
         }
 
-        window.setFilterToday = function() {
-            const today = new Date().toISOString().split('T')[0];
-            document.getElementById("filterDateFrom").value = today;
-            document.getElementById("filterDateTo").value = today;
-            window.filterTable();
-        }
-
         window.clearFilters = function() {
             if (window.currentUser && window.currentUser.role === 'admin') {
                 document.getElementById("filterBranch").value = "";
             }
             document.getElementById("filterStatus").value = "";
+            document.getElementById("filterCategory").value = "";
             document.getElementById("filterPayment").value = "";
             document.getElementById("filterDateFrom").value = "";
             document.getElementById("filterDateTo").value = "";
@@ -739,10 +817,14 @@
             const data = window.appointmentsDataCache[docId];
             if(!data) return;
             
+            // Remove the min date restriction when editing an old appointment so dates can be loaded properly
+            document.getElementById('aptDate').removeAttribute('min');
+
             document.getElementById('aptDocId').value = docId; 
             document.getElementById('aptMobile').value = data.mobile || '';
             document.getElementById('aptName').value = data.name || '';
             document.getElementById('aptAge').value = data.age || '';
+            document.getElementById('aptCategory').value = data.category || 'Normal';
             document.getElementById('aptLocation').value = data.location || '';
             document.getElementById('aptPatientNotes').value = data.patientNotes || '';
             document.getElementById('aptBranch').value = data.branch || '';
@@ -771,9 +853,10 @@
             else window.scrollTo({ top: 0, behavior: 'smooth' });
         }
 
-        // --- 6. MOVE TO NEXT SCHEDULE ---
+        // --- 6. BULK ACTIONS (COPY / DELETE) ---
         window.toggleAllCheckboxes = function(masterCheckbox) {
-            const checkboxes = document.querySelectorAll('.apt-checkbox');
+            // Only toggle visible checkboxes to respect current filter
+            const checkboxes = document.querySelectorAll('.apt-row:not([style*="display: none"]) .apt-checkbox');
             checkboxes.forEach(cb => cb.checked = masterCheckbox.checked);
         }
 
@@ -803,6 +886,7 @@
                         mobile: existingData.mobile,
                         name: existingData.name,
                         age: existingData.age || '',
+                        category: existingData.category || 'Normal',
                         location: existingData.location || '',
                         patientNotes: existingData.patientNotes || '',
                         branch: existingData.branch,
@@ -829,6 +913,35 @@
 
             } catch(e) {
                 alert("Failed to perform bulk copy.");
+            }
+        }
+
+        window.executeBulkDelete = async function() {
+            const checkboxes = document.querySelectorAll('.apt-checkbox:checked');
+            if (checkboxes.length === 0) return alert("Please select appointments to delete.");
+
+            // Verify they are all pending or cancelled
+            for(let cb of checkboxes) {
+                const data = window.appointmentsDataCache[cb.value];
+                if (data && data.status !== 'Pending' && data.status !== 'Cancelled') {
+                    return alert("You can only bulk delete Pending or Cancelled appointments. Deselect Reported/Completed/Rescheduled items first.");
+                }
+            }
+
+            if (!confirm(`Are you sure you want to permanently delete the ${checkboxes.length} selected Pending/Cancelled appointments?`)) return;
+
+            try {
+                let deletedCount = 0;
+                for (let cb of checkboxes) {
+                    await window.deleteDoc(window.doc(db, "appointments", cb.value));
+                    deletedCount++;
+                }
+                
+                alert(`Successfully deleted ${deletedCount} appointments.`);
+                window.loadAppointments(); 
+            } catch(e) {
+                console.error(e);
+                alert("Error deleting appointments. Check permissions.");
             }
         }
 
@@ -863,6 +976,7 @@
             const mobile = document.getElementById('aptMobile').value;
             const name = document.getElementById('aptName').value;
             const age = document.getElementById('aptAge').value;
+            const category = document.getElementById('aptCategory').value;
             const location = document.getElementById('aptLocation').value;
             const patientNotes = document.getElementById('aptPatientNotes').value;
             const branch = document.getElementById('aptBranch').value;
@@ -880,7 +994,7 @@
             
             let notes = document.getElementById('aptNotes').value;
 
-            if (!name || !mobile || !date || !branch || !therapist) return alert("Please fill all required (*) fields!");
+            if (!name || !mobile || !date || !branch || !therapist || !category) return alert("Please fill all required (*) fields!");
 
             if(!docId && isPastDateTime(date, time)) {
                 return alert("You cannot book a new appointment in the past!");
@@ -901,7 +1015,7 @@
             saveBtn.disabled = true;
 
             const payload = {
-                mobile: mobile, name: name, age: age, location: location, patientNotes: patientNotes, branch: branch, date: finalDate, time: time, therapist: therapist,
+                mobile: mobile, name: name, age: age, category: category, location: location, patientNotes: patientNotes, branch: branch, date: finalDate, time: time, therapist: therapist,
                 status: status, fee: fee, advance: advance, balance: dbBalance, prevDues: prevDues, notes: notes, updatedAt: new Date()
             };
 
@@ -909,7 +1023,13 @@
                 const pSnap = await getDocs(query(collection(db, "patients"), where("mobile", "==", mobile)));
                 if (pSnap.empty) {
                     const genId = "P" + Math.floor(Math.random() * 90000 + 10000);
-                    await addDoc(collection(db, "patients"), { patientId: genId, mobile: mobile, name: name, age: age, location: location, notes: patientNotes, branch: branch, createdAt: new Date() });
+                    await addDoc(collection(db, "patients"), { patientId: genId, mobile: mobile, name: name, age: age, category: category, location: location, notes: patientNotes, branch: branch, createdAt: new Date() });
+                } else {
+                    // Update patient category if it changed
+                    const pDoc = pSnap.docs[0];
+                    if (pDoc.data().category !== category) {
+                        await updateDoc(doc(db, "patients", pDoc.id), { category: category });
+                    }
                 }
 
                 if(docId) {
