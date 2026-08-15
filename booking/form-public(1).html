@@ -1,0 +1,613 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1.0,maximum-scale=1.0,user-scalable=no">
+<title>STRA CARE - Book Appointment</title>
+<link rel="icon" href="assets/logo-app.png">
+<link rel="apple-touch-icon" href="assets/logo-app.png">
+<meta name="theme-color" content="#0369A1">
+<link rel="manifest" href="manifest.json">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Outfit:wght@300;400;500;600;700&family=Sora:wght@400;600;700&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="styles.css">
+<script src="https://unpkg.com/lucide@latest"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/html2canvas/1.4.1/html2canvas.min.js"></script>
+<style>
+body{min-height:100vh}
+.public-form-wrap{max-width:760px;margin:0 auto;padding:90px 16px 40px}
+.public-card{background:var(--card-bg,#fff);border:1px solid var(--border-color,#e5e7eb);border-radius:18px;box-shadow:0 10px 35px rgba(0,0,0,.08);overflow:hidden}
+.public-head{padding:22px 22px 14px;border-bottom:1px solid var(--border-color,#e5e7eb)}
+.public-head h1{font-family:Sora;margin:0 0 6px;font-size:22px}
+.public-head p{margin:0;color:var(--text-muted)}
+.public-body{padding:22px}
+.form-section-title{font-family:Sora;font-weight:700;margin:20px 0 12px}
+.form-group{margin-bottom:15px}
+.form-group label{display:block;font-weight:600;margin-bottom:7px}
+.form-control{width:100%;box-sizing:border-box}
+.form-row{display:grid;grid-template-columns:1fr 1fr;gap:12px}
+.btn-primary{width:100%}
+.status-box{display:none;margin-top:14px;padding:12px;border-radius:10px;font-size:13px}
+.status-box.error{display:block;background:#fee2e2;color:#991b1b}
+.status-box.success{display:block;background:#dcfce7;color:#166534}
+.back-link{display:inline-flex;align-items:center;gap:7px;margin-bottom:12px;color:var(--primary-color);text-decoration:none;font-weight:600}
+.branch-hint{font-size:12px;color:var(--text-muted);margin-top:6px}
+.ticket{display:none;padding:20px;border:1px solid #d1d5db;border-radius:14px;margin-top:18px;background:#fff}
+.ticket.show{display:block}
+.ticket h2{margin-top:0;font-family:Sora}
+.ticket-row{display:flex;justify-content:space-between;gap:15px;padding:8px 0;border-bottom:1px solid #eee}
+.ticket-row .label{font-weight:600}
+@media(max-width:600px){.form-row{grid-template-columns:1fr}.public-form-wrap{padding:78px 12px 30px}.public-body{padding:16px}}
+
+/* Embedded booking module: shown between the parent app header and bottom navigation */
+body.embedded{
+    min-height:100%;
+    background:transparent;
+    overflow-x:hidden;
+}
+body.embedded .header,
+body.embedded .back-link{
+    display:none !important;
+}
+body.embedded .public-form-wrap{
+    max-width:none;
+    width:100%;
+    margin:0;
+    padding:12px 12px 24px;
+    box-sizing:border-box;
+}
+body.embedded .public-card{
+    border:0;
+    border-radius:14px;
+    box-shadow:none;
+}
+body.embedded .public-head{
+    padding:16px 16px 12px;
+}
+body.embedded .public-body{
+    padding:16px;
+}
+body.embedded .ticket{
+    margin-bottom:20px;
+}
+</style>
+</head>
+<body>
+<script>if(new URLSearchParams(location.search).get("embedded")==="1") document.body.classList.add("embedded");</script>
+<div class="app-container">
+<header class="header">
+<div class="header-left">
+<button class="icon-btn" type="button" onclick="history.length>1?history.back():location.href='index.html'">
+<i data-lucide="arrow-left"></i>
+</button>
+<div class="brand">
+<img alt="Logo" class="logo" src="assets/logo.png" onerror="this.style.display='none'">
+<img alt="Stra Care" class="name" src="assets/name.png" onerror="this.style.display='none'">
+</div>
+</div>
+</header>
+
+<main class="public-form-wrap">
+<a class="back-link" href="index.html"><i data-lucide="arrow-left"></i> Back to STRA CARE</a>
+
+<div class="public-card">
+<div class="public-head">
+<h1><i data-lucide="calendar-plus"></i> Book an Appointment</h1>
+<p>Enter your details and submit your preferred appointment.</p>
+</div>
+
+<div class="public-body">
+<form id="publicAppointmentForm">
+
+<div class="form-section-title">Personal Information</div>
+
+<div class="form-group">
+<label for="pat_mobile">Contact Phone Number <span style="color:red">*</span></label>
+<div style="display:flex;gap:8px">
+<input class="form-control" id="pat_mobile" maxlength="10" pattern="[0-9]{10}" placeholder="10-digit number" required type="tel">
+<button class="btn-verify" id="verifyBtn" type="button">Check</button>
+</div>
+</div>
+
+<div class="form-group">
+<label for="pat_name">Patient Full Legal Name <span style="color:red">*</span></label>
+<input class="form-control" id="pat_name" placeholder="e.g., John Doe" required type="text">
+</div>
+
+<div class="form-row">
+<div class="form-group">
+<label for="pat_age">Age <span style="color:red">*</span></label>
+<input class="form-control" id="pat_age" min="1" max="120" placeholder="Years" required type="number">
+</div>
+<div class="form-group">
+<label for="pat_gender">Gender <span style="color:red">*</span></label>
+<select class="form-control" id="pat_gender" required>
+<option disabled selected value="">Select</option>
+<option>Male</option>
+<option>Female</option>
+<option>Other</option>
+</select>
+</div>
+</div>
+
+<div class="form-section-title">Location Details</div>
+
+<div class="form-group">
+<label for="pat_address">Patient Address / Location <span style="color:red">*</span></label>
+<textarea class="form-control" id="pat_address" rows="2" placeholder="Enter address, landmark, or use location detection" required></textarea>
+</div>
+
+<div class="form-group">
+<button class="btn-location" type="button" id="locationBtn">
+<i data-lucide="map-pin"></i> Auto-Detect My Location
+</button>
+<p id="location-status" class="branch-hint"></p>
+<input id="lat_val" type="hidden">
+<input id="lng_val" type="hidden">
+</div>
+
+<div class="form-section-title">Treatment Details</div>
+
+<div class="form-group">
+<label for="pat_symptom">Symptoms / Service Needed <span style="color:red">*</span></label>
+<select class="form-control" id="pat_symptom" required>
+<option disabled selected value="">Select an issue or service...</option>
+<option>Intervertebral Disc Prolapse</option>
+<option>Low Back Ache</option>
+<option>Cervical Spondylosis</option>
+<option>Osteoarthritis of Knee</option>
+<option>Periarthritis of Shoulder</option>
+<option>Tennis Elbow</option>
+<option>Plantar Fasciitis</option>
+<option>Sports Injuries</option>
+<option>Stroke Rehabilitation</option>
+<option>Cerebral Palsy</option>
+<option>Bell's Palsy</option>
+<option>Home Care Physiotherapy</option>
+<option value="Other">Other (Type manually)</option>
+</select>
+<input class="form-control" id="pat_symptom_custom" style="display:none;margin-top:8px" placeholder="Please specify your issue" type="text">
+</div>
+
+<div class="form-group">
+<label for="pat_branch">Select Branch <span style="color:red">*</span></label>
+<select class="form-control" id="pat_branch" required>
+<option disabled selected value="">Loading branches...</option>
+</select>
+<div class="branch-hint">Branch details are loaded directly from the Firebase branches collection.</div>
+</div>
+
+<div class="form-row">
+<div class="form-group">
+<label for="pat_date">Preferred Date <span style="color:red">*</span></label>
+<div class="branch-hint">India format: DD/MM/YYYY</div>
+<input class="form-control" id="pat_date" required type="date">
+</div>
+<div class="form-group">
+<label for="pat_time">Preferred Time <span style="color:red">*</span></label>
+<div class="branch-hint">India time: IST (Asia/Kolkata)</div>
+<input class="form-control" id="pat_time" required type="time">
+</div>
+</div>
+
+<div class="form-group">
+<label for="pat_notes">Brief Medical History / Notes (Optional)</label>
+<textarea class="form-control" id="pat_notes" rows="3" placeholder="Any previous injuries, surgeries, or specific pain areas..."></textarea>
+</div>
+
+<button class="btn-primary" id="submitAppBtn" type="submit">
+Proceed to Submit <i data-lucide="check-circle"></i>
+</button>
+
+<div id="formStatus" class="status-box"></div>
+</form>
+
+<div id="ticket" class="ticket">
+<h2>Booking Submitted</h2>
+<div class="ticket-row"><span class="label">Booking Ref</span><span id="tkt_ref">--</span></div>
+<div class="ticket-row"><span class="label">Patient</span><span id="tkt_name">--</span></div>
+<div class="ticket-row"><span class="label">Branch</span><span id="tkt_branch">--</span></div>
+<div class="ticket-row"><span class="label">Date & Time</span><span id="tkt_datetime">--</span></div>
+<div class="ticket-row"><span class="label">Status</span><span>Pending (Review)</span></div>
+<button class="btn-primary" type="button" style="margin-top:14px" onclick="location.href='index.html'">Back to Home</button>
+</div>
+
+</div>
+</div>
+</main>
+</div>
+
+<script src="firebase.js" type="module"></script>
+
+<script type="module">
+import {
+    getFirestore,
+    collection,
+    getDocs,
+    addDoc,
+    query,
+    where,
+    limit,
+    getDocs as getDocsQuery,
+    Timestamp
+} from "https://www.gstatic.com/firebasejs/12.1.0/firebase-firestore.js";
+
+import {
+    getApps,
+    getApp
+} from "https://www.gstatic.com/firebasejs/12.1.0/firebase-app.js";
+
+let db = null;
+let branches = [];
+
+document.addEventListener("DOMContentLoaded", async () => {
+    try {
+        if (!getApps().length) {
+            throw new Error("Firebase is not initialized. Check firebase.js.");
+        }
+
+        db = getFirestore(getApp());
+
+        await loadBranches();
+        setMinimumDate();
+        applyBranchFromUrl();
+
+        document.getElementById("publicAppointmentForm")
+            .addEventListener("submit", submitAppointment);
+
+        document.getElementById("pat_symptom")
+            .addEventListener("change", toggleCustomSymptom);
+
+        document.getElementById("locationBtn")
+            .addEventListener("click", getLocation);
+
+        document.getElementById("verifyBtn")
+            .addEventListener("click", checkExistingPatient);
+
+        lucide.createIcons();
+
+    } catch (error) {
+        console.error(error);
+        showStatus("Unable to initialize booking form. Please try again.", true);
+    }
+});
+
+async function loadBranches() {
+
+    const select = document.getElementById("pat_branch");
+
+    const snapshot = await getDocs(
+        collection(db, "branches")
+    );
+
+    branches = [];
+
+    snapshot.forEach(doc => {
+        const d = doc.data();
+
+        branches.push({
+            id: doc.id,
+            branchId: d.branchId || doc.id,
+            name: d.name || "Unnamed Branch",
+            contact: d.contact || "",
+            mapLink: d.mapLink || "",
+            address: d.address || ""
+        });
+    });
+
+    branches.sort((a,b) =>
+        String(a.name).localeCompare(String(b.name))
+    );
+
+    select.innerHTML =
+        '<option disabled selected value="">Select Branch</option>';
+
+    branches.forEach(branch => {
+        const option = document.createElement("option");
+        option.value = branch.name;
+        option.textContent = branch.name;
+        option.dataset.branchId = branch.branchId;
+        select.appendChild(option);
+    });
+}
+
+function applyBranchFromUrl() {
+
+    const params = new URLSearchParams(location.search);
+    const branchId = params.get("branchId");
+    const branchName = params.get("branch");
+
+    const select = document.getElementById("pat_branch");
+
+    if (branchId) {
+        const match = branches.find(
+            b => String(b.branchId) === String(branchId)
+        );
+
+        if (match) {
+            select.value = match.name;
+            return;
+        }
+    }
+
+    if (branchName) {
+        const match = branches.find(
+            b => b.name === branchName
+        );
+
+        if (match) {
+            select.value = match.name;
+        }
+    }
+}
+
+async function submitAppointment(event) {
+
+    event.preventDefault();
+
+    const btn = document.getElementById("submitAppBtn");
+
+    const mobile = document.getElementById("pat_mobile").value.trim();
+    const name = document.getElementById("pat_name").value.trim();
+    const age = document.getElementById("pat_age").value;
+    const gender = document.getElementById("pat_gender").value;
+    const address = document.getElementById("pat_address").value.trim();
+    const symptomSelect = document.getElementById("pat_symptom");
+    const symptom =
+        symptomSelect.value === "Other"
+            ? document.getElementById("pat_symptom_custom").value.trim()
+            : symptomSelect.value;
+
+    const branchSelect = document.getElementById("pat_branch");
+    const branch = branchSelect.value;
+
+    const branchOption =
+        branchSelect.options[branchSelect.selectedIndex];
+
+    const branchId =
+        branchOption?.dataset.branchId || "";
+
+    const date = document.getElementById("pat_date").value;
+    const time = document.getElementById("pat_time").value;
+    const notes = document.getElementById("pat_notes").value.trim();
+    const latitude = document.getElementById("lat_val").value;
+    const longitude = document.getElementById("lng_val").value;
+
+    if (!/^[0-9]{10}$/.test(mobile)) {
+        showStatus("Please enter a valid 10-digit mobile number.", true);
+        return;
+    }
+
+    if (!symptom) {
+        showStatus("Please specify the service needed.", true);
+        return;
+    }
+
+    if (!branch) {
+        showStatus("Please select a branch.", true);
+        return;
+    }
+
+    btn.disabled = true;
+    btn.innerHTML = "Submitting...";
+
+    try {
+
+        const ref = "APT-" +
+            Date.now().toString().slice(-8);
+
+        // Keep the ISO values for compatibility/querying, but also store
+        // Indian display values and a real Firestore Timestamp in IST.
+        const dateDisplay = formatIndianDate(date);
+        const timeDisplay = formatIndianTime(time);
+        const dateTimeDisplay = `${dateDisplay} ${timeDisplay}`;
+        const appointmentAt = indianDateTimeToTimestamp(date, time);
+
+        const payload = {
+            name,
+            mobile,
+            age: String(age),
+            gender,
+            address,
+            symptom,
+            service: symptom,
+            branch,
+            branchId,
+            date,
+            time,
+            dateDisplay,
+            timeDisplay,
+            dateTimeDisplay,
+            timezone: "Asia/Kolkata",
+            appointmentAt,
+            notes,
+            patientNotes: notes,
+            latitude: latitude || "",
+            longitude: longitude || "",
+            status: "Pending",
+            advance: 0,
+            fee: 0,
+            balance: 0,
+            category: "Normal",
+            bookingRef: ref,
+            createdAt: Timestamp.now(),
+            updatedAt: Timestamp.now()
+        };
+
+        await addDoc(
+            collection(db, "appointments"),
+            payload
+        );
+
+        document.getElementById("tkt_ref").textContent = ref;
+        document.getElementById("tkt_name").textContent = name;
+        document.getElementById("tkt_branch").textContent = branch;
+        document.getElementById("tkt_datetime").textContent =
+            dateTimeDisplay;
+
+        document.getElementById("ticket").classList.add("show");
+
+        showStatus(
+            "Appointment submitted successfully. Our team will review it shortly.",
+            false
+        );
+
+        document.getElementById("publicAppointmentForm").style.display = "none";
+
+        window.scrollTo({
+            top: 0,
+            behavior: "smooth"
+        });
+
+    } catch (error) {
+
+        console.error("Appointment submission error:", error);
+
+        showStatus(
+            "Unable to submit the appointment. Please try again.",
+            true
+        );
+
+        btn.disabled = false;
+        btn.innerHTML =
+            'Proceed to Submit <i data-lucide="check-circle"></i>';
+
+        lucide.createIcons();
+    }
+}
+
+async function checkExistingPatient() {
+
+    const mobile =
+        document.getElementById("pat_mobile").value.trim();
+
+    if (!/^[0-9]{10}$/.test(mobile)) {
+        showStatus("Enter a valid 10-digit mobile number first.", true);
+        return;
+    }
+
+    try {
+
+        // Public rules intentionally do not expose patient records.
+        // This button therefore only validates the mobile format.
+        showStatus(
+            "Mobile number is valid. Please continue with the booking details.",
+            false
+        );
+
+    } catch (error) {
+        showStatus("Unable to check the mobile number.", true);
+    }
+}
+
+function toggleCustomSymptom() {
+
+    const select =
+        document.getElementById("pat_symptom");
+
+    const custom =
+        document.getElementById("pat_symptom_custom");
+
+    const isOther = select.value === "Other";
+
+    custom.style.display =
+        isOther ? "block" : "none";
+
+    custom.required = isOther;
+}
+
+function getLocation() {
+
+    const status =
+        document.getElementById("location-status");
+
+    if (!navigator.geolocation) {
+        status.textContent =
+            "Location detection is not supported on this device.";
+        return;
+    }
+
+    status.textContent = "Detecting your location...";
+
+    navigator.geolocation.getCurrentPosition(
+        position => {
+
+            document.getElementById("lat_val").value =
+                position.coords.latitude;
+
+            document.getElementById("lng_val").value =
+                position.coords.longitude;
+
+            status.textContent =
+                "Location detected successfully. Please enter your address/landmark too.";
+
+        },
+        error => {
+
+            console.error(error);
+
+            status.textContent =
+                "Unable to detect location. Please enter your address manually.";
+        },
+        {
+            enableHighAccuracy: true,
+            timeout: 10000,
+            maximumAge: 60000
+        }
+    );
+}
+
+function setMinimumDate() {
+
+    const input =
+        document.getElementById("pat_date");
+
+    const today =
+        new Intl.DateTimeFormat("en-CA", {
+            timeZone: "Asia/Kolkata",
+            year: "numeric",
+            month: "2-digit",
+            day: "2-digit"
+        }).format(new Date());
+
+    input.min = today;
+}
+
+
+function formatIndianDate(isoDate) {
+    const [y,m,d] = String(isoDate).split("-");
+    return `${d}/${m}/${y}`;
+}
+
+function formatIndianTime(hhmm) {
+    const [hRaw,m] = String(hhmm).split(":");
+    let h = Number(hRaw);
+    const suffix = h >= 12 ? "PM" : "AM";
+    h = h % 12 || 12;
+    return `${String(h).padStart(2,"0")}:${m} ${suffix}`;
+}
+
+function indianDateTimeToTimestamp(isoDate, hhmm) {
+    const [y,m,d] = String(isoDate).split("-").map(Number);
+    const [hh,mm] = String(hhmm).split(":").map(Number);
+
+    // Asia/Kolkata is UTC+05:30. Construct the UTC instant explicitly.
+    const utcMillis = Date.UTC(y, m - 1, d, hh - 5, mm - 30, 0);
+    return Timestamp.fromDate(new Date(utcMillis));
+}
+
+function showStatus(message, error) {
+
+    const box =
+        document.getElementById("formStatus");
+
+    box.textContent = message;
+    box.className =
+        "status-box " + (error ? "error" : "success");
+}
+</script>
+
+<script src="pwa-register.js"></script>
+</body>
+</html>
