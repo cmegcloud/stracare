@@ -15,35 +15,277 @@
 <script src="https://unpkg.com/lucide@latest"></script>
 <script src="https://cdnjs.cloudflare.com/ajax/libs/html2canvas/1.4.1/html2canvas.min.js"></script>
 <style>
-body{min-height:100vh}
-.public-form-wrap{max-width:760px;margin:0 auto;padding:90px 16px 40px}
-.public-card{background:var(--card-bg,#fff);border:1px solid var(--border-color,#e5e7eb);border-radius:18px;box-shadow:0 10px 35px rgba(0,0,0,.08);overflow:hidden}
-.public-head{padding:22px 22px 14px;border-bottom:1px solid var(--border-color,#e5e7eb)}
-.public-head h1{font-family:Sora;margin:0 0 6px;font-size:22px}
-.public-head p{margin:0;color:var(--text-muted)}
-.public-body{padding:22px}
-.form-section-title{font-family:Sora;font-weight:700;margin:20px 0 12px}
-.form-group{margin-bottom:15px}
-.form-group label{display:block;font-weight:600;margin-bottom:7px}
-.form-control{width:100%;box-sizing:border-box}
-.form-row{display:grid;grid-template-columns:1fr 1fr;gap:12px}
-.btn-primary{width:100%}
-.status-box{display:none;margin-top:14px;padding:12px;border-radius:10px;font-size:13px}
-.status-box.error{display:block;background:#fee2e2;color:#991b1b}
-.status-box.success{display:block;background:#dcfce7;color:#166534}
-.back-link{display:inline-flex;align-items:center;gap:7px;margin-bottom:12px;color:var(--primary-color);text-decoration:none;font-weight:600}
-.branch-hint{font-size:12px;color:var(--text-muted);margin-top:6px}
-.ticket{display:none;padding:20px;border:1px solid #d1d5db;border-radius:14px;margin-top:18px;background:#fff}
-.ticket.show{display:block}
-.ticket h2{margin-top:0;font-family:Sora}
-.ticket-row{display:flex;justify-content:space-between;gap:15px;padding:8px 0;border-bottom:1px solid #eee}
-.ticket-row .label{font-weight:600}
-@media(max-width:600px){.form-row{grid-template-columns:1fr}.public-form-wrap{padding:78px 12px 30px}.public-body{padding:16px}}
+/* =========================================================
+   STRA CARE PUBLIC BOOKING MODULE
+   Uses the existing styles.css/app design system.
+   In embedded mode the parent index.html supplies the shell.
+   ========================================================= */
+
+html, body {
+    margin: 0;
+    padding: 0;
+    width: 100%;
+    min-height: 100%;
+    background: var(--bg-color, #f8fafc);
+    color: var(--text-main, #0f172a);
+    font-family: 'Outfit', sans-serif;
+}
+
+.public-form-wrap {
+    max-width: 760px;
+    margin: 0 auto;
+    padding: 24px 16px 32px;
+}
+
+.public-card {
+    background: var(--card-bg, #fff);
+    color: var(--text-main, #0f172a);
+    border: 1px solid var(--border-color, #e2e8f0);
+    border-radius: var(--card-radius, 16px);
+    box-shadow: var(--shadow, 0 8px 24px rgba(0,0,0,.06));
+    overflow: hidden;
+}
+
+.public-head {
+    padding: 20px 20px 14px;
+    border-bottom: 1px solid var(--border-color, #e2e8f0);
+}
+
+.public-head h1 {
+    display: flex;
+    align-items: center;
+    gap: 9px;
+    margin: 0 0 5px;
+    color: var(--text-main, #0f172a);
+    font-family: 'Sora', sans-serif;
+    font-size: 20px;
+    font-weight: 700;
+}
+
+.public-head h1 svg {
+    width: 20px;
+    height: 20px;
+    color: var(--primary-color, #0369a1);
+}
+
+.public-head p {
+    margin: 0;
+    color: var(--text-muted, #64748b);
+    font-size: 13px;
+}
+
+.public-body {
+    padding: 20px;
+}
+
+.public-body .form-section-title {
+    color: var(--text-main, #0f172a);
+    font-family: 'Sora', sans-serif;
+    font-size: 14px;
+    font-weight: 700;
+    margin: 20px 0 12px;
+}
+
+.public-body .form-section-title:first-child {
+    margin-top: 0;
+}
+
+.public-body .form-group {
+    margin-bottom: 15px;
+}
+
+.public-body .form-group label {
+    display: block;
+    color: var(--text-main, #0f172a);
+    font-size: 13px;
+    font-weight: 600;
+    margin-bottom: 7px;
+}
+
+.public-body .form-control {
+    width: 100%;
+    box-sizing: border-box;
+    font-family: 'Outfit', sans-serif;
+}
+
+.public-body textarea.form-control {
+    resize: vertical;
+    min-height: 76px;
+}
+
+.public-body .form-row {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 12px;
+}
+
+.public-body .btn-primary {
+    width: 100%;
+    font-family: 'Outfit', sans-serif;
+}
+
+.public-body .btn-verify,
+.public-body .btn-location {
+    flex: 0 0 auto;
+    font-family: 'Outfit', sans-serif;
+}
+
+.status-box {
+    display: none;
+    margin-top: 14px;
+    padding: 12px 14px;
+    border-radius: 10px;
+    font-size: 13px;
+    border: 1px solid transparent;
+}
+
+.status-box.error {
+    display: block;
+    background: rgba(239,68,68,.08);
+    color: #b91c1c;
+    border-color: rgba(239,68,68,.18);
+}
+
+.status-box.success {
+    display: block;
+    background: rgba(16,185,129,.08);
+    color: #047857;
+    border-color: rgba(16,185,129,.18);
+}
+
+.back-link {
+    display: inline-flex;
+    align-items: center;
+    gap: 7px;
+    margin: 0 0 12px;
+    color: var(--primary-color, #0369a1);
+    text-decoration: none;
+    font-size: 13px;
+    font-weight: 600;
+}
+
+.branch-hint {
+    font-size: 11px;
+    line-height: 1.5;
+    color: var(--text-muted, #64748b);
+    margin-top: 6px;
+}
+
+.ticket {
+    display: none;
+    padding: 18px;
+    border: 1px solid var(--border-color, #e2e8f0);
+    border-radius: 14px;
+    margin-top: 18px;
+    background: var(--card-bg, #fff);
+}
+
+.ticket.show {
+    display: block;
+}
+
+.ticket h2 {
+    margin: 0 0 12px;
+    color: var(--primary-color, #0369a1);
+    font-family: 'Sora', sans-serif;
+    font-size: 18px;
+}
+
+.ticket-row {
+    display: flex;
+    justify-content: space-between;
+    gap: 15px;
+    padding: 9px 0;
+    border-bottom: 1px solid var(--border-color, #e2e8f0);
+    font-size: 13px;
+}
+
+.ticket-row .label {
+    color: var(--text-muted, #64748b);
+    font-weight: 600;
+}
+
+.ticket-row span:last-child {
+    color: var(--text-main, #0f172a);
+    font-weight: 600;
+    text-align: right;
+}
+
+/* Parent index.html opens this page inside an iframe with ?embedded=1. */
+body.embedded-mode {
+    min-height: 100%;
+    overflow-x: hidden;
+}
+
+body.embedded-mode .standalone-header,
+body.embedded-mode .standalone-back {
+    display: none !important;
+}
+
+body.embedded-mode .public-form-wrap {
+    max-width: none;
+    width: 100%;
+    box-sizing: border-box;
+    margin: 0;
+    padding: 16px 14px 28px;
+}
+
+body.embedded-mode .public-card {
+    box-shadow: none;
+    border-radius: 0;
+    border-left: 0;
+    border-right: 0;
+}
+
+body.embedded-mode .public-head {
+    padding: 16px 16px 12px;
+}
+
+body.embedded-mode .public-body {
+    padding: 16px;
+}
+
+@media (max-width: 600px) {
+    .public-form-wrap {
+        padding: 14px 10px 24px;
+    }
+
+    .public-body {
+        padding: 15px;
+    }
+
+    .public-body .form-row {
+        grid-template-columns: 1fr;
+        gap: 0;
+    }
+
+    body.embedded-mode .public-form-wrap {
+        padding: 8px 0 22px;
+    }
+
+    body.embedded-mode .public-card {
+        border-radius: 0;
+    }
+
+    body.embedded-mode .public-head,
+    body.embedded-mode .public-body {
+        padding-left: 14px;
+        padding-right: 14px;
+    }
+}
 </style>
 </head>
 <body>
+<script>
+(function () {
+    const params = new URLSearchParams(window.location.search);
+    if (params.get("embedded") === "1") {
+        document.body.classList.add("embedded-mode");
+    }
+})();
+</script>
 <div class="app-container">
-<header class="header">
+<header class="header standalone-header">
 <div class="header-left">
 <button class="icon-btn" type="button" onclick="history.length>1?history.back():location.href='index.html'">
 <i data-lucide="arrow-left"></i>
@@ -56,7 +298,7 @@ body{min-height:100vh}
 </header>
 
 <main class="public-form-wrap">
-<a class="back-link" href="index.html"><i data-lucide="arrow-left"></i> Back to STRA CARE</a>
+<a class="back-link standalone-back" href="index.html"><i data-lucide="arrow-left"></i> Back to STRA CARE</a>
 
 <div class="public-card">
 <div class="public-head">
@@ -395,8 +637,21 @@ async function submitAppointment(event) {
         document.getElementById("tkt_ref").textContent = ref;
         document.getElementById("tkt_name").textContent = name;
         document.getElementById("tkt_branch").textContent = branch;
+        const dateParts = String(date || "").split("-");
+        const indianDate = dateParts.length === 3
+            ? `${dateParts[2]}/${dateParts[1]}/${dateParts[0]}`
+            : date;
+
+        let displayTime = time || "";
+        if (/^\\d{2}:\\d{2}$/.test(displayTime)) {
+            const [hh, mm] = displayTime.split(":").map(Number);
+            const suffix = hh >= 12 ? "PM" : "AM";
+            const hour12 = (hh % 12) || 12;
+            displayTime = `${String(hour12).padStart(2, "0")}:${String(mm).padStart(2, "0")} ${suffix}`;
+        }
+
         document.getElementById("tkt_datetime").textContent =
-            `${date} ${time}`;
+            `${indianDate} ${displayTime}`;
 
         document.getElementById("ticket").classList.add("show");
 
@@ -532,6 +787,6 @@ function showStatus(message, error) {
 }
 </script>
 
-<script src="pwa-register.js"></script>
+<script>if (new URLSearchParams(location.search).get("embedded") !== "1") { const s=document.createElement("script"); s.src="pwa-register.js"; document.head.appendChild(s); }</script>
 </body>
 </html>
