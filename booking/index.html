@@ -22,88 +22,151 @@
 </link>
 <style id="appointment-module-style">
 /* =========================================================
-   APPOINTMENT MODULE
-   Full area between fixed header and bottom navigation
+   STRA CARE — APPOINTMENT MODULE
+   Keeps the appointment page fully contained between
+   the fixed app header and bottom navigation.
    ========================================================= */
 
 #appointment-modal.appointment-module {
     position: fixed !important;
 
     top: 64px !important;
+    right: 0 !important;
     bottom: 76px !important;
     left: 0 !important;
-    right: 0 !important;
 
+    width: 100% !important;
     height: auto !important;
+    max-width: none !important;
     max-height: none !important;
 
-    z-index: 1200 !important;
-
-    padding: 0 !important;
     margin: 0 !important;
+    padding: 0 !important;
 
-    overflow: hidden !important;
-    border-radius: 0 !important;
+    z-index: 1200 !important;
 
     display: flex !important;
     flex-direction: column !important;
 
+    overflow: hidden !important;
+    border-radius: 0 !important;
+
+    box-sizing: border-box !important;
+
     background: var(--bg-color, #f8fafc) !important;
 }
 
+/* Appointment modal header */
 #appointment-modal.appointment-module .modal-header {
     flex: 0 0 52px !important;
+
+    width: 100% !important;
     height: 52px !important;
     min-height: 52px !important;
+    max-height: 52px !important;
 
-    box-sizing: border-box;
+    margin: 0 !important;
+    box-sizing: border-box !important;
 
-    display: flex;
-    align-items: center;
-    justify-content: space-between;
-}
-
-#appointment-modal.appointment-module .modal-body {
-    flex: 1 1 auto !important;
-
-    height: auto !important;
-    min-height: 0 !important;
-
-    padding: 0 !important;
+    display: flex !important;
+    align-items: center !important;
+    justify-content: space-between !important;
 
     overflow: hidden !important;
 }
 
+/* Appointment iframe container */
+#appointment-modal.appointment-module .modal-body {
+    flex: 1 1 auto !important;
+
+    width: 100% !important;
+    height: auto !important;
+    min-height: 0 !important;
+    max-height: none !important;
+
+    margin: 0 !important;
+    padding: 0 !important;
+
+    box-sizing: border-box !important;
+
+    overflow: hidden !important;
+
+    display: flex !important;
+}
+
+/* Public appointment form */
 #appointment-modal.appointment-module #bookingModuleFrame {
+    flex: 1 1 auto !important;
+
     display: block !important;
 
     width: 100% !important;
     height: 100% !important;
-
+    min-width: 0 !important;
     min-height: 0 !important;
 
+    margin: 0 !important;
+    padding: 0 !important;
+
     border: 0 !important;
+    outline: none !important;
+
+    box-sizing: border-box !important;
 
     background: var(--bg-color, #f8fafc) !important;
 }
 
+/* Never show the old appointment form underneath the iframe */
 #appointment-modal.appointment-module .legacy-appointment-content {
     display: none !important;
 }
 
+/* Make sure the parent page cannot visually leak through */
+#appointment-modal.appointment-module::before {
+    content: "";
+    position: absolute;
+    inset: 0;
+    z-index: -1;
+    background: var(--bg-color, #f8fafc);
+}
+
+/* Mobile: use the actual compact header/nav heights */
 @media (max-width: 600px) {
 
     #appointment-modal.appointment-module {
         top: 60px !important;
+        right: 0 !important;
         bottom: 70px !important;
+        left: 0 !important;
     }
 
     #appointment-modal.appointment-module .modal-header {
-        flex-basis: 52px !important;
+        flex: 0 0 52px !important;
         height: 52px !important;
+        min-height: 52px !important;
+        max-height: 52px !important;
+    }
+}
+
+/* Extra protection for very small mobile screens */
+@media (max-width: 380px) {
+
+    #appointment-modal.appointment-module {
+        top: 58px !important;
+        bottom: 68px !important;
     }
 }
 </style>
+
+<style id="appointment-module-safety">
+/* Appointment module must sit above the normal home-page content. */
+#appointment-modal.appointment-module.active,
+#appointment-modal.appointment-module.open {
+    visibility: visible !important;
+    opacity: 1 !important;
+}
+</style>
+
 </head>
 <body>
 <div id="splash-screen">
