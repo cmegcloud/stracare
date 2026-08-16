@@ -1,472 +1,442 @@
 <!DOCTYPE html>
-
 <html lang="en">
 <head>
-<meta charset="utf-8"/>
-<meta content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no" name="viewport"/>
-<title>STRA CARE - Booking App</title>
-<link href="assets/logo-app.png" rel="icon" type="image/png"/>
-<link href="assets/logo-app.png" rel="apple-touch-icon"/>
-<meta content="#0369A1" name="theme-color"/>
-<!-- 1. PASTE THE MANIFEST LINK HERE -->
-<link href="manifest.json" rel="manifest"/>
-<!-- 2. PASTE THE SERVICE WORKER SCRIPT HERE -->
-<script src="pwa-register.js"></script>
-<link href="https://fonts.googleapis.com" rel="preconnect"/>
-<link crossorigin="" href="https://fonts.gstatic.com" rel="preconnect"/>
-<link href="https://fonts.googleapis.com/css2?family=Outfit:wght@300;400;500;600;700&amp;family=Sora:wght@400;600;700&amp;display=swap" rel="stylesheet"/>
-<link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css" rel="stylesheet">
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1.0,maximum-scale=1.0,user-scalable=no">
+<title>STRA CARE - Book Appointment</title>
+<link rel="icon" href="assets/logo-app.png">
+<link rel="apple-touch-icon" href="assets/logo-app.png">
+<meta name="theme-color" content="#0369A1">
+<link rel="manifest" href="manifest.json">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Outfit:wght@300;400;500;600;700&family=Sora:wght@400;600;700&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="styles.css">
 <script src="https://unpkg.com/lucide@latest"></script>
 <script src="https://cdnjs.cloudflare.com/ajax/libs/html2canvas/1.4.1/html2canvas.min.js"></script>
-<link href="styles.css" rel="stylesheet"/>
-</link>
-<style id="appointment-module-style">
-/* Booking opens as an in-app module between the fixed header and bottom navigation. */
-#appointment-modal.appointment-module{
-    position:fixed !important;
-    top:64px !important;
-    bottom:76px !important;
-    left:0 !important;
-    right:0 !important;
-    height:auto !important;
-    max-height:none !important;
-    z-index:1200 !important;
-    overflow:hidden !important;
-    padding:0 !important;
-    border-radius:0 !important;
+<style>
+/* =========================================================
+   STRA CARE PUBLIC BOOKING MODULE
+   Uses the existing styles.css/app design system.
+   In embedded mode the parent index.html supplies the shell.
+   ========================================================= */
+
+html, body {
+    margin: 0;
+    padding: 0;
+    width: 100%;
+    min-height: 100%;
+    background: var(--bg-color, #f8fafc);
+    color: var(--text-main, #0f172a);
+    font-family: 'Outfit', sans-serif;
 }
-#appointment-modal.appointment-module .modal-header{
-    min-height:52px;
-    box-sizing:border-box;
-    display:flex;
-    align-items:center;
-    justify-content:space-between;
+
+.public-form-wrap {
+    max-width: 760px;
+    margin: 0 auto;
+    padding: 24px 16px 32px;
 }
-#appointment-modal.appointment-module .modal-body{
-    height:calc(100% - 52px);
-    padding:0 !important;
-    overflow:hidden !important;
+
+.public-card {
+    background: var(--card-bg, #fff);
+    color: var(--text-main, #0f172a);
+    border: 1px solid var(--border-color, #e2e8f0);
+    border-radius: var(--card-radius, 16px);
+    box-shadow: var(--shadow, 0 8px 24px rgba(0,0,0,.06));
+    overflow: hidden;
 }
-#appointment-modal.appointment-module #bookingModuleFrame{
-    display:block;
-    width:100%;
-    height:100%;
-    border:0;
-    background:transparent;
+
+.public-head {
+    padding: 20px 20px 14px;
+    border-bottom: 1px solid var(--border-color, #e2e8f0);
 }
-#appointment-modal.appointment-module .legacy-appointment-content{
-    display:none !important;
+
+.public-head h1 {
+    display: flex;
+    align-items: center;
+    gap: 9px;
+    margin: 0 0 5px;
+    color: var(--text-main, #0f172a);
+    font-family: 'Sora', sans-serif;
+    font-size: 20px;
+    font-weight: 700;
 }
-@media(max-width:600px){
-    #appointment-modal.appointment-module{
-        top:60px !important;
-        bottom:70px !important;
+
+.public-head h1 svg {
+    width: 20px;
+    height: 20px;
+    color: var(--primary-color, #0369a1);
+}
+
+.public-head p {
+    margin: 0;
+    color: var(--text-muted, #64748b);
+    font-size: 13px;
+}
+
+.public-body {
+    padding: 20px;
+}
+
+.public-body .form-section-title {
+    color: var(--text-main, #0f172a);
+    font-family: 'Sora', sans-serif;
+    font-size: 14px;
+    font-weight: 700;
+    margin: 20px 0 12px;
+}
+
+.public-body .form-section-title:first-child {
+    margin-top: 0;
+}
+
+.public-body .form-group {
+    margin-bottom: 15px;
+}
+
+.public-body .form-group label {
+    display: block;
+    color: var(--text-main, #0f172a);
+    font-size: 13px;
+    font-weight: 600;
+    margin-bottom: 7px;
+}
+
+.public-body .form-control {
+    width: 100%;
+    box-sizing: border-box;
+    font-family: 'Outfit', sans-serif;
+}
+
+.public-body textarea.form-control {
+    resize: vertical;
+    min-height: 76px;
+}
+
+.public-body .form-row {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 12px;
+}
+
+.public-body .btn-primary {
+    width: 100%;
+    font-family: 'Outfit', sans-serif;
+}
+
+.public-body .btn-verify,
+.public-body .btn-location {
+    flex: 0 0 auto;
+    font-family: 'Outfit', sans-serif;
+}
+
+.status-box {
+    display: none;
+    margin-top: 14px;
+    padding: 12px 14px;
+    border-radius: 10px;
+    font-size: 13px;
+    border: 1px solid transparent;
+}
+
+.status-box.error {
+    display: block;
+    background: rgba(239,68,68,.08);
+    color: #b91c1c;
+    border-color: rgba(239,68,68,.18);
+}
+
+.status-box.success {
+    display: block;
+    background: rgba(16,185,129,.08);
+    color: #047857;
+    border-color: rgba(16,185,129,.18);
+}
+
+.back-link {
+    display: inline-flex;
+    align-items: center;
+    gap: 7px;
+    margin: 0 0 12px;
+    color: var(--primary-color, #0369a1);
+    text-decoration: none;
+    font-size: 13px;
+    font-weight: 600;
+}
+
+.branch-hint {
+    font-size: 11px;
+    line-height: 1.5;
+    color: var(--text-muted, #64748b);
+    margin-top: 6px;
+}
+
+.ticket {
+    display: none;
+    padding: 18px;
+    border: 1px solid var(--border-color, #e2e8f0);
+    border-radius: 14px;
+    margin-top: 18px;
+    background: var(--card-bg, #fff);
+}
+
+.ticket.show {
+    display: block;
+}
+
+.ticket h2 {
+    margin: 0 0 12px;
+    color: var(--primary-color, #0369a1);
+    font-family: 'Sora', sans-serif;
+    font-size: 18px;
+}
+
+.ticket-row {
+    display: flex;
+    justify-content: space-between;
+    gap: 15px;
+    padding: 9px 0;
+    border-bottom: 1px solid var(--border-color, #e2e8f0);
+    font-size: 13px;
+}
+
+.ticket-row .label {
+    color: var(--text-muted, #64748b);
+    font-weight: 600;
+}
+
+.ticket-row span:last-child {
+    color: var(--text-main, #0f172a);
+    font-weight: 600;
+    text-align: right;
+}
+
+/* Parent index.html opens this page inside an iframe with ?embedded=1. */
+body.embedded-mode {
+    min-height: 100%;
+    overflow-x: hidden;
+}
+
+body.embedded-mode .standalone-header,
+body.embedded-mode .standalone-back {
+    display: none !important;
+}
+
+body.embedded-mode .public-form-wrap {
+    max-width: none;
+    width: 100%;
+    box-sizing: border-box;
+    margin: 0;
+    padding: 16px 14px 28px;
+}
+
+body.embedded-mode .public-card {
+    box-shadow: none;
+    border-radius: 0;
+    border-left: 0;
+    border-right: 0;
+}
+
+body.embedded-mode .public-head {
+    padding: 16px 16px 12px;
+}
+
+body.embedded-mode .public-body {
+    padding: 16px;
+}
+
+@media (max-width: 600px) {
+    .public-form-wrap {
+        padding: 14px 10px 24px;
     }
-}
-</style>
-<style id="info-module-style">
-/* Privacy / About App open inside the same app shell. */
-#info-modal.info-module{
-    position:fixed !important;
-    top:64px !important;
-    bottom:76px !important;
-    left:0 !important;
-    right:0 !important;
-    height:auto !important;
-    max-height:none !important;
-    z-index:1200 !important;
-    overflow:hidden !important;
-    padding:0 !important;
-    border-radius:0 !important;
-}
-#info-modal.info-module .modal-header{
-    min-height:52px;
-    box-sizing:border-box;
-    display:flex;
-    align-items:center;
-    justify-content:space-between;
-}
-#info-modal.info-module .modal-body{
-    height:calc(100% - 52px);
-    padding:0 !important;
-    overflow:hidden !important;
-}
-#infoModuleFrame{
-    display:block;
-    width:100%;
-    height:100%;
-    border:0;
-    background:transparent;
-}
-@media(max-width:600px){
-    #info-modal.info-module{
-        top:60px !important;
-        bottom:70px !important;
+
+    .public-body {
+        padding: 15px;
+    }
+
+    .public-body .form-row {
+        grid-template-columns: 1fr;
+        gap: 0;
+    }
+
+    body.embedded-mode .public-form-wrap {
+        padding: 8px 0 22px;
+    }
+
+    body.embedded-mode .public-card {
+        border-radius: 0;
+    }
+
+    body.embedded-mode .public-head,
+    body.embedded-mode .public-body {
+        padding-left: 14px;
+        padding-right: 14px;
     }
 }
 </style>
 </head>
 <body>
-<div id="splash-screen">
-<img alt="Stra Care Splash Screen" onerror="this.src='assets/logo-splash.png'" src="1000777295.png"/>
-</div>
+<script>
+(function () {
+    const params = new URLSearchParams(window.location.search);
+    if (params.get("embedded") === "1") {
+        document.body.classList.add("embedded-mode");
+    }
+})();
+</script>
 <div class="app-container">
-<header class="header">
+<header class="header standalone-header">
 <div class="header-left">
-<button class="icon-btn" id="btn-menu" onclick="toggleSidebar()">
-<i data-lucide="menu"></i>
-</button>
-<button class="icon-btn" id="btn-back" onclick="closeAllModals()" style="display: none;">
+<button class="icon-btn" type="button" onclick="history.length>1?history.back():location.href='index.html'">
 <i data-lucide="arrow-left"></i>
 </button>
 <div class="brand">
-<img alt="Logo" class="logo" onerror="this.style.display='none'" src="assets/logo.png"/>
-<img alt="Stra Care" class="name" onerror="this.outerHTML='&lt;h2 style=\'color:#FFFFFF; margin-left:8px; font-size:16px; font-family:Sora; font-weight:700; margin-bottom:0;\'&gt;STRA CARE&lt;/h2&gt;'" src="assets/name.png"/>
+<img alt="Logo" class="logo" src="assets/logo.png" onerror="this.style.display='none'">
+<img alt="Stra Care" class="name" src="assets/name.png" onerror="this.style.display='none'">
 </div>
-</div>
-<div class="header-right">
-<button class="icon-btn" onclick="openModal('search-modal')">
-<i data-lucide="search"></i>
-</button>
-<button class="icon-btn theme-toggle" onclick="toggleTheme()">
-<i data-lucide="moon" id="theme-icon"></i>
-</button>
 </div>
 </header>
-<main class="main-content">
-<div class="welcome-msg animate-slide-up">
-<h1>Good Health Awaits.</h1>
-<p>Book your advanced physiotherapy session today with STRA CARE.</p>
+
+<main class="public-form-wrap">
+<a class="back-link standalone-back" href="index.html"><i data-lucide="arrow-left"></i> Back to STRA CARE</a>
+
+<div class="public-card">
+<div class="public-head">
+<h1><i data-lucide="calendar-plus"></i> Book an Appointment</h1>
+<p>Enter your details and submit your preferred appointment.</p>
 </div>
-<div class="section-header animate-slide-up delay-50">
-<h2>Our Specialized Care</h2>
-</div>
-<div class="services-wrapper animate-slide-up delay-50">
-<button class="carousel-btn left" onclick="scrollCarousel(-1)"><i data-lucide="chevron-left"></i></button>
-<div class="services-carousel" id="servicesCarousel">
-<!-- FULL SERVICE LIST CARDS -->
-<div class="service-card" onclick="openServiceDetails('disc', 'Intervertebral Disc Prolapse', 'photos/1.png', 'Specialized care for spinal disc issues, focusing on pain relief and restoring spine health.')">
-<div class="service-photo"><img onerror="this.src='https://placehold.co/400x300/0369A1/FFF?text=Disc+Prolapse'" src="photos/1.png"/></div>
-<div class="service-info"><h3>Intervertebral Disc Prolapse</h3><i data-lucide="info" style="color:var(--primary-color);"></i></div>
-</div>
-<div class="service-card" onclick="openServiceDetails('back', 'Low Back Ache', 'photos/2.jpg', 'Targeted physiotherapy to alleviate chronic and acute lower back pain effectively.')">
-<div class="service-photo"><img onerror="this.src='https://placehold.co/400x300/0369A1/FFF?text=Back+Ache'" src="photos/2.jpg"/></div>
-<div class="service-info"><h3>Low Back Ache</h3><i data-lucide="info" style="color:var(--primary-color);"></i></div>
-</div>
-<div class="service-card" onclick="openServiceDetails('cervical', 'Cervical Spondylosis', 'photos/3.jpg', 'Comprehensive neck pain management and posture correction techniques.')">
-<div class="service-photo"><img onerror="this.src='https://placehold.co/400x300/0369A1/FFF?text=Cervical+Spondylosis'" src="photos/3.jpg"/></div>
-<div class="service-info"><h3>Cervical Spondylosis</h3><i data-lucide="info" style="color:var(--primary-color);"></i></div>
-</div>
-<div class="service-card" onclick="openServiceDetails('knee', 'Osteoarthritis of Knee', 'photos/4.jpg', 'Mobility improvement and pain reduction for knee joint degeneration.')">
-<div class="service-photo"><img onerror="this.src='https://placehold.co/400x300/0369A1/FFF?text=Osteoarthritis+Knee'" src="photos/4.jpg"/></div>
-<div class="service-info"><h3>Osteoarthritis of Knee</h3><i data-lucide="info" style="color:var(--primary-color);"></i></div>
-</div>
-<div class="service-card" onclick="openServiceDetails('shoulder', 'Periarthritis of Shoulder', 'photos/5.jpg', 'Therapies designed to restore range of motion and treat frozen shoulder.')">
-<div class="service-photo"><img onerror="this.src='https://placehold.co/400x300/0369A1/FFF?text=Periarthritis+Shoulder'" src="photos/5.jpg"/></div>
-<div class="service-info"><h3>Periarthritis of Shoulder</h3><i data-lucide="info" style="color:var(--primary-color);"></i></div>
-</div>
-<div class="service-card" onclick="openServiceDetails('elbow', 'Tennis Elbow', 'photos/6.jpg', 'Effective rehabilitation for elbow joint inflammation and strain injuries.')">
-<div class="service-photo"><img onerror="this.src='https://placehold.co/400x300/0369A1/FFF?text=Tennis+Elbow'" src="photos/6.jpg"/></div>
-<div class="service-info"><h3>Tennis Elbow</h3><i data-lucide="info" style="color:var(--primary-color);"></i></div>
-</div>
-<div class="service-card" onclick="openServiceDetails('heel', 'Plantar Fasciitis', 'photos/7.jpg', 'Advanced care for heel pain to help you walk comfortably again.')">
-<div class="service-photo"><img onerror="this.src='https://placehold.co/400x300/0369A1/FFF?text=Plantar+Fasciitis'" src="photos/7.jpg"/></div>
-<div class="service-info"><h3>Plantar Fasciitis</h3><i data-lucide="info" style="color:var(--primary-color);"></i></div>
-</div>
-<div class="service-card" onclick="openServiceDetails('sports', 'Sports Injuries', 'photos/8.jpg', 'Dedicated sports rehabilitation to get athletes back to their peak performance.')">
-<div class="service-photo"><img onerror="this.src='https://placehold.co/400x300/0369A1/FFF?text=Sports+Injuries'" src="photos/8.jpg"/></div>
-<div class="service-info"><h3>Sports Injuries</h3><i data-lucide="info" style="color:var(--primary-color);"></i></div>
-</div>
-<div class="service-card" onclick="openServiceDetails('stroke', 'Stroke Rehabilitation', 'photos/9.jpg', 'Neurological physiotherapy to aid in balance, mobility, and motor recovery.')">
-<div class="service-photo"><img onerror="this.src='https://placehold.co/400x300/0369A1/FFF?text=Stroke+Rehab'" src="photos/9.jpg"/></div>
-<div class="service-info"><h3>Stroke Rehabilitation</h3><i data-lucide="info" style="color:var(--primary-color);"></i></div>
-</div>
-<div class="service-card" onclick="openServiceDetails('cp', 'Cerebral Palsy', 'photos/10.jpg', 'Paediatric therapy ensuring physical development and muscle control.')">
-<div class="service-photo"><img onerror="this.src='https://placehold.co/400x300/0369A1/FFF?text=Cerebral+Palsy'" src="photos/10.jpg"/></div>
-<div class="service-info"><h3>Cerebral Palsy</h3><i data-lucide="info" style="color:var(--primary-color);"></i></div>
-</div>
-<div class="service-card" onclick="openServiceDetails('bells', 'Bell\'s Palsy', 'photos/11.jpg', 'Facial nerve rehabilitation utilizing specialized stimulation and exercises.')">
-<div class="service-photo"><img onerror="this.src='https://placehold.co/400x300/0369A1/FFF?text=Bells+Palsy'" src="photos/11.jpg"/></div>
-<div class="service-info"><h3>Bell's Palsy</h3><i data-lucide="info" style="color:var(--primary-color);"></i></div>
-</div>
-</div>
-<button class="carousel-btn right" onclick="scrollCarousel(1)"><i data-lucide="chevron-right"></i></button>
-</div>
-<div class="we-care-section animate-slide-up delay-100">
-<div class="we-care-card">
-<img alt="Home Care" class="we-care-bg" onerror="this.src='https://placehold.co/600x400/0369A1/FFF?text=Home+Care+Services'" src="photos/home.jpg"/>
-<div class="we-care-overlay">
-<span class="we-care-badge"><i data-lucide="home" style="width:12px; height:12px; display:inline-block; vertical-align:-2px; margin-right:4px;"></i> Premium Service</span>
-<h2>We Care You.</h2>
-<p>Experience world-class physiotherapy from the comfort of your home. Compassionate care, fully tailored for your fastest recovery.</p>
-<button class="btn-glass" onclick="openAppointmentModule(); return false;">
-<i data-lucide="calendar-plus"></i> Book Home Care
-                    </button>
-</div>
-</div>
-</div>
-</main>
-<nav class="bottom-nav">
-<a class="nav-item" href="form-public.html" onclick="openAppointmentModule(); setActiveNav(this); return false;">
-<i data-lucide="calendar-plus"></i><span>Book</span>
-</a>
-<a class="nav-item" onclick="openModal('payment-modal'); setActiveNav(this)">
-<i data-lucide="credit-card"></i><span>Pay</span>
-</a>
-<div class="nav-fab-wrapper">
-<a class="nav-fab" onclick="closeAllModals(); setActiveNav(document.getElementById('nav-dummy-home'))">
-<i class="heart-anim" data-lucide="heart-pulse"></i> </a>
-<span class="nav-item active" id="nav-dummy-home" style="display:none;"></span>
-</div>
-<a class="nav-item" onclick="openModal('branch-modal'); setActiveNav(this)">
-<i data-lucide="map-pin"></i><span>Branches</span>
-</a>
-<a class="nav-item" href="tel:+919744902555">
-<i data-lucide="phone-call"></i><span>Call</span>
-</a>
-</nav>
-</div>
-<div class="sidebar-overlay" onclick="toggleSidebar()"></div>
-<div class="sidebar">
-<div class="sidebar-header">
-<h2 style="color: var(--primary-color); font-size: 18px; font-family: 'Sora', sans-serif;">Menu</h2>
-<button class="icon-btn" onclick="toggleSidebar()" style="background: transparent; border: none; box-shadow: none;">
-<i data-lucide="x"></i>
-</button>
-</div>
-<ul class="sidebar-menu">
-<li><button onclick="openAppointmentModule(); return false;"><i class="icon-main" data-lucide="calendar"></i> Appointment</button></li>
-<li><button onclick="toggleSidebar(); openModal('payment-modal');"><i class="icon-main" data-lucide="credit-card"></i> Pay Online</button></li>
-<li><button onclick="toggleSidebar(); openModal('branch-modal');"><i class="icon-main" data-lucide="building-2"></i> Clinic Branches</button></li>
-<!-- PWA Install App Button Added Here -->
-<li><button class="pwa-install-btn"><i class="icon-main" data-lucide="download"></i> Install App</button></li>
-<li><a href="https://share.google/lyiPHUz6CFLNwzPyC" target="_blank"><i class="icon-main" data-lucide="star"></i> Google Review</a></li>
-<li><a href="privacy.html" onclick="openInfoModule('privacy.html', 'Privacy & Policy'); return false;"><i class="icon-main" data-lucide="shield-check"></i> Privacy &amp; Policy</a></li>
-<li><a href="about-app.html" onclick="openInfoModule('about-app.html', 'About App'); return false;"><i class="icon-main" data-lucide="info"></i> About App</a></li>
-</ul>
-</div>
-<div class="popup-overlay" id="service-popup" onclick="closeServicePopup(event)">
-<div class="popup-content">
-<img alt="Service Image" class="popup-img" id="sp-img" src=""/>
-<div class="popup-body">
-<h3 id="sp-title">Service Title</h3>
-<p id="sp-desc">Service Description</p>
-<button class="btn-primary" onclick="openAppointmentModule(); return false;">
-<i data-lucide="calendar-plus"></i> Book This Service
-            </button>
-</div>
-</div>
-</div>
-</div>
-<div class="fs-modal" id="search-modal">
-<div class="modal-header">
-<h2><i data-lucide="search"></i> Master Search</h2>
-</div>
-<div class="modal-body">
-<div class="form-group">
-<div style="position: relative;">
-<i data-lucide="search" style="position: absolute; left: 16px; top: 14px; color: var(--text-muted); width: 20px;"></i>
-<input autofocus="" class="form-control" placeholder="Search clinics, therapies, info..." style="padding-left: 48px;" type="text"/>
-</div>
-</div>
-<div style="text-align: center; padding: 40px 20px; color: var(--text-muted);">
-<i data-lucide="stethoscope" style="width: 48px; height: 48px; opacity: 0.3; margin-bottom: 12px;"></i>
-<p>Start typing to search our physiotherapy services, branch details, and general health info.</p>
-</div>
-</div>
-</div>
-<div class="fs-modal" id="appointment-modal">
-<div class="modal-header">
-<h2><i data-lucide="file-text"></i> Appointment Form</h2>
-</div>
-<div class="modal-body">
-<iframe id="bookingModuleFrame" title="STRA CARE Appointment Booking" loading="lazy"></iframe>
-<div class="legacy-appointment-content">
-<div class="form-header-card">
-<h3><i data-lucide="user-circle"></i> Patient Details</h3>
-<p>Please enter the exact details of the patient receiving treatment.</p>
-</div>
-<form id="appointmentForm">
+
+<div class="public-body">
+<form id="publicAppointmentForm">
+
 <div class="form-section-title">Personal Information</div>
+
 <div class="form-group">
-<label>Contact Phone Number <span style="color:red">*</span></label>
-<div style="display: flex; gap: 8px;">
-<input class="form-control" id="pat_mobile" maxlength="10" pattern="[0-9]{10}" placeholder="10-digit number" required="" type="tel"/>
+<label for="pat_mobile">Contact Phone Number <span style="color:red">*</span></label>
+<div style="display:flex;gap:8px">
+<input class="form-control" id="pat_mobile" maxlength="10" pattern="[0-9]{10}" placeholder="10-digit number" required type="tel">
 <button class="btn-verify" id="verifyBtn" type="button">Check</button>
 </div>
 </div>
+
 <div class="form-group">
-<label>Patient Full Legal Name <span style="color:red">*</span></label>
-<input class="form-control" id="pat_name" placeholder="e.g., John Doe" required="" type="text"/>
+<label for="pat_name">Patient Full Legal Name <span style="color:red">*</span></label>
+<input class="form-control" id="pat_name" placeholder="e.g., John Doe" required type="text">
 </div>
+
 <div class="form-row">
 <div class="form-group">
-<label>Age <span style="color:red">*</span></label>
-<input class="form-control" id="pat_age" max="120" min="1" placeholder="Years" required="" type="number"/>
+<label for="pat_age">Age <span style="color:red">*</span></label>
+<input class="form-control" id="pat_age" min="1" max="120" placeholder="Years" required type="number">
 </div>
 <div class="form-group">
-<label>Gender <span style="color:red">*</span></label>
-<select class="form-control" id="pat_gender" required="">
-<option disabled="" selected="" value="">Select</option>
-<option value="Male">Male</option>
-<option value="Female">Female</option>
-<option value="Other">Other</option>
+<label for="pat_gender">Gender <span style="color:red">*</span></label>
+<select class="form-control" id="pat_gender" required>
+<option disabled selected value="">Select</option>
+<option>Male</option>
+<option>Female</option>
+<option>Other</option>
 </select>
 </div>
 </div>
+
 <div class="form-section-title">Location Details</div>
+
 <div class="form-group">
-<label>Patient Address / Location <span style="color:red">*</span></label>
-<textarea class="form-control" id="pat_address" placeholder="Enter full address, landmark, or click below to auto-detect location..." required="" rows="2"></textarea>
+<label for="pat_address">Patient Address / Location <span style="color:red">*</span></label>
+<textarea class="form-control" id="pat_address" rows="2" placeholder="Enter address, landmark, or use location detection" required></textarea>
 </div>
+
 <div class="form-group">
-<button class="btn-location" onclick="getLocation()" type="button">
+<button class="btn-location" type="button" id="locationBtn">
 <i data-lucide="map-pin"></i> Auto-Detect My Location
-                </button>
-<p id="location-status" style="font-size: 12px; color: var(--text-muted); margin-top: 8px; display: none;"></p>
-<input id="lat_val" type="hidden"/><input id="lng_val" type="hidden"/>
+</button>
+<p id="location-status" class="branch-hint"></p>
+<input id="lat_val" type="hidden">
+<input id="lng_val" type="hidden">
 </div>
+
 <div class="form-section-title">Treatment Details</div>
+
 <div class="form-group">
-<label>Symptoms / Service Needed <span style="color:red">*</span></label>
-<select class="form-control" id="pat_symptom" onchange="toggleCustomSymptom()" required="">
-<option disabled="" selected="" value="">Select an issue or service...</option>
-<option value="Intervertebral Disc Prolapse">Intervertebral Disc Prolapse</option>
-<option value="Low Back Ache">Low Back Ache</option>
-<option value="Cervical Spondylosis">Cervical Spondylosis</option>
-<option value="Osteoarthritis of Knee">Osteoarthritis of Knee</option>
-<option value="Periarthritis of Shoulder">Periarthritis of Shoulder</option>
-<option value="Tennis Elbow">Tennis Elbow</option>
-<option value="Plantar Fasciitis">Plantar Fasciitis</option>
-<option value="Sports Injuries">Sports Injuries</option>
-<option value="Stroke Rehabilitation">Stroke Rehabilitation</option>
-<option value="Cerebral Palsy">Cerebral Palsy</option>
-<option value="Bell's Palsy">Bell's Palsy</option>
-<option value="Home Care Physiotherapy">Home Care Physiotherapy</option>
+<label for="pat_symptom">Symptoms / Service Needed <span style="color:red">*</span></label>
+<select class="form-control" id="pat_symptom" required>
+<option disabled selected value="">Select an issue or service...</option>
+<option>Intervertebral Disc Prolapse</option>
+<option>Low Back Ache</option>
+<option>Cervical Spondylosis</option>
+<option>Osteoarthritis of Knee</option>
+<option>Periarthritis of Shoulder</option>
+<option>Tennis Elbow</option>
+<option>Plantar Fasciitis</option>
+<option>Sports Injuries</option>
+<option>Stroke Rehabilitation</option>
+<option>Cerebral Palsy</option>
+<option>Bell's Palsy</option>
+<option>Home Care Physiotherapy</option>
 <option value="Other">Other (Type manually)</option>
 </select>
-<input class="form-control" id="pat_symptom_custom" placeholder="Please specify your issue" style="display: none; margin-top: 8px;" type="text"/>
+<input class="form-control" id="pat_symptom_custom" style="display:none;margin-top:8px" placeholder="Please specify your issue" type="text">
 </div>
+
 <div class="form-group">
-<label>Select Branch <span style="color:red">*</span></label>
-<select class="form-control" id="pat_branch" required="">
-<option disabled="" selected="" value="">Loading branches...</option>
+<label for="pat_branch">Select Branch <span style="color:red">*</span></label>
+<select class="form-control" id="pat_branch" required>
+<option disabled selected value="">Loading branches...</option>
 </select>
+<div class="branch-hint">Branch details are loaded directly from the Firebase branches collection.</div>
 </div>
+
 <div class="form-row">
 <div class="form-group">
-<label>Preferred Date <span style="color:red">*</span></label>
-<input class="form-control" id="pat_date" required="" type="date"/>
+<label for="pat_date">Preferred Date <span style="color:red">*</span></label>
+<input class="form-control" id="pat_date" required type="date">
 </div>
 <div class="form-group">
-<label>Preferred Time <span style="color:red">*</span></label>
-<input class="form-control" id="pat_time" required="" type="time"/>
+<label for="pat_time">Preferred Time <span style="color:red">*</span></label>
+<input class="form-control" id="pat_time" required type="time">
 </div>
 </div>
+
 <div class="form-group">
-<label>Brief Medical History / Notes (Optional)</label>
-<textarea class="form-control" id="pat_notes" placeholder="Any previous injuries, surgeries, or specific pain areas..." rows="3"></textarea>
+<label for="pat_notes">Brief Medical History / Notes (Optional)</label>
+<textarea class="form-control" id="pat_notes" rows="3" placeholder="Any previous injuries, surgeries, or specific pain areas..."></textarea>
 </div>
-<button class="btn-primary" id="submitAppBtn" style="margin-top: 16px;" type="submit">
-                Proceed to Submit <i data-lucide="check-circle"></i>
+
+<button class="btn-primary" id="submitAppBtn" type="submit">
+Proceed to Submit <i data-lucide="check-circle"></i>
 </button>
+
+<div id="formStatus" class="status-box"></div>
 </form>
+
+<div id="ticket" class="ticket">
+<h2>Booking Submitted</h2>
+<div class="ticket-row"><span class="label">Booking Ref</span><span id="tkt_ref">--</span></div>
+<div class="ticket-row"><span class="label">Patient</span><span id="tkt_name">--</span></div>
+<div class="ticket-row"><span class="label">Branch</span><span id="tkt_branch">--</span></div>
+<div class="ticket-row"><span class="label">Date & Time</span><span id="tkt_datetime">--</span></div>
+<div class="ticket-row"><span class="label">Status</span><span>Pending (Review)</span></div>
+<button class="btn-primary" type="button" style="margin-top:14px" onclick="location.href='index.html'">Back to Home</button>
+</div>
+
 </div>
 </div>
-<div class="popup-overlay" id="success-popup">
-<div class="popup-content" style="background: transparent; box-shadow: none;">
-<div id="capture-ticket" style="background: white; padding: 24px; border-radius: 16px;">
-<div style="text-align: center; margin-bottom: 16px;">
-<i data-lucide="check-circle" style="color: #10B981; width: 48px; height: 48px; margin: 0 auto 12px;"></i>
-<h2 style="color: #10B981; font-family: 'Sora'; font-size: 20px;">Booking Confirmed!</h2>
-<p style="font-size: 13px; color: var(--text-muted);">Thank you for choosing STRA CARE.</p>
+</main>
 </div>
-<div class="ticket-box">
-<div class="ticket-header">
-<h3>Booking Ref: <span id="tkt_ref" style="color: var(--text-main);">APT-XXXXX</span></h3>
-</div>
-<div class="ticket-row"><span class="label">Patient Name:</span><span class="val" id="tkt_name">--</span></div>
-<div class="ticket-row"><span class="label">Date &amp; Time:</span><span class="val" id="tkt_datetime">--</span></div>
-<div class="ticket-row"><span class="label">Branch:</span><span class="val" id="tkt_branch">--</span></div>
-<div class="ticket-row"><span class="label">Status:</span><span class="val" style="color:#FB923C;">Pending (Review)</span></div>
-</div>
-</div>
-<div style="display: flex; gap: 10px; margin-top: 16px;">
-<button class="btn-location" onclick="closeSuccessPopup()" style="flex:1; background: white; margin: 0;">Close</button>
-<button class="btn-primary" onclick="downloadTicket()" style="flex:2; margin: 0;"><i data-lucide="download"></i> Download JPEG</button>
-</div>
-</div>
-</div>
-<div class="fs-modal" id="payment-modal">
-<div class="modal-header">
-<h2><i data-lucide="credit-card"></i> Pay Advance</h2>
-</div>
-<div class="modal-body">
-<div class="qr-card">
-<h3 style="margin-bottom: 16px; font-family: 'Sora'; font-size: 16px;">Scan to Pay via UPI</h3>
-<div class="qr-code">
-<img alt="UPI QR Code" src="https://api.qrserver.com/v1/create-qr-code/?size=200x200&amp;data=upi://pay?pa=9744902555@hdfc%26pn=STRA%20CARE%26cu=INR"/>
-</div>
-<p style="color: var(--text-muted); font-size: 13px; margin-bottom: 10px;">UPI ID: 9744902555@hdfc</p>
-<div class="bank-details">
-<h4 style="margin-bottom: 12px; font-size: 14px; font-family: 'Sora'; border-bottom: 1px solid var(--border-color); padding-bottom: 8px;">Bank Transfer Details</h4>
-<div class="bank-row"><span>Account Name:</span><span>STRA CARE</span></div>
-<div class="bank-row"><span>Account No:</span><span>50200120597389</span></div>
-<div class="bank-row"><span>IFSC Code:</span><span>HDFC0000465</span></div>
-<div class="bank-row"><span>Bank Name:</span><span>HDFC Bank</span></div>
-</div>
-</div>
-</div>
-</div>
-<div class="fs-modal" id="app-info-modal">
-<div class="modal-header">
-<h2><i data-lucide="info"></i> App Info</h2>
-</div>
-<div class="modal-body" style="padding: 0; display: flex; flex-direction: column;">
-<div style="flex: 1; display: flex; flex-direction: column; align-items: center; justify-content: center; padding: 40px 20px;">
-<div class="brand" style="flex-direction: column; gap: 12px; margin-bottom: 16px;">
-<img alt="Logo" onerror="this.style.display='none'" src="assets/logo.png" style="height: 65px; object-fit: contain;"/>
-<h2 style="color:var(--primary-color); font-size: 26px; font-family:'Sora'; font-weight: 700;">STRA CARE</h2>
-</div>
-<p style="color: var(--text-muted); font-size: 15px;">Booking App Version 1.0</p>
-<!-- Secondary PWA Install App Button Added Here -->
-<button class="btn-primary pwa-install-btn" style="margin-top: 24px; max-width: 220px;">
-<i data-lucide="download"></i> Install Booking App
-            </button>
-</div>
-<div style="padding: 24px; text-align: center; background: var(--bg-color); border-top: 1px solid var(--border-color); padding-bottom: max(24px, env(safe-area-inset-bottom));">
-<p style="font-size: 11px; color: var(--text-muted); margin:0;">© STRA CARE. All rights reserved.</p>
-</div>
-</div>
-</div>
-<div class="fs-modal" id="info-modal">
-<div class="modal-header">
-<h2><i data-lucide="info"></i> <span id="infoModuleTitle">Information</span></h2>
-</div>
-<div class="modal-body">
-<iframe id="infoModuleFrame" title="STRA CARE Information" loading="lazy"></iframe>
-</div>
-</div>
-<div class="fs-modal" id="branch-modal">
-<div class="modal-header">
-<h2><i data-lucide="map"></i> Our Branches</h2>
-</div>
-<div class="modal-body">
-<div id="publicBranches">
-<div class="branch-loading" style="text-align:center;padding:30px;color:var(--text-muted);">
-<i data-lucide="loader-circle"></i>
-<p>Loading branches...</p>
-</div>
-</div>
-</div>
-</div>
+
 <script src="firebase.js" type="module"></script>
 
 <script type="module">
 import {
     getFirestore,
     collection,
-    getDocs
+    getDocs,
+    addDoc,
+    query,
+    where,
+    limit,
+    getDocs as getDocsQuery
 } from "https://www.gstatic.com/firebasejs/12.1.0/firebase-firestore.js";
 
 import {
@@ -474,207 +444,349 @@ import {
     getApp
 } from "https://www.gstatic.com/firebasejs/12.1.0/firebase-app.js";
 
-let publicDb = null;
+let db = null;
+let branches = [];
 
 document.addEventListener("DOMContentLoaded", async () => {
     try {
         if (!getApps().length) {
-            console.error("Firebase app is not initialized. Check firebase.js.");
-            return;
+            throw new Error("Firebase is not initialized. Check firebase.js.");
         }
 
-        publicDb = getFirestore(getApp());
+        db = getFirestore(getApp());
 
-        await loadPublicBranches();
+        await loadBranches();
+        setMinimumDate();
+        applyBranchFromUrl();
+
+        document.getElementById("publicAppointmentForm")
+            .addEventListener("submit", submitAppointment);
+
+        document.getElementById("pat_symptom")
+            .addEventListener("change", toggleCustomSymptom);
+
+        document.getElementById("locationBtn")
+            .addEventListener("click", getLocation);
+
+        document.getElementById("verifyBtn")
+            .addEventListener("click", checkExistingPatient);
+
+        lucide.createIcons();
+
     } catch (error) {
-        console.error("Public Firebase initialization error:", error);
-        showBranchError();
+        console.error(error);
+        showStatus("Unable to initialize booking form. Please try again.", true);
     }
 });
 
-window.addEventListener("message", event => {
-    if (!event.data || event.data.type !== "STRA_CARE_BOOKING_SUBMITTED") return;
-    // Keep the booking module open so the confirmation ticket remains visible.
-});
+async function loadBranches() {
 
-async function loadPublicBranches() {
-    const container = document.getElementById("publicBranches");
-    const branchSelect = document.getElementById("pat_branch");
+    const select = document.getElementById("pat_branch");
 
-    if (!container) return;
+    const snapshot = await getDocs(
+        collection(db, "branches")
+    );
 
-    try {
-        const snapshot = await getDocs(collection(publicDb, "branches"));
+    branches = [];
 
-        const branches = [];
+    snapshot.forEach(doc => {
+        const d = doc.data();
 
-        snapshot.forEach(doc => {
-            const d = doc.data();
-
-            branches.push({
-                id: doc.id,
-                branchId: d.branchId || doc.id,
-                name: d.name || "Unnamed Branch",
-                contact: d.contact || "",
-                mapLink: d.mapLink || "",
-                address: d.address || ""
-            });
+        branches.push({
+            id: doc.id,
+            branchId: d.branchId || doc.id,
+            name: d.name || "Unnamed Branch",
+            contact: d.contact || "",
+            mapLink: d.mapLink || "",
+            address: d.address || ""
         });
+    });
 
-        branches.sort((a, b) =>
-            String(a.name).localeCompare(String(b.name))
+    branches.sort((a,b) =>
+        String(a.name).localeCompare(String(b.name))
+    );
+
+    select.innerHTML =
+        '<option disabled selected value="">Select Branch</option>';
+
+    branches.forEach(branch => {
+        const option = document.createElement("option");
+        option.value = branch.name;
+        option.textContent = branch.name;
+        option.dataset.branchId = branch.branchId;
+        select.appendChild(option);
+    });
+}
+
+function applyBranchFromUrl() {
+
+    const params = new URLSearchParams(location.search);
+    const branchId = params.get("branchId");
+    const branchName = params.get("branch");
+
+    const select = document.getElementById("pat_branch");
+
+    if (branchId) {
+        const match = branches.find(
+            b => String(b.branchId) === String(branchId)
         );
 
-        if (!branches.length) {
-            container.innerHTML = `
-                <div class="branch-loading" style="text-align:center;padding:30px;color:var(--text-muted);">
-                    <i data-lucide="map-pin-off"></i>
-                    <p>No branches available.</p>
-                </div>`;
-            if (window.lucide) lucide.createIcons();
+        if (match) {
+            select.value = match.name;
             return;
         }
+    }
 
-        container.innerHTML = branches.map((branch, index) => {
-            const phone = String(branch.contact || "").replace(/\D/g, "");
-            const wa = phone.length === 10 ? "91" + phone : phone;
-            const icon = /home/i.test(branch.name) ? "home" : "map-pin";
+    if (branchName) {
+        const match = branches.find(
+            b => b.name === branchName
+        );
 
-            return `
-                <div class="branch-card ${index === 0 && /home/i.test(branch.name) ? "premium" : ""}">
-                    <div class="branch-header">
-                        <div class="branch-icon">
-                            <i data-lucide="${icon}"></i>
-                        </div>
-                        <div class="branch-card-info">
-                            <h3>${escapeHtml(branch.name)}</h3>
-                            ${branch.address ? `<p>${escapeHtml(branch.address)}</p>` : ""}
-                        </div>
-                    </div>
-                    <div class="branch-actions">
-                        ${phone ? `
-                        <a class="b-btn call" href="tel:+${phone}">
-                            <i data-lucide="phone"></i> Call
-                        </a>` : ""}
-                        ${phone ? `
-                        <a class="b-btn wa" href="https://wa.me/${wa}" target="_blank" rel="noopener">
-                            <i class="fa-brands fa-whatsapp"></i> Chat
-                        </a>` : ""}
-                        ${branch.mapLink ? `
-                        <a class="b-btn map" href="${safeUrl(branch.mapLink)}" target="_blank" rel="noopener">
-                            <i data-lucide="navigation"></i> Map
-                        </a>` : ""}
-                        <button class="b-btn map" type="button"
-                            onclick="bookPublicBranch(${JSON.stringify(branch.name)}, ${JSON.stringify(branch.branchId)})">
-                            <i data-lucide="calendar"></i> Book
-                        </button>
-                    </div>
-                </div>`;
-        }).join("");
+        if (match) {
+            select.value = match.name;
+        }
+    }
+}
 
-        if (branchSelect) {
-            branchSelect.innerHTML =
-                '<option disabled selected value="">Select Branch</option>';
+async function submitAppointment(event) {
 
-            branches.forEach(branch => {
-                const option = document.createElement("option");
-                option.value = branch.name;
-                option.textContent = branch.name;
-                option.dataset.branchId = branch.branchId;
-                branchSelect.appendChild(option);
-            });
+    event.preventDefault();
+
+    const btn = document.getElementById("submitAppBtn");
+
+    const mobile = document.getElementById("pat_mobile").value.trim();
+    const name = document.getElementById("pat_name").value.trim();
+    const age = document.getElementById("pat_age").value;
+    const gender = document.getElementById("pat_gender").value;
+    const address = document.getElementById("pat_address").value.trim();
+    const symptomSelect = document.getElementById("pat_symptom");
+    const symptom =
+        symptomSelect.value === "Other"
+            ? document.getElementById("pat_symptom_custom").value.trim()
+            : symptomSelect.value;
+
+    const branchSelect = document.getElementById("pat_branch");
+    const branch = branchSelect.value;
+
+    const branchOption =
+        branchSelect.options[branchSelect.selectedIndex];
+
+    const branchId =
+        branchOption?.dataset.branchId || "";
+
+    const date = document.getElementById("pat_date").value;
+    const time = document.getElementById("pat_time").value;
+    const notes = document.getElementById("pat_notes").value.trim();
+    const latitude = document.getElementById("lat_val").value;
+    const longitude = document.getElementById("lng_val").value;
+
+    if (!/^[0-9]{10}$/.test(mobile)) {
+        showStatus("Please enter a valid 10-digit mobile number.", true);
+        return;
+    }
+
+    if (!symptom) {
+        showStatus("Please specify the service needed.", true);
+        return;
+    }
+
+    if (!branch) {
+        showStatus("Please select a branch.", true);
+        return;
+    }
+
+    btn.disabled = true;
+    btn.innerHTML = "Submitting...";
+
+    try {
+
+        const ref = "APT-" +
+            Date.now().toString().slice(-8);
+
+        const payload = {
+            name,
+            mobile,
+            age: String(age),
+            gender,
+            address,
+            symptom,
+            service: symptom,
+            branch,
+            branchId,
+            date,
+            time,
+            notes,
+            patientNotes: notes,
+            latitude: latitude || "",
+            longitude: longitude || "",
+            status: "Pending",
+            advance: 0,
+            fee: 0,
+            balance: 0,
+            category: "Normal",
+            bookingRef: ref,
+            createdAt: new Date(),
+            updatedAt: new Date()
+        };
+
+        await addDoc(
+            collection(db, "appointments"),
+            payload
+        );
+
+        document.getElementById("tkt_ref").textContent = ref;
+        document.getElementById("tkt_name").textContent = name;
+        document.getElementById("tkt_branch").textContent = branch;
+        const dateParts = String(date || "").split("-");
+        const indianDate = dateParts.length === 3
+            ? `${dateParts[2]}/${dateParts[1]}/${dateParts[0]}`
+            : date;
+
+        let displayTime = time || "";
+        if (/^\\d{2}:\\d{2}$/.test(displayTime)) {
+            const [hh, mm] = displayTime.split(":").map(Number);
+            const suffix = hh >= 12 ? "PM" : "AM";
+            const hour12 = (hh % 12) || 12;
+            displayTime = `${String(hour12).padStart(2, "0")}:${String(mm).padStart(2, "0")} ${suffix}`;
         }
 
-        if (window.lucide) lucide.createIcons();
+        document.getElementById("tkt_datetime").textContent =
+            `${indianDate} ${displayTime}`;
+
+        document.getElementById("ticket").classList.add("show");
+
+        showStatus(
+            "Appointment submitted successfully. Our team will review it shortly.",
+            false
+        );
+
+        document.getElementById("publicAppointmentForm").style.display = "none";
+
+        window.scrollTo({
+            top: 0,
+            behavior: "smooth"
+        });
 
     } catch (error) {
-        console.error("Branch loading error:", error);
-        showBranchError();
+
+        console.error("Appointment submission error:", error);
+
+        showStatus(
+            "Unable to submit the appointment. Please try again.",
+            true
+        );
+
+        btn.disabled = false;
+        btn.innerHTML =
+            'Proceed to Submit <i data-lucide="check-circle"></i>';
+
+        lucide.createIcons();
     }
 }
 
-window.openAppointmentModule = function(branchName = "", branchId = "") {
-    const frame = document.getElementById("bookingModuleFrame");
-    const modal = document.getElementById("appointment-modal");
-    if (!frame || !modal) {
-        window.location.href = "form-public.html";
+async function checkExistingPatient() {
+
+    const mobile =
+        document.getElementById("pat_mobile").value.trim();
+
+    if (!/^[0-9]{10}$/.test(mobile)) {
+        showStatus("Enter a valid 10-digit mobile number first.", true);
         return;
     }
 
-    const params = new URLSearchParams({ embedded: "1" });
-    if (branchName) params.set("branch", branchName);
-    if (branchId) params.set("branchId", branchId);
+    try {
 
-    frame.src = "form-public.html?" + params.toString();
-    modal.classList.add("appointment-module");
+        // Public rules intentionally do not expose patient records.
+        // This button therefore only validates the mobile format.
+        showStatus(
+            "Mobile number is valid. Please continue with the booking details.",
+            false
+        );
 
-    // Use the existing modal system so the header/back control continues to work.
-    if (typeof openModal === "function") {
-        openModal("appointment-modal");
-    } else {
-        modal.classList.add("active", "open");
+    } catch (error) {
+        showStatus("Unable to check the mobile number.", true);
     }
+}
 
-    const back = document.getElementById("btn-back");
-    const menu = document.getElementById("btn-menu");
-    if (back) back.style.display = "flex";
-    if (menu) menu.style.display = "none";
-};
+function toggleCustomSymptom() {
 
-window.bookPublicBranch = function(name, branchId) {
-    closeAllModals();
-    openAppointmentModule(name, branchId);
-};
+    const select =
+        document.getElementById("pat_symptom");
 
-window.openInfoModule = function(page, title) {
-    const frame = document.getElementById("infoModuleFrame");
-    const modal = document.getElementById("info-modal");
-    const titleEl = document.getElementById("infoModuleTitle");
-    if (!frame || !modal) {
-        window.location.href = page;
+    const custom =
+        document.getElementById("pat_symptom_custom");
+
+    const isOther = select.value === "Other";
+
+    custom.style.display =
+        isOther ? "block" : "none";
+
+    custom.required = isOther;
+}
+
+function getLocation() {
+
+    const status =
+        document.getElementById("location-status");
+
+    if (!navigator.geolocation) {
+        status.textContent =
+            "Location detection is not supported on this device.";
         return;
     }
-    if (titleEl) titleEl.textContent = title || "Information";
-    frame.src = page + "?embedded=1";
-    modal.classList.add("info-module");
-    if (typeof closeAllModals === "function") closeAllModals();
-    if (typeof openModal === "function") openModal("info-modal");
-    else modal.classList.add("active", "open");
-    const back = document.getElementById("btn-back");
-    const menu = document.getElementById("btn-menu");
-    if (back) back.style.display = "flex";
-    if (menu) menu.style.display = "none";
-};
 
-function showBranchError() {
-    const container = document.getElementById("publicBranches");
-    if (!container) return;
+    status.textContent = "Detecting your location...";
 
-    container.innerHTML = `
-        <div class="branch-loading" style="text-align:center;padding:30px;color:var(--text-muted);">
-            <i data-lucide="triangle-alert"></i>
-            <p>Unable to load branches. Please try again.</p>
-            <button class="btn-primary" type="button" onclick="location.reload()">Retry</button>
-        </div>`;
+    navigator.geolocation.getCurrentPosition(
+        position => {
 
-    if (window.lucide) lucide.createIcons();
+            document.getElementById("lat_val").value =
+                position.coords.latitude;
+
+            document.getElementById("lng_val").value =
+                position.coords.longitude;
+
+            status.textContent =
+                "Location detected successfully. Please enter your address/landmark too.";
+
+        },
+        error => {
+
+            console.error(error);
+
+            status.textContent =
+                "Unable to detect location. Please enter your address manually.";
+        },
+        {
+            enableHighAccuracy: true,
+            timeout: 10000,
+            maximumAge: 60000
+        }
+    );
 }
 
-function escapeHtml(value) {
-    return String(value ?? "")
-        .replace(/&/g, "&amp;")
-        .replace(/</g, "&lt;")
-        .replace(/>/g, "&gt;")
-        .replace(/"/g, "&quot;")
-        .replace(/'/g, "&#039;");
+function setMinimumDate() {
+
+    const input =
+        document.getElementById("pat_date");
+
+    const today =
+        new Date().toISOString().split("T")[0];
+
+    input.min = today;
 }
 
-function safeUrl(value) {
-    const url = String(value || "").trim();
-    if (!/^https?:\/\//i.test(url)) return "#";
-    return url.replace(/"/g, "%22");
+function showStatus(message, error) {
+
+    const box =
+        document.getElementById("formStatus");
+
+    box.textContent = message;
+    box.className =
+        "status-box " + (error ? "error" : "success");
 }
 </script>
-<script src="app.js"></script>
+
+<script>if (new URLSearchParams(location.search).get("embedded") !== "1") { const s=document.createElement("script"); s.src="pwa-register.js"; document.head.appendChild(s); }</script>
 </body>
 </html>
