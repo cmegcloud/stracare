@@ -1,16 +1,289 @@
 <!DOCTYPE html>
-<html>
+<html lang="en">
 <head>
     <meta charset="UTF-8">
-    <title>Redirecting...</title>
-    <!-- This meta tag redirects the user immediately -->
-    <meta http-equiv="refresh" content="0; url=https://bizflow.cmfilings.com/40001-stracare/qr html">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Stra Care - QR Generator</title>
+    <!-- Tailwind CSS -->
+    <script src="https://cdn.tailwindcss.com"></script>
+    <!-- QR Code Generator Library -->
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/qrcodejs/1.0.0/qrcode.min.js"></script>
+    <!-- HTML2Canvas -->
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/html2canvas/1.4.1/html2canvas.min.js"></script>
+    
     <script>
-        // Fallback JavaScript redirect just in case
-        window.location.href = "https://bizflow.cmfilings.com/40001-stracare/qr.html";
+        tailwind.config = {
+            theme: {
+                extend: {
+                    colors: {
+                        /* Bolder, deeper corporate blue */
+                        brandBlue: '#005596', 
+                        brandDark: '#003d6d',
+                        brandLight: '#e6f2ff',
+                        brandAccent: '#007ced'
+                    }
+                }
+            }
+        }
     </script>
 </head>
-<body>
-    <p>If you are not redirected automatically, <a href="https://bizflow.cmfilings.com/40001-stracare/qr.html">click here</a>.</p>
+<body class="bg-gray-100 min-h-screen flex items-center justify-center p-4 md:p-6 font-sans">
+
+    <div class="max-w-5xl w-full bg-white rounded-2xl shadow-[0_8px_30px_rgb(0,0,0,0.12)] overflow-hidden flex flex-col md:flex-row">
+        
+        <!-- Left Column: Form -->
+        <div class="w-full md:w-1/2 p-6 md:p-10 border-r-2 border-gray-100">
+            
+            <h2 class="text-xl font-black text-gray-800 mb-6 border-b-2 border-gray-100 pb-3">Payment Details</h2>
+
+            <form id="qrForm" class="space-y-5">
+                
+                <!-- UPI ID Section -->
+                <div class="bg-brandLight p-5 rounded-xl border-2 border-brandBlue/20">
+                    <label class="block text-sm font-bold text-brandDark mb-2">Merchant UPI ID *</label>
+                    <div class="flex flex-col gap-3">
+                        <select id="savedUpiDropdown" onchange="selectSavedUpi()" class="w-full px-4 py-2.5 border-2 border-brandBlue/30 rounded-lg focus:ring-0 focus:border-brandBlue text-sm bg-white font-medium shadow-sm transition-colors cursor-pointer">
+                            <option value="">-- Select Saved UPI ID --</option>
+                        </select>
+                        <input type="text" id="upiInput" placeholder="e.g. stracare@upi" required class="w-full px-4 py-2.5 border-2 border-gray-300 rounded-lg focus:ring-0 focus:border-brandBlue outline-none transition-all font-bold text-gray-800">
+                    </div>
+                </div>
+
+                <div class="grid grid-cols-2 gap-5">
+                    <div>
+                        <label class="block text-sm font-bold text-gray-700 mb-1">Date</label>
+                        <!-- Native date picker for ease of use, output formats to DD MM YYYY -->
+                        <input type="date" id="dateInput" class="w-full px-4 py-2.5 border-2 border-gray-300 rounded-lg focus:ring-0 focus:border-brandBlue outline-none font-semibold text-gray-800">
+                    </div>
+                    <div>
+                        <label class="block text-sm font-bold text-gray-700 mb-1">Amount (₹) *</label>
+                        <input type="number" id="amountInput" placeholder="0.00" required class="w-full px-4 py-2.5 border-2 border-gray-300 rounded-lg focus:ring-0 focus:border-brandBlue outline-none font-black text-brandBlue text-lg">
+                    </div>
+                </div>
+                
+                <div>
+                    <label class="block text-sm font-bold text-gray-700 mb-1">Patient Name *</label>
+                    <input type="text" id="nameInput" placeholder="Enter patient name" required class="w-full px-4 py-2.5 border-2 border-gray-300 rounded-lg focus:ring-0 focus:border-brandBlue outline-none font-semibold text-gray-800">
+                </div>
+
+                <div>
+                    <label class="block text-sm font-bold text-gray-700 mb-1">Mobile Number *</label>
+                    <input type="tel" id="mobileInput" placeholder="+91..." required class="w-full px-4 py-2.5 border-2 border-gray-300 rounded-lg focus:ring-0 focus:border-brandBlue outline-none font-semibold text-gray-800">
+                </div>
+
+                <div>
+                    <label class="block text-sm font-bold text-gray-700 mb-1">Payment Description</label>
+                    <input type="text" id="descInput" placeholder="e.g. Physiotherapy Session" class="w-full px-4 py-2.5 border-2 border-gray-300 rounded-lg focus:ring-0 focus:border-brandBlue outline-none font-medium text-gray-800">
+                </div>
+
+                <button type="button" onclick="generateQR()" class="w-full bg-brandBlue hover:bg-brandDark text-white font-bold py-4 px-4 rounded-xl shadow-lg transition-all duration-200 mt-8 flex items-center justify-center gap-2 text-lg transform hover:-translate-y-0.5">
+                    <svg xmlns="http://www.w3.org/2000/svg" class="h-6 w-6" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2.5" d="M12 4v16m8-8H4" /></svg>
+                    Generate UPI QR
+                </button>
+            </form>
+        </div>
+
+        <!-- Right Column: QR Output & Actions -->
+        <div class="w-full md:w-1/2 p-6 md:p-10 bg-gray-50 flex flex-col items-center justify-center relative">
+            
+            <!-- Downloadable Area (The actual image payload) -->
+            <div id="qr-download-area" class="bg-white p-8 rounded-2xl shadow-sm border-2 border-gray-100 flex flex-col items-center w-80 text-center relative">
+                
+                <!-- Receipt Assets -->
+                <div class="mb-5 flex flex-col items-center gap-2">
+                    <img src="assets/logo.png" alt="Logo" class="h-12 w-auto object-contain" onerror="this.outerHTML='<div class=\'w-10 h-10 bg-brandBlue rounded-full flex items-center justify-center text-white font-bold text-xl\'>S</div>'">
+                    <img src="assets/name.png" alt="Stra Care" class="h-6 w-auto object-contain" onerror="this.outerHTML='<h3 class=\'text-2xl font-black text-brandBlue tracking-tight mb-0\'>STRA CARE</h3>'">
+                </div>
+                
+                <!-- QR Code Container -->
+                <div id="qrcode" class="mb-5 bg-white p-3 rounded-xl border-4 border-brandLight min-h-[200px] min-w-[200px] flex items-center justify-center">
+                    <span class="text-gray-400 font-medium text-sm text-center px-4">Enter details & click generate</span>
+                </div>
+                
+                <div class="w-full border-t-2 border-gray-100 pt-4 mt-1">
+                    <p class="text-xs text-gray-500 font-bold uppercase tracking-wider mb-1">Amount Payable</p>
+                    <p id="displayAmount" class="text-4xl font-black text-brandBlue mb-2 leading-normal">₹0</p>
+                    
+                    <div class="bg-gray-50 rounded-lg p-3 mt-3 w-full">
+                        <p id="displayName" class="text-sm font-bold text-gray-800 break-words leading-normal">Patient Name</p>
+                        <p id="displayDate" class="text-xs font-bold text-brandAccent mt-1 leading-normal"></p>
+                        <p id="displayUpi" class="text-xs font-semibold text-gray-500 mt-1 break-all leading-normal"></p>
+                    </div>
+                </div>
+
+                <div class="mt-6 pt-4 w-full border-t-2 border-dashed border-gray-200">
+                    <p class="text-[11px] text-gray-400 font-black tracking-widest uppercase">Powered by BizOdit</p>
+                </div>
+            </div>
+
+            <!-- Action Buttons (2 in a row) -->
+            <div class="mt-8 grid grid-cols-2 gap-3 w-full max-w-[320px]">
+                <button onclick="downloadJPEG()" class="w-full bg-white border-2 border-brandBlue text-brandBlue hover:bg-brandLight font-bold py-3 px-2 rounded-xl transition-all duration-200 flex items-center justify-center gap-1.5 shadow-sm text-sm">
+                    <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5 shrink-0" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2.5" d="M4 16v1a3 3 0 003 3h10a3 3 0 003-3v-1m-4-4l-4 4m0 0l-4-4m4 4V4" />
+                    </svg>
+                    Download
+                </button>
+
+                <button onclick="shareViaWhatsApp()" class="w-full bg-[#25D366] hover:bg-[#1fbd59] text-white font-bold py-3 px-2 rounded-xl shadow-[0_4px_15px_rgba(37,211,102,0.4)] transition-all duration-200 flex items-center justify-center gap-1.5 transform hover:-translate-y-0.5 text-sm">
+                    <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5 shrink-0" viewBox="0 0 24 24" fill="currentColor">
+                        <path d="M17.472 14.382c-.297-.149-1.758-.867-2.03-.967-.273-.099-.471-.148-.67.15-.197.297-.767.966-.94 1.164-.173.199-.347.223-.644.075-.297-.15-1.255-.463-2.39-1.475-.883-.788-1.48-1.761-1.653-2.059-.173-.297-.018-.458.13-.606.134-.133.298-.347.446-.52.149-.174.198-.298.298-.497.099-.198.05-.371-.025-.52-.075-.149-.669-1.612-.916-2.207-.242-.579-.487-.5-.669-.51-.173-.008-.371-.01-.57-.01-.198 0-.52.074-.792.372-.272.297-1.04 1.016-1.04 2.479 0 1.462 1.065 2.875 1.213 3.074.149.198 2.096 3.2 5.077 4.487.709.306 1.262.489 1.694.625.712.227 1.36.195 1.871.118.571-.085 1.758-.719 2.006-1.413.248-.694.248-1.289.173-1.413-.074-.124-.272-.198-.57-.347m-5.421 7.403h-.004a9.87 9.87 0 01-5.031-1.378l-.361-.214-3.741.982.998-3.648-.235-.374a9.86 9.86 0 01-1.51-5.26c.001-5.45 4.436-9.884 9.888-9.884 2.64 0 5.122 1.03 6.988 2.898a9.825 9.825 0 012.893 6.994c-.003 5.45-4.437 9.884-9.885 9.884m8.413-18.297A11.815 11.815 0 0012.05 0C5.495 0 .16 5.335.157 11.892c0 2.096.547 4.142 1.588 5.945L.057 24l6.305-1.654a11.882 11.882 0 005.683 1.448h.005c6.554 0 11.89-5.335 11.893-11.893a11.821 11.821 0 00-3.48-8.413Z" />
+                    </svg>
+                    WhatsApp
+                </button>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        const STORAGE_KEY = 'straCareUpiList';
+        let qrCodeObj = null;
+
+        window.onload = () => {
+            document.getElementById('dateInput').valueAsDate = new Date();
+            loadSavedUpis();
+        };
+
+        function loadSavedUpis() {
+            const savedUpis = JSON.parse(localStorage.getItem(STORAGE_KEY) || '[]');
+            const dropdown = document.getElementById('savedUpiDropdown');
+            dropdown.innerHTML = '<option value="">-- Select Saved UPI ID --</option>';
+            savedUpis.forEach(upi => {
+                const option = document.createElement('option');
+                option.value = upi;
+                option.textContent = upi;
+                dropdown.appendChild(option);
+            });
+        }
+
+        function saveUpiToStorage(upiId) {
+            if (!upiId) return;
+            let savedUpis = JSON.parse(localStorage.getItem(STORAGE_KEY) || '[]');
+            if (!savedUpis.includes(upiId)) {
+                savedUpis.push(upiId);
+                localStorage.setItem(STORAGE_KEY, JSON.stringify(savedUpis));
+                loadSavedUpis();
+            }
+        }
+
+        function selectSavedUpi() {
+            const dropdown = document.getElementById('savedUpiDropdown');
+            if (dropdown.value) {
+                document.getElementById('upiInput').value = dropdown.value;
+            }
+        }
+
+        function formatDDMMYYYY(dateString) {
+            if (!dateString) return '';
+            const dateObj = new Date(dateString);
+            const dd = String(dateObj.getDate()).padStart(2, '0');
+            const mm = String(dateObj.getMonth() + 1).padStart(2, '0');
+            const yyyy = dateObj.getFullYear();
+            return `${dd} ${mm} ${yyyy}`;
+        }
+
+        function generateQR() {
+            const upiId = document.getElementById('upiInput').value.trim();
+            const name = document.getElementById('nameInput').value.trim();
+            const amount = document.getElementById('amountInput').value;
+            const desc = document.getElementById('descInput').value.trim();
+            const dateVal = document.getElementById('dateInput').value;
+
+            if (!upiId || !name || !amount) {
+                alert("Please enter the UPI ID, Patient Name, and Amount.");
+                return;
+            }
+
+            saveUpiToStorage(upiId);
+
+            document.getElementById('displayAmount').innerText = '₹' + parseFloat(amount).toLocaleString('en-IN', { minimumFractionDigits: 2 });
+            document.getElementById('displayName').innerText = name;
+            document.getElementById('displayDate').innerText = formatDDMMYYYY(dateVal);
+            document.getElementById('displayUpi').innerText = `To: ${upiId}`;
+
+            const qrContainer = document.getElementById('qrcode');
+            qrContainer.innerHTML = ''; 
+
+            const upiString = `upi://pay?pa=${upiId}&pn=Stra%20Care&am=${amount}&cu=INR&tn=${encodeURIComponent(desc)}`;
+
+            qrCodeObj = new QRCode(qrContainer, {
+                text: upiString,
+                width: 200,
+                height: 200,
+                colorDark : "#003d6d",
+                colorLight : "#ffffff",
+                correctLevel : QRCode.CorrectLevel.H
+            });
+        }
+
+        function downloadJPEG() {
+            return new Promise((resolve, reject) => {
+                const element = document.getElementById('qr-download-area');
+                
+                if (document.getElementById('qrcode').innerHTML.includes('Enter details')) {
+                    alert("Please generate the QR code first!");
+                    reject(new Error("No QR generated"));
+                    return;
+                }
+
+                html2canvas(element, { scale: 3, backgroundColor: '#ffffff', useCORS: true }).then(canvas => {
+                    const link = document.createElement('a');
+                    link.download = `StraCare_QR_${document.getElementById('nameInput').value.replace(/\s+/g, '_')}.jpeg`;
+                    link.href = canvas.toDataURL('image/jpeg', 1.0);
+                    link.click();
+                    resolve(canvas);
+                }).catch(reject);
+            });
+        }
+
+        async function shareViaWhatsApp() {
+            const mobile = document.getElementById('mobileInput').value;
+            const name = document.getElementById('nameInput').value;
+            const amount = document.getElementById('amountInput').value;
+            
+            if (!mobile || !name || !amount) {
+                alert("Please fill in Name, Amount, and Mobile number first.");
+                return;
+            }
+
+            if (document.getElementById('qrcode').innerHTML.includes('Enter details')) {
+                alert("Please generate the QR code first!");
+                return;
+            }
+
+            const cleanMobile = mobile.replace(/[^0-9]/g, '');
+            const element = document.getElementById('qr-download-area');
+            const message = `Hello ${name},\n\nPlease scan the attached QR code to process your payment of ₹${amount} to STRA CARE. Thank you!`;
+
+            try {
+                const canvas = await html2canvas(element, { scale: 3, backgroundColor: '#ffffff', useCORS: true });
+                
+                canvas.toBlob(async (blob) => {
+                    const file = new File([blob], `StraCare_QR_${name.replace(/\s+/g, '_')}.jpeg`, { type: 'image/jpeg' });
+                    
+                    if (navigator.canShare && navigator.canShare({ files: [file] })) {
+                        try {
+                            await navigator.share({
+                                files: [file],
+                                title: 'Stra Care Payment QR',
+                                text: message,
+                            });
+                        } catch (error) {
+                            console.log('User cancelled share or share failed.', error);
+                        }
+                    } else {
+                        alert("Direct image attachment is not supported on your current browser. The QR will download to your device, and WhatsApp will open. Please attach the downloaded image manually.");
+                        downloadJPEG();
+                        const whatsappUrl = `https://wa.me/${cleanMobile}?text=${encodeURIComponent(message)}`;
+                        setTimeout(() => window.open(whatsappUrl, '_blank'), 1500);
+                    }
+                }, 'image/jpeg', 1.0);
+                
+            } catch (error) {
+                console.error("Error creating image for share:", error);
+                alert("An error occurred while generating the shareable image.");
+            }
+        }
+    </script>
 </body>
-</html
+</html>
