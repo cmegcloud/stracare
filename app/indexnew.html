@@ -1,0 +1,812 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+    <title>STRA CARE - Booking App</title>
+    
+    <link rel="icon" type="image/png" href="1000720760.png">
+    <link rel="apple-touch-icon" href="1000720760.png">
+    <meta name="theme-color" content="#024D94"> <!-- Updated to match logo blue -->
+
+    <!-- PWA Manifest -->
+    <link rel="manifest" href="/app/manifest.json">
+
+    <!-- Fonts: Poppins -->
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700;800&display=swap" rel="stylesheet">
+    
+    <!-- Icons -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css"/>
+    <script src="https://unpkg.com/lucide@latest"></script>
+    
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/html2canvas/1.4.1/html2canvas.min.js"></script>
+
+    <style>
+        :root {
+            /* Updated Primary Blue based on the logo provided */
+            --primary-color: #024D94; 
+            --primary-hover: #023B73;
+            --primary-light: #EBF4FA;
+            --primary-border: #B3D4F0;
+            
+            --bg-color: #F8FAFC;
+            --surface-color: #FFFFFF;
+            --text-main: #1E293B;
+            --text-muted: #64748B;
+            --border-color: #E2E8F0;
+            
+            --shadow-sm: 0 1px 2px rgba(0, 0, 0, 0.05);
+            --shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.05), 0 2px 4px -1px rgba(0, 0, 0, 0.03);
+            --shadow-lg: 0 10px 15px -3px rgba(2, 77, 148, 0.1), 0 4px 6px -2px rgba(2, 77, 148, 0.05);
+            
+            --glass-bg: rgba(255, 255, 255, 0.95);
+        }
+
+        [data-theme="dark"] {
+            --primary-color: #0EA5E9; /* Lighter blue for dark mode visibility */
+            --primary-hover: #38BDF8;
+            --primary-light: rgba(14, 165, 233, 0.15);
+            --primary-border: rgba(14, 165, 233, 0.3);
+            
+            --bg-color: #0F172A;
+            --surface-color: #1E293B;
+            --text-main: #F1F5F9;
+            --text-muted: #94A3B8;
+            --border-color: #334155;
+            
+            --glass-bg: rgba(30, 41, 59, 0.95);
+            --shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.5);
+            --shadow-lg: 0 10px 15px -3px rgba(0, 0, 0, 0.6);
+        }
+
+        * { margin: 0; padding: 0; box-sizing: border-box; -webkit-tap-highlight-color: transparent; font-family: 'Poppins', sans-serif; }
+        
+        body { background-color: var(--bg-color); color: var(--text-main); transition: background-color 0.3s, color 0.3s; overflow-x: hidden; }
+
+        /* Splash Screen */
+        #splash-screen {
+            position: fixed; inset: 0; background: var(--surface-color); z-index: 99999;
+            display: flex; flex-direction: column; align-items: center; justify-content: center;
+            transition: opacity 0.5s ease;
+        }
+        #splash-screen img { width: 120px; height: 120px; object-fit: contain; margin-bottom: 20px; animation: pulseSoft 2s infinite ease-in-out; }
+        #splash-screen h1 { font-size: 24px; font-weight: 700; color: var(--primary-color); letter-spacing: 1px; }
+
+        /* Animations */
+        @keyframes slideUp { from { opacity: 0; transform: translateY(20px); } to { opacity: 1; transform: translateY(0); } }
+        @keyframes pulseSoft { 0%, 100% { transform: scale(1); } 50% { transform: scale(1.05); } }
+        @keyframes heartbeat { 0%, 30%, 60% { transform: scale(1); } 15%, 45% { transform: scale(1.15); } }
+        
+        .animate-slide-up { animation: slideUp 0.5s cubic-bezier(0.16, 1, 0.3, 1) forwards; opacity: 0; }
+        .delay-100 { animation-delay: 0.1s; } .delay-200 { animation-delay: 0.2s; }
+
+        .app-container {
+            max-width: 480px; margin: 0 auto; min-height: 100vh; position: relative;
+            background-color: var(--bg-color); box-shadow: 0 0 20px rgba(0,0,0,0.05);
+            display: flex; flex-direction: column; overflow-x: hidden;
+        }
+        [data-theme="dark"] .app-container { box-shadow: 0 0 20px rgba(0,0,0,0.5); }
+
+        /* Header */
+        .header {
+            position: fixed; top: 0; left: 0; right: 0; max-width: 480px; margin: 0 auto; height: 64px;
+            background: var(--glass-bg); backdrop-filter: blur(12px); -webkit-backdrop-filter: blur(12px);
+            display: flex; justify-content: space-between; align-items: center; padding: 0 16px;
+            z-index: 2000; border-bottom: 1px solid var(--border-color);
+        }
+        .header-left, .header-right { display: flex; align-items: center; gap: 12px; }
+        
+        .icon-btn {
+            width: 40px; height: 40px; border-radius: 12px; background: transparent; border: 1px solid var(--border-color);
+            display: flex; align-items: center; justify-content: center; color: var(--text-main); cursor: pointer;
+            transition: all 0.2s;
+        }
+        .icon-btn:active { transform: scale(0.95); background: var(--bg-color); }
+        
+        .brand-logo-small { width: 32px; height: 32px; object-fit: contain; border-radius: 8px; }
+
+        /* Main Content */
+        .main-content { flex: 1; padding: 80px 16px 100px; overflow-y: auto; }
+        
+        .hero-section { margin-bottom: 24px; }
+        .hero-section h1 { font-size: 28px; font-weight: 800; line-height: 1.2; color: var(--text-main); margin-bottom: 8px; letter-spacing: -0.5px; }
+        .hero-section h1 span { color: var(--primary-color); }
+        .hero-section p { font-size: 13px; color: var(--text-muted); font-weight: 400; max-width: 90%; line-height: 1.5; }
+
+        .section-title { display: flex; justify-content: space-between; align-items: center; margin-bottom: 12px; }
+        .section-title h2 { font-size: 16px; font-weight: 700; color: var(--text-main); }
+        .section-title a { font-size: 12px; font-weight: 600; color: var(--primary-color); text-decoration: none; }
+
+        /* Carousel */
+        .services-carousel {
+            display: flex; gap: 12px; overflow-x: auto; scroll-snap-type: x mandatory; 
+            padding-bottom: 16px; scrollbar-width: none; margin: 0 -16px; padding-left: 16px; padding-right: 16px;
+        }
+        .services-carousel::-webkit-scrollbar { display: none; }
+        
+        .service-card {
+            flex: 0 0 160px; scroll-snap-align: start; background: var(--surface-color);
+            border-radius: 20px; padding: 10px; border: 1px solid var(--border-color); box-shadow: var(--shadow-sm);
+            cursor: pointer; transition: transform 0.2s;
+        }
+        .service-card:active { transform: scale(0.98); }
+        .service-photo { width: 100%; height: 110px; border-radius: 14px; overflow: hidden; background: var(--bg-color); margin-bottom: 10px; }
+        .service-photo img { width: 100%; height: 100%; object-fit: cover; }
+        .service-info h3 { font-size: 13px; font-weight: 700; color: var(--text-main); line-height: 1.2; margin-bottom: 4px; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+        .service-info p { font-size: 11px; color: var(--text-muted); white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+
+        /* We Care Section */
+        .premium-card {
+            background: linear-gradient(135deg, var(--primary-color), #012B54);
+            border-radius: 24px; padding: 24px; position: relative; overflow: hidden;
+            box-shadow: var(--shadow-lg); color: white; display: flex; flex-direction: column; justify-content: center; min-height: 180px;
+        }
+        .premium-badge {
+            background: rgba(255,255,255,0.2); backdrop-filter: blur(4px); padding: 4px 10px; border-radius: 12px;
+            font-size: 10px; font-weight: 700; text-transform: uppercase; letter-spacing: 0.5px; display: inline-flex; align-items: center; gap: 4px; align-self: flex-start; margin-bottom: 12px;
+        }
+        .premium-card h2 { font-size: 22px; font-weight: 700; margin-bottom: 8px; }
+        .premium-card p { font-size: 12px; opacity: 0.9; line-height: 1.5; max-width: 220px; }
+        .premium-card::after {
+            content: ''; position: absolute; right: -20px; bottom: -20px; width: 150px; height: 150px;
+            background: radial-gradient(circle, rgba(255,255,255,0.1) 0%, transparent 70%); border-radius: 50%;
+        }
+
+        /* Bottom Nav */
+        .bottom-nav {
+            position: fixed; bottom: 0; left: 0; right: 0; max-width: 480px; margin: 0 auto; height: 70px;
+            background: var(--glass-bg); backdrop-filter: blur(16px); -webkit-backdrop-filter: blur(16px);
+            border-top: 1px solid var(--border-color); display: flex; justify-content: space-between; align-items: center;
+            padding: 0 12px; z-index: 2000; border-radius: 24px 24px 0 0; box-shadow: 0 -4px 15px rgba(0,0,0,0.03);
+        }
+        .nav-item {
+            flex: 1; display: flex; flex-direction: column; align-items: center; justify-content: center; gap: 4px;
+            color: var(--text-muted); font-size: 10px; font-weight: 500; text-decoration: none; cursor: pointer; transition: color 0.2s;
+        }
+        .nav-item.active, .nav-item:hover { color: var(--primary-color); font-weight: 600; }
+        .nav-item i { width: 20px; height: 20px; stroke-width: 2px; }
+        
+        .nav-fab-container { position: relative; top: -24px; display: flex; justify-content: center; width: 64px; }
+        .nav-fab {
+            width: 56px; height: 56px; border-radius: 50%; background: var(--primary-color); color: white;
+            display: flex; align-items: center; justify-content: center; box-shadow: var(--shadow-lg);
+            border: 4px solid var(--bg-color); cursor: pointer; transition: transform 0.2s;
+        }
+        [data-theme="dark"] .nav-fab { border-color: var(--bg-color); }
+        .nav-fab:active { transform: scale(0.95); }
+        .nav-fab i { width: 24px; height: 24px; }
+
+        /* Modals */
+        .modal {
+            position: fixed; top: 0; left: 0; right: 0; bottom: 0; max-width: 480px; margin: 0 auto;
+            background: var(--bg-color); z-index: 2500; transform: translateY(100%);
+            transition: transform 0.3s cubic-bezier(0.16, 1, 0.3, 1); display: flex; flex-direction: column;
+        }
+        .modal.active { transform: translateY(0); }
+        
+        .modal-header {
+            height: 64px; background: var(--surface-color); display: flex; align-items: center; padding: 0 16px;
+            border-bottom: 1px solid var(--border-color); gap: 12px; flex-shrink: 0;
+        }
+        .modal-header h2 { font-size: 16px; font-weight: 700; color: var(--text-main); display: flex; align-items: center; gap: 8px; }
+        .modal-header .back-btn { width: 36px; height: 36px; display: flex; align-items: center; justify-content: center; border-radius: 50%; border: 1px solid var(--border-color); background: var(--bg-color); color: var(--text-main); }
+        
+        .modal-body { flex: 1; overflow-y: auto; padding: 16px; }
+
+        /* Form Styling (Matching 1000941560_2.jpg) */
+        .form-section { background: var(--surface-color); border-radius: 20px; padding: 20px; margin-bottom: 16px; box-shadow: var(--shadow-sm); border: 1px solid var(--border-color); }
+        .form-section-title { font-size: 11px; font-weight: 700; color: var(--primary-color); text-transform: uppercase; letter-spacing: 1px; margin-bottom: 16px; }
+        
+        .form-group { margin-bottom: 16px; }
+        .form-group label { display: block; font-size: 12px; font-weight: 600; color: var(--text-main); margin-bottom: 8px; }
+        .form-group label span { color: #EF4444; }
+        
+        .form-control {
+            width: 100%; padding: 12px 16px; border-radius: 12px; border: 1px solid transparent; 
+            background: var(--bg-color); color: var(--text-main); font-size: 13px; font-weight: 500;
+            transition: all 0.2s; outline: none; appearance: none;
+        }
+        .form-control:focus { border-color: var(--primary-border); background: var(--surface-color); box-shadow: 0 0 0 3px var(--primary-light); }
+        .form-control::placeholder { color: var(--text-muted); opacity: 0.7; font-weight: 400; }
+        
+        select.form-control { background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='16' height='16' viewBox='0 0 24 24' fill='none' stroke='%2364748b' stroke-width='2' stroke-linecap='round' stroke-linejoin='round'%3E%3Cpolyline points='6 9 12 15 18 9'%3E%3C/polyline%3E%3C/svg%3E"); background-repeat: no-repeat; background-position: right 12px center; padding-right: 36px; }
+        
+        .form-row { display: flex; gap: 12px; }
+        .form-row .form-group { flex: 1; }
+
+        .btn-primary {
+            width: 100%; padding: 14px; border-radius: 14px; border: none; background: var(--primary-color);
+            color: white; font-size: 14px; font-weight: 600; cursor: pointer; display: flex; align-items: center; justify-content: center; gap: 8px;
+            box-shadow: 0 4px 12px rgba(2, 77, 148, 0.2); transition: transform 0.1s;
+        }
+        .btn-primary:active { transform: scale(0.98); }
+        
+        .btn-secondary {
+            padding: 12px 16px; border-radius: 12px; border: none; background: var(--primary-light);
+            color: var(--primary-color); font-size: 13px; font-weight: 600; cursor: pointer; transition: opacity 0.2s;
+        }
+        .btn-secondary:active { opacity: 0.7; }
+        
+        .btn-outline {
+            width: 100%; padding: 12px; border-radius: 12px; border: 1px solid var(--primary-border); background: transparent;
+            color: var(--primary-color); font-size: 13px; font-weight: 600; cursor: pointer; display: flex; align-items: center; justify-content: center; gap: 6px;
+        }
+
+        /* Branch Cards */
+        .branch-card { background: var(--surface-color); border: 1px solid var(--border-color); border-radius: 16px; padding: 16px; margin-bottom: 12px; box-shadow: var(--shadow-sm); }
+        .branch-card.premium { border: 1px solid var(--primary-color); background: var(--primary-light); }
+        .branch-header { display: flex; gap: 12px; margin-bottom: 12px; }
+        .branch-icon { width: 40px; height: 40px; border-radius: 10px; background: var(--bg-color); display: flex; align-items: center; justify-content: center; color: var(--primary-color); flex-shrink: 0; }
+        .branch-card.premium .branch-icon { background: var(--primary-color); color: white; }
+        .branch-info h3 { font-size: 14px; font-weight: 700; margin-bottom: 2px; }
+        .branch-info p { font-size: 11px; color: var(--text-muted); line-height: 1.4; }
+        .branch-actions { display: grid; grid-template-columns: repeat(3, 1fr); gap: 8px; border-top: 1px solid var(--border-color); padding-top: 12px; }
+        .branch-btn { display: flex; flex-direction: column; align-items: center; gap: 4px; font-size: 10px; font-weight: 600; text-decoration: none; color: var(--text-main); padding: 8px 0; border-radius: 8px; background: var(--bg-color); }
+        .branch-btn i { font-size: 14px; }
+        .branch-btn.call i { color: var(--primary-color); }
+        .branch-btn.wa i { color: #10B981; }
+        .branch-btn.map i { color: #F59E0B; }
+
+        /* Toast & Popups */
+        .toast-container { position: fixed; top: 20px; left: 50%; transform: translateX(-50%); z-index: 9999; display: flex; flex-direction: column; gap: 8px; width: 90%; max-width: 400px; }
+        .toast { background: var(--text-main); color: var(--bg-color); padding: 12px 16px; border-radius: 12px; font-size: 12px; font-weight: 500; display: flex; align-items: center; gap: 8px; box-shadow: var(--shadow-lg); opacity: 0; transform: translateY(-20px); transition: all 0.3s; }
+        .toast.show { opacity: 1; transform: translateY(0); }
+        .toast.success { background: #10B981; color: white; }
+        .toast.error { background: #EF4444; color: white; }
+
+        /* Sidebar Overlay */
+        .sidebar-overlay { position: fixed; inset: 0; background: rgba(0,0,0,0.5); z-index: 2999; opacity: 0; pointer-events: none; transition: opacity 0.3s; }
+        .sidebar-overlay.active { opacity: 1; pointer-events: auto; }
+        .sidebar { position: fixed; top: 0; left: -280px; bottom: 0; width: 280px; background: var(--surface-color); z-index: 3000; transition: left 0.3s cubic-bezier(0.16, 1, 0.3, 1); box-shadow: 4px 0 20px rgba(0,0,0,0.1); }
+        .sidebar.active { left: 0; }
+        .sidebar-header { padding: 20px; border-bottom: 1px solid var(--border-color); display: flex; align-items: center; gap: 12px; }
+        .sidebar-header img { width: 32px; height: 32px; border-radius: 8px; }
+        .sidebar-header h2 { font-size: 16px; font-weight: 700; color: var(--primary-color); }
+        .sidebar-menu { list-style: none; padding: 12px 0; }
+        .sidebar-menu li a, .sidebar-menu li button { display: flex; align-items: center; gap: 12px; padding: 14px 20px; width: 100%; border: none; background: transparent; color: var(--text-main); font-size: 13px; font-weight: 500; cursor: pointer; text-decoration: none; text-align: left; transition: background 0.2s; }
+        .sidebar-menu li a:active, .sidebar-menu li button:active { background: var(--bg-color); }
+        .sidebar-menu li i { color: var(--text-muted); width: 18px; height: 18px; }
+
+    </style>
+</head>
+<body>
+
+<div id="splash-screen">
+    <img src="1000720760.png" alt="Stra Care Logo">
+    <h1>STRA CARE</h1>
+</div>
+
+<div class="toast-container" id="toast-container"></div>
+
+<div class="app-container">
+    
+    <header class="header">
+        <div class="header-left">
+            <button class="icon-btn" onclick="toggleSidebar()">
+                <i data-lucide="menu"></i>
+            </button>
+            <img src="1000720760.png" alt="Logo" class="brand-logo-small ml-2">
+            <span style="font-weight: 700; font-size: 16px; margin-left: 8px;">STRA CARE</span>
+        </div>
+        <div class="header-right">
+            <button class="icon-btn" onclick="openModal('search-modal')">
+                <i data-lucide="search"></i>
+            </button>
+            <button class="icon-btn" onclick="toggleTheme()">
+                <i data-lucide="moon" id="theme-icon"></i>
+            </button>
+        </div>
+    </header>
+
+    <main class="main-content">
+        <div class="hero-section animate-slide-up">
+            <h1>Good Health<br><span>Awaits You.</span></h1>
+            <p>Book your advanced physiotherapy session today with certified experts.</p>
+        </div>
+
+        <div class="section-title animate-slide-up delay-100">
+            <h2>Specialized Care</h2>
+            <a href="#" onclick="openModal('search-modal')">See All</a>
+        </div>
+
+        <div class="services-carousel animate-slide-up delay-100" id="servicesCarousel">
+            <div class="service-card" onclick="openServiceInfo('Disc Prolapse', 'Spine health & pain relief', 'photos/1.png')">
+                <div class="service-photo"><img src="photos/1.png" onerror="this.src='https://placehold.co/400x300/EBF4FA/024D94?text=Disc+Prolapse'"></div>
+                <div class="service-info"><h3>Disc Prolapse</h3><p>Spine health & pain relief</p></div>
+            </div>
+            <div class="service-card" onclick="openServiceInfo('Low Back Ache', 'Targeted pain therapy', 'photos/2.jpg')">
+                <div class="service-photo"><img src="photos/2.jpg" onerror="this.src='https://placehold.co/400x300/EBF4FA/024D94?text=Low+Back+Ache'"></div>
+                <div class="service-info"><h3>Low Back Ache</h3><p>Targeted pain therapy</p></div>
+            </div>
+            <div class="service-card" onclick="openServiceInfo('Knee Osteoarthritis', 'Mobility improvement', 'photos/4.jpg')">
+                <div class="service-photo"><img src="photos/4.jpg" onerror="this.src='https://placehold.co/400x300/EBF4FA/024D94?text=Knee+Care'"></div>
+                <div class="service-info"><h3>Knee Care</h3><p>Mobility improvement</p></div>
+            </div>
+            <div class="service-card" onclick="openServiceInfo('Sports Injuries', 'Rehab & recovery', 'photos/8.jpg')">
+                <div class="service-photo"><img src="photos/8.jpg" onerror="this.src='https://placehold.co/400x300/EBF4FA/024D94?text=Sports+Injuries'"></div>
+                <div class="service-info"><h3>Sports Injuries</h3><p>Rehab & recovery</p></div>
+            </div>
+        </div>
+
+        <div class="mt-4 animate-slide-up delay-200">
+            <div class="premium-card">
+                <div class="premium-badge"><i data-lucide="home" style="width:12px;height:12px;"></i> PREMIUM SERVICE</div>
+                <h2>We Care You.</h2>
+                <p>World-class physiotherapy from the comfort of your home.</p>
+            </div>
+        </div>
+    </main>
+
+    <nav class="bottom-nav">
+        <a onclick="openModal('appointment-modal')" class="nav-item">
+            <i data-lucide="calendar-plus"></i><span>Book</span>
+        </a>
+        <a onclick="openModal('payment-modal')" class="nav-item">
+            <i data-lucide="credit-card"></i><span>Pay</span>
+        </a>
+        <div class="nav-fab-container">
+            <div class="nav-fab animate-pulse" style="animation: heartbeat 2s infinite ease-in-out;" onclick="closeAllModals()">
+                <i data-lucide="heart-pulse"></i>
+            </div>
+        </div>
+        <a onclick="openModal('branch-modal')" class="nav-item">
+            <i data-lucide="map-pin"></i><span>Clinics</span>
+        </a>
+        <a href="tel:+919744902555" class="nav-item">
+            <i data-lucide="phone-call"></i><span>Call</span>
+        </a>
+    </nav>
+
+    <div class="sidebar-overlay" onclick="toggleSidebar()"></div>
+    <div class="sidebar">
+        <div class="sidebar-header">
+            <img src="1000720760.png" alt="Logo">
+            <h2>STRA CARE</h2>
+        </div>
+        <ul class="sidebar-menu">
+            <li><button onclick="toggleSidebar(); openModal('appointment-modal')"><i data-lucide="calendar"></i> Book Appointment</button></li>
+            <li><button onclick="toggleSidebar(); openModal('branch-modal')"><i data-lucide="building-2"></i> Clinic Branches</button></li>
+            <li><button onclick="toggleSidebar(); openModal('payment-modal')"><i data-lucide="credit-card"></i> Pay Online</button></li>
+            <li style="margin: 8px 16px; border-top: 1px solid var(--border-color);"></li>
+            <li><button onclick="toggleSidebar(); showToast('Opening Play Store...')"><i data-lucide="download"></i> Download App</button></li>
+            <li><button onclick="toggleSidebar(); showToast('Opening Google Reviews...')"><i data-lucide="star"></i> Rate Us</button></li>
+            <li><button onclick="toggleSidebar(); openModal('app-info-modal')"><i data-lucide="info"></i> App Info</button></li>
+        </ul>
+    </div>
+
+    <!-- Booking Form Modal -->
+    <div class="modal" id="appointment-modal">
+        <div class="modal-header">
+            <button class="back-btn" onclick="closeAllModals()"><i data-lucide="arrow-left" style="width:18px;"></i></button>
+            <i data-lucide="file-text" style="color:var(--primary-color); width:20px;"></i>
+            <h2>Booking Form</h2>
+        </div>
+        <div class="modal-body">
+            <form id="bookingForm">
+                <div class="form-section">
+                    <div class="form-section-title">Patient Info</div>
+                    
+                    <div class="form-group">
+                        <label>Mobile Number <span>*</span></label>
+                        <div class="flex gap-2">
+                            <input type="tel" id="pat_mobile" class="form-control" placeholder="10-digit number" maxlength="10" required pattern="[0-9]{10}" style="flex:1;">
+                            <button type="button" class="btn-secondary" onclick="checkPatient()">Check</button>
+                        </div>
+                    </div>
+
+                    <div class="form-group">
+                        <label>Full Name <span>*</span></label>
+                        <input type="text" id="pat_name" class="form-control" placeholder="John Doe" required>
+                    </div>
+
+                    <div class="form-row">
+                        <div class="form-group">
+                            <label>Age <span>*</span></label>
+                            <input type="number" id="pat_age" class="form-control" placeholder="Years" required min="1">
+                        </div>
+                        <div class="form-group">
+                            <label>Gender <span>*</span></label>
+                            <select id="pat_gender" class="form-control" required>
+                                <option value="" disabled selected>Select</option>
+                                <option value="Male">Male</option>
+                                <option value="Female">Female</option>
+                                <option value="Other">Other</option>
+                            </select>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="form-section">
+                    <div class="form-section-title">Treatment Details</div>
+                    
+                    <div class="form-group">
+                        <label>Service Needed <span>*</span></label>
+                        <select id="pat_service" class="form-control" required>
+                            <option value="" disabled selected>Select an issue...</option>
+                            <option value="Intervertebral Disc Prolapse">Disc Prolapse</option>
+                            <option value="Low Back Ache">Low Back Ache</option>
+                            <option value="Cervical Spondylosis">Cervical Spondylosis</option>
+                            <option value="Osteoarthritis of Knee">Knee Osteoarthritis</option>
+                            <option value="Sports Injuries">Sports Injuries</option>
+                            <option value="Home Care">Home Care</option>
+                            <option value="Other">Other</option>
+                        </select>
+                    </div>
+
+                    <div class="form-group">
+                        <label>Clinic Branch <span>*</span></label>
+                        <select id="pat_branch" class="form-control" required>
+                            <option value="" disabled selected>Select Branch</option>
+                            <option value="6. HOME CARE">6. HOME CARE (All Kerala)</option>
+                            <option value="1. AZHIYUR">1. AZHIYUR (Anjam Peedika)</option>
+                            <option value="2. PALLIKKUNI">2. PALLIKKUNI (Chokli)</option>
+                            <option value="3. ARAYAKOOL">3. ARAYAKOOL (Panoor)</option>
+                            <option value="4. KOTTAYAMPOYIL">4. KOTTAYAMPOYIL (Koothuparamba)</option>
+                            <option value="5. TUNERI">5. TUNERI (Nadapuram)</option>
+                        </select>
+                    </div>
+
+                    <div class="form-row">
+                        <div class="form-group">
+                            <label>Date <span>*</span></label>
+                            <input type="date" id="pat_date" class="form-control" required>
+                        </div>
+                        <div class="form-group">
+                            <label>Time <span>*</span></label>
+                            <input type="time" id="pat_time" class="form-control" required>
+                        </div>
+                    </div>
+
+                    <div class="form-group">
+                        <label>Address <span>*</span></label>
+                        <textarea id="pat_address" class="form-control" rows="2" placeholder="Full address..." required></textarea>
+                    </div>
+                    
+                    <button type="button" class="btn-outline" onclick="detectLocation()">
+                        <i data-lucide="map-pin" style="width:16px;"></i> Detect Location
+                    </button>
+                    <p id="location-msg" style="font-size: 11px; text-align: center; margin-top: 8px; color: var(--text-muted); display: none;"></p>
+                </div>
+
+                <button type="submit" class="btn-primary" id="submitBtn">
+                    Confirm Booking <i data-lucide="check-circle" style="width:16px;"></i>
+                </button>
+            </form>
+        </div>
+    </div>
+
+    <!-- Branch Modal -->
+    <div class="modal" id="branch-modal">
+        <div class="modal-header">
+            <button class="back-btn" onclick="closeAllModals()"><i data-lucide="arrow-left" style="width:18px;"></i></button>
+            <i data-lucide="map" style="color:var(--primary-color); width:20px;"></i>
+            <h2>Our Clinics</h2>
+        </div>
+        <div class="modal-body">
+            
+            <div class="branch-card premium">
+                <div class="branch-header">
+                    <div class="branch-icon"><i data-lucide="home"></i></div>
+                    <div class="branch-info">
+                        <h3>6. HOME CARE</h3>
+                        <p>All Kerala<br>stracp1@gmail.com</p>
+                    </div>
+                </div>
+                <div class="branch-actions">
+                    <a href="tel:+919744902555" class="branch-btn call"><i class="fa-solid fa-phone"></i> Call</a>
+                    <a href="https://wa.me/919744902555" target="_blank" class="branch-btn wa"><i class="fa-brands fa-whatsapp"></i> Chat</a>
+                    <a href="https://maps.app.goo.gl/pcophJknkTr" target="_blank" class="branch-btn map"><i class="fa-solid fa-location-dot"></i> Map</a>
+                </div>
+            </div>
+
+            <div class="branch-card">
+                <div class="branch-header">
+                    <div class="branch-icon"><i data-lucide="map-pin"></i></div>
+                    <div class="branch-info">
+                        <h3>1. AZHIYUR</h3>
+                        <p>Azhiyur, Anjam Peedika<br>theracare555physio@gmail.com</p>
+                    </div>
+                </div>
+                <div class="branch-actions">
+                    <a href="tel:8590243951" class="branch-btn call"><i class="fa-solid fa-phone"></i> Call</a>
+                    <a href="https://wa.me/918590243951" target="_blank" class="branch-btn wa"><i class="fa-brands fa-whatsapp"></i> Chat</a>
+                    <a href="https://maps.app.goo.gl/aLRYe65tc2U" target="_blank" class="branch-btn map"><i class="fa-solid fa-location-dot"></i> Map</a>
+                </div>
+            </div>
+
+            <div class="branch-card">
+                <div class="branch-header">
+                    <div class="branch-icon"><i data-lucide="map-pin"></i></div>
+                    <div class="branch-info">
+                        <h3>2. PALLIKKUNI</h3>
+                        <p>Chokli<br>stracp2@gmail.com</p>
+                    </div>
+                </div>
+                <div class="branch-actions">
+                    <a href="tel:+917306962564" class="branch-btn call"><i class="fa-solid fa-phone"></i> Call</a>
+                    <a href="https://wa.me/917306962564" target="_blank" class="branch-btn wa"><i class="fa-brands fa-whatsapp"></i> Chat</a>
+                    <a href="https://maps.app.goo.gl/AaVbwg1gD9" target="_blank" class="branch-btn map"><i class="fa-solid fa-location-dot"></i> Map</a>
+                </div>
+            </div>
+
+            <div class="branch-card">
+                <div class="branch-header">
+                    <div class="branch-icon"><i data-lucide="map-pin"></i></div>
+                    <div class="branch-info">
+                        <h3>3. ARAYAKOOL</h3>
+                        <p>Panoor<br>stracare1@gmail.com</p>
+                    </div>
+                </div>
+                <div class="branch-actions">
+                    <a href="tel:+917306813576" class="branch-btn call"><i class="fa-solid fa-phone"></i> Call</a>
+                    <a href="https://wa.me/917306813576" target="_blank" class="branch-btn wa"><i class="fa-brands fa-whatsapp"></i> Chat</a>
+                    <a href="https://maps.app.goo.gl/w13aYFN68jK" target="_blank" class="branch-btn map"><i class="fa-solid fa-location-dot"></i> Map</a>
+                </div>
+            </div>
+
+            <div class="branch-card">
+                <div class="branch-header">
+                    <div class="branch-icon"><i data-lucide="map-pin"></i></div>
+                    <div class="branch-info">
+                        <h3>4. KOTTAYAMPOYIL</h3>
+                        <p>Koothuparamba<br>stracare555@gmail.com</p>
+                    </div>
+                </div>
+                <div class="branch-actions">
+                    <a href="tel:+919895972836" class="branch-btn call"><i class="fa-solid fa-phone"></i> Call</a>
+                    <a href="https://wa.me/919895972836" target="_blank" class="branch-btn wa"><i class="fa-brands fa-whatsapp"></i> Chat</a>
+                    <a href="https://maps.app.goo.gl/ZguKZQHfH1" target="_blank" class="branch-btn map"><i class="fa-solid fa-location-dot"></i> Map</a>
+                </div>
+            </div>
+
+            <div class="branch-card">
+                <div class="branch-header">
+                    <div class="branch-icon"><i data-lucide="map-pin"></i></div>
+                    <div class="branch-info">
+                        <h3>5. TUNERI</h3>
+                        <p>Nadapuram<br>stracarephysiotherapy@gmail.com</p>
+                    </div>
+                </div>
+                <div class="branch-actions">
+                    <a href="tel:+916282088672" class="branch-btn call"><i class="fa-solid fa-phone"></i> Call</a>
+                    <a href="https://wa.me/916282088672" target="_blank" class="branch-btn wa"><i class="fa-brands fa-whatsapp"></i> Chat</a>
+                    <a href="https://maps.app.goo.gl/WsMS496n3" target="_blank" class="branch-btn map"><i class="fa-solid fa-location-dot"></i> Map</a>
+                </div>
+            </div>
+
+        </div>
+    </div>
+
+    <!-- App Info Modal -->
+    <div class="modal" id="app-info-modal">
+        <div class="modal-header">
+            <button class="back-btn" onclick="closeAllModals()"><i data-lucide="arrow-left" style="width:18px;"></i></button>
+            <i data-lucide="info" style="color:var(--primary-color); width:20px;"></i>
+            <h2>App Info</h2>
+        </div>
+        <div class="modal-body" style="display: flex; flex-direction: column; align-items: center; justify-content: center; text-align: center;">
+            <img src="1000720760.png" alt="Logo" style="width: 80px; height: 80px; border-radius: 20px; box-shadow: var(--shadow-sm); margin-bottom: 16px;">
+            <h2 style="font-size: 20px; font-weight: 700; color: var(--primary-color);">STRA CARE</h2>
+            <p style="font-size: 12px; color: var(--text-muted); font-weight: 500; margin-bottom: 24px;">App Version 1.0</p>
+            
+            <div style="border-top: 1px solid var(--border-color); padding-top: 24px; width: 100%; max-width: 200px;">
+                <p style="font-size: 9px; font-weight: 700; text-transform: uppercase; letter-spacing: 1px; color: var(--text-muted); margin-bottom: 8px;">Powered By</p>
+                <h3 style="font-size: 16px; font-weight: 800; color: var(--text-main); letter-spacing: 1px;">COREBIQ</h3>
+                <a href="https://www.corbiq.com" target="_blank" style="font-size: 12px; color: var(--primary-color); font-weight: 500; text-decoration: none;">www.corbiq.com</a>
+            </div>
+
+            <a href="#" style="font-size: 11px; color: var(--text-muted); text-decoration: underline; margin-top: 32px;">Privacy Policy & Terms</a>
+        </div>
+    </div>
+
+    <!-- Search Modal (Master Search) -->
+    <div class="modal" id="search-modal">
+        <div class="modal-header" style="gap: 8px;">
+            <button class="back-btn" onclick="closeAllModals()" style="border:none; background:transparent;"><i data-lucide="arrow-left"></i></button>
+            <div style="flex:1; position: relative;">
+                <i data-lucide="search" style="position: absolute; left: 12px; top: 10px; width: 16px; color: var(--text-muted);"></i>
+                <input type="text" class="form-control" placeholder="Search clinics, therapies..." autofocus style="padding-left: 36px; padding-top:10px; padding-bottom:10px;">
+            </div>
+        </div>
+        <div class="modal-body" style="display: flex; flex-direction: column; align-items: center; justify-content: center; opacity: 0.5;">
+            <i data-lucide="search-x" style="width: 40px; height: 40px; margin-bottom: 12px;"></i>
+            <p style="font-size: 13px;">Start typing to search...</p>
+        </div>
+    </div>
+
+    <!-- Payment Modal -->
+    <div class="modal" id="payment-modal">
+        <div class="modal-header">
+            <button class="back-btn" onclick="closeAllModals()"><i data-lucide="arrow-left" style="width:18px;"></i></button>
+            <i data-lucide="credit-card" style="color:var(--primary-color); width:20px;"></i>
+            <h2>Secure Payment</h2>
+        </div>
+        <div class="modal-body" style="display: flex; flex-direction: column; align-items: center;">
+            <div class="form-section" style="width: 100%; max-width: 300px; text-align: center; padding: 30px 20px;">
+                <h3 style="font-size: 14px; font-weight: 700; margin-bottom: 20px;">Scan & Pay via UPI</h3>
+                <div style="background: white; padding: 10px; border-radius: 16px; border: 1px solid var(--border-color); display: inline-block; margin-bottom: 16px; box-shadow: var(--shadow-sm);">
+                    <img src="https://api.qrserver.com/v1/create-qr-code/?size=150x150&data=upi://pay?pa=Q30454120@ybl%26pn=STRA%20CARE%26cu=INR" alt="UPI QR" style="width: 150px; height: 150px;">
+                </div>
+                <div style="background: var(--bg-color); padding: 8px 12px; border-radius: 8px; border: 1px solid var(--border-color);">
+                    <p style="font-size: 11px; font-weight: 600; color: var(--text-muted); font-family: monospace;">UPI: Q30454120@ybl</p>
+                </div>
+            </div>
+        </div>
+    </div>
+
+</div>
+
+<script>
+    // Initialize Icons
+    lucide.createIcons();
+
+    // Splash Screen Logic
+    window.addEventListener('load', () => {
+        setTimeout(() => {
+            const splash = document.getElementById('splash-screen');
+            splash.style.opacity = '0';
+            setTimeout(() => splash.remove(), 500);
+        }, 1500);
+
+        // Date restriction
+        const dateInput = document.getElementById("pat_date");
+        if (dateInput) {
+            const today = new Date().toISOString().split('T')[0];
+            dateInput.setAttribute('min', today);
+        }
+    });
+
+    // Custom Toast Function
+    function showToast(message, type = 'info') {
+        const container = document.getElementById('toast-container');
+        const toast = document.createElement('div');
+        toast.className = `toast ${type}`;
+        
+        let icon = 'info';
+        if(type === 'success') icon = 'check-circle';
+        if(type === 'error') icon = 'alert-circle';
+        
+        toast.innerHTML = `<i data-lucide="${icon}" style="width:16px;"></i> ${message}`;
+        container.appendChild(toast);
+        lucide.createIcons({root: toast});
+        
+        // Trigger reflow for animation
+        toast.offsetHeight; 
+        toast.classList.add('show');
+        
+        setTimeout(() => {
+            toast.classList.remove('show');
+            setTimeout(() => toast.remove(), 300);
+        }, 3000);
+    }
+
+    // Modal Logic
+    function openModal(id) {
+        closeAllModals();
+        document.getElementById(id).classList.add('active');
+    }
+
+    function closeAllModals() {
+        document.querySelectorAll('.modal').forEach(m => m.classList.remove('active'));
+    }
+
+    // Sidebar Logic
+    function toggleSidebar() {
+        const sidebar = document.querySelector('.sidebar');
+        const overlay = document.querySelector('.sidebar-overlay');
+        sidebar.classList.toggle('active');
+        overlay.classList.toggle('active');
+    }
+
+    // Theme Logic
+    function toggleTheme() {
+        const body = document.documentElement;
+        const isDark = body.getAttribute('data-theme') === 'dark';
+        
+        if (isDark) {
+            body.removeAttribute('data-theme');
+            localStorage.setItem('theme', 'light');
+            document.getElementById('theme-icon').setAttribute('data-lucide', 'moon');
+        } else {
+            body.setAttribute('data-theme', 'dark');
+            localStorage.setItem('theme', 'dark');
+            document.getElementById('theme-icon').setAttribute('data-lucide', 'sun');
+        }
+        lucide.createIcons();
+    }
+
+    // Check system preference or saved theme
+    if (localStorage.theme === 'dark' || (!('theme' in localStorage) && window.matchMedia('(prefers-color-scheme: dark)').matches)) {
+        document.documentElement.setAttribute('data-theme', 'dark');
+        document.addEventListener('DOMContentLoaded', () => {
+            document.getElementById('theme-icon').setAttribute('data-lucide', 'sun');
+            lucide.createIcons();
+        });
+    }
+
+    // Mock functions for form
+    function checkPatient() {
+        const num = document.getElementById('pat_mobile').value;
+        if(num.length === 10) {
+            showToast('Searching patient records...');
+        } else {
+            showToast('Enter valid 10-digit number', 'error');
+        }
+    }
+
+    function openServiceInfo(title, desc, img) {
+        openModal('search-modal');
+        const input = document.querySelector('#search-modal input');
+        if(input) {
+            input.value = title;
+            input.focus();
+        }
+    }
+
+    // Fixed Location Detection
+    function detectLocation() {
+        const msg = document.getElementById('location-msg');
+        const address = document.getElementById('pat_address');
+        
+        msg.style.display = 'block';
+        msg.textContent = 'Requesting location access...';
+        msg.style.color = 'var(--text-muted)';
+
+        if (!navigator.geolocation) {
+            msg.textContent = 'Geolocation is not supported by your browser.';
+            msg.style.color = '#EF4444';
+            return;
+        }
+
+        navigator.geolocation.getCurrentPosition(
+            (position) => {
+                const lat = position.coords.latitude.toFixed(5);
+                const lng = position.coords.longitude.toFixed(5);
+                
+                msg.innerHTML = `<span style="color:#10B981; font-weight:600;"><i data-lucide="check-circle" style="width:12px; display:inline-block; vertical-align:middle;"></i> Location securely attached!</span>`;
+                lucide.createIcons({root: msg});
+                
+                if(address.value.trim() === '') {
+                    address.value = `[GPS Coordinates: ${lat}, ${lng}]`;
+                }
+                showToast('Location captured successfully', 'success');
+            },
+            (error) => {
+                let errorMsg = 'Unable to retrieve location.';
+                if(error.code === 1) errorMsg = 'Location permission denied.';
+                if(error.code === 2) errorMsg = 'Position unavailable.';
+                if(error.code === 3) errorMsg = 'Location request timed out.';
+                
+                msg.textContent = errorMsg;
+                msg.style.color = '#EF4444';
+                showToast(errorMsg, 'error');
+            },
+            { enableHighAccuracy: true, timeout: 5000, maximumAge: 0 }
+        );
+    }
+
+    // Form Submission
+    document.getElementById('bookingForm').addEventListener('submit', (e) => {
+        e.preventDefault();
+        const btn = document.getElementById('submitBtn');
+        const originalText = btn.innerHTML;
+        
+        btn.innerHTML = 'Processing...';
+        btn.disabled = true;
+
+        setTimeout(() => {
+            showToast('Booking Confirmed Successfully!', 'success');
+            document.getElementById('bookingForm').reset();
+            document.getElementById('location-msg').style.display = 'none';
+            closeAllModals();
+            
+            btn.innerHTML = originalText;
+            btn.disabled = false;
+        }, 1500);
+    });
+
+</script>
+</body>
+</html>
