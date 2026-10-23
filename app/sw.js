@@ -1,4 +1,4 @@
-const CACHE_NAME = 'stracare-pwa-v1';
+const CACHE_NAME = 'stracare-pwa-v2';
 
 // Assets configured strictly for the /app/ directory
 const ASSETS_TO_CACHE = [
