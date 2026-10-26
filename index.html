@@ -158,7 +158,7 @@
             </nav>
 
             <div class="hidden lg:flex items-center gap-4 shrink-0">
-                <a href="#appointment" class="px-7 py-2.5 bg-primary hover:bg-primaryHover text-white rounded-full font-semibold transition-all shadow-lg shadow-primary/20 hover:-translate-y-0.5">
+                <a href="https://app.stracares.in" class="px-7 py-2.5 bg-primary hover:bg-primaryHover text-white rounded-full font-semibold transition-all shadow-lg shadow-primary/20 hover:-translate-y-0.5">
                     Book Appointment
                 </a>
             </div>
@@ -177,7 +177,7 @@
                 <a href="#team" class="hover:text-primary transition-colors mobile-link">Our Team</a>
                 <a href="#branches" class="hover:text-primary transition-colors mobile-link">Branches</a>
                 <a href="#payment" class="hover:text-primary transition-colors mobile-link">Payment</a>
-                <a href="#appointment" class="mt-4 px-8 py-3.5 bg-primary text-white rounded-full font-bold shadow-lg shadow-primary/20 mx-auto inline-block mobile-link hover:-translate-y-0.5 transition-transform">Book Appointment</a>
+                <a href="https://app.stracares.in" class="mt-4 px-8 py-3.5 bg-primary text-white rounded-full font-bold shadow-lg shadow-primary/20 mx-auto inline-block mobile-link hover:-translate-y-0.5 transition-transform">Book Appointment</a>
             </nav>
         </div>
     </header>
@@ -209,7 +209,7 @@
                 </p>
                 
                 <div class="flex flex-col sm:flex-row gap-4">
-                    <a href="#appointment" class="px-8 py-4 bg-primary text-white rounded-full font-bold shadow-xl shadow-primary/20 hover:-translate-y-1 hover:shadow-primary/40 transition-all flex items-center justify-center gap-2 text-lg">
+                    <a href="https://app.stracares.in" class="px-8 py-4 bg-primary text-white rounded-full font-bold shadow-xl shadow-primary/20 hover:-translate-y-1 hover:shadow-primary/40 transition-all flex items-center justify-center gap-2 text-lg">
                         Book Appointment <i data-lucide="arrow-right" class="w-5 h-5"></i>
                     </a>
                     <a href="tel:+919744902555" class="px-8 py-4 bg-white text-slate-900 rounded-full font-bold shadow-md hover:bg-slate-50 hover:-translate-y-1 transition-all flex items-center justify-center gap-2 text-lg border border-slate-200">
@@ -438,7 +438,7 @@
                             <h3 class="font-bold text-2xl mb-2 text-white">Physiotherapy at your Home</h3>
                             <p class="text-slate-300 text-sm leading-relaxed mb-6">Expert clinical care delivered to the comfort and safety of your own house.</p>
                             
-                            <a href="#appointment" class="inline-flex items-center gap-2 bg-white text-dark font-bold px-6 py-3 rounded-full hover:bg-primaryLight transition-colors w-max text-sm shadow-md">
+                            <a href="https://app.stracares.in" class="inline-flex items-center gap-2 bg-white text-dark font-bold px-6 py-3 rounded-full hover:bg-primaryLight transition-colors w-max text-sm shadow-md">
                                 Request Home Visit <i data-lucide="arrow-right" class="w-4 h-4"></i>
                             </a>
                         </div>
@@ -702,7 +702,7 @@
                 <div class="flex flex-col items-center md:items-start gap-2 text-center md:text-left">
                     <span>© 2026 STRA CARE Physiotherapy. All Rights Reserved.</span>
                     <span class="flex flex-wrap items-center justify-center md:justify-start gap-2 text-xs text-slate-500 mt-1">
-Our Digital & Compliance Partner 
+Powered by 
 <a href="https://cmfilings.com" target="_blank" rel="noopener noreferrer" class="hover:opacity-80 transition-opacity">
     <!-- Changed to assets/logo.png and made the dimensions 1x1 using h-8 w-8 -->
     <img src="assets/logo-light-cm.svg" alt="CM Logo" class="h-12 w-Auto object-contain">
@@ -793,35 +793,6 @@ Our Digital & Compliance Partner
             });
         }
 
-        // --- DATE AND TIME VALIDATION LOGIC ---
-        const dateInput = document.getElementById('fb-date');
-        const timeInput = document.getElementById('fb-time');
-
-        if(dateInput && timeInput) {
-            // Set min date to today to prevent past dates
-            const today = new Date();
-            const minDate = today.getFullYear() + '-' + String(today.getMonth() + 1).padStart(2, '0') + '-' + String(today.getDate()).padStart(2, '0');
-            dateInput.setAttribute('min', minDate);
-
-            // Prevent past time if today is selected
-            function validateTime() {
-                if (dateInput.value === minDate && timeInput.value) {
-                    const now = new Date();
-                    const currentHours = String(now.getHours()).padStart(2, '0');
-                    const currentMinutes = String(now.getMinutes()).padStart(2, '0');
-                    const currentTime = `${currentHours}:${currentMinutes}`;
-                    
-                    if (timeInput.value < currentTime) {
-                        alert("You cannot book an appointment in the past. Please select a valid time.");
-                        timeInput.value = ''; // Clear the invalid time
-                    }
-                }
-            }
-
-            dateInput.addEventListener('change', validateTime);
-            timeInput.addEventListener('change', validateTime);
-        }
-
         // Typewriter Effect
         const words = ["Live Better.", "Recover Faster.", "Stay Active.", "Pain Free."];
         let i = 0;
@@ -868,70 +839,5 @@ Our Digital & Compliance Partner
 
     </script>
     
-    <script type="module">
-        import { initializeApp } from "https://www.gstatic.com/firebasejs/10.8.0/firebase-app.js";
-        import { getAnalytics } from "https://www.gstatic.com/firebasejs/10.8.0/firebase-analytics.js";
-        import { getFirestore, collection, addDoc } from "https://www.gstatic.com/firebasejs/10.8.0/firebase-firestore.js";
-
-        // Your web app's Firebase configuration
-        const firebaseConfig = {
-            apiKey: "AIzaSyDwfmoDPvslFmTn3GjO56VAxhODRlem5bg",
-            authDomain: "stra-care.firebaseapp.com",
-            projectId: "stra-care",
-            storageBucket: "stra-care.firebasestorage.app",
-            messagingSenderId: "329966100049",
-            appId: "1:329966100049:web:d4b4dc7033f0ed12da6270",
-            measurementId: "G-TQ7YK3RVSR"
-        };
-
-        // Initialize Firebase
-        const app = initializeApp(firebaseConfig);
-        const analytics = getAnalytics(app);
-        const db = getFirestore(app);
-
-        // Handle Form Submission
-        document.getElementById('fb-booking-form').addEventListener('submit', async (e) => {
-            e.preventDefault();
-            
-            // Explicit strict mobile number check
-            const mobileVal = document.getElementById('fb-mobile').value;
-            if (!/^\d{10}$/.test(mobileVal)) {
-                alert("Please enter exactly 10 digits for your mobile number.");
-                return; // Stops submission if not exactly 10 digits
-            }
-
-            const submitBtn = document.getElementById('fb-submit-btn');
-            const originalHTML = submitBtn.innerHTML;
-            
-            // Loading state
-            submitBtn.innerHTML = '<i class="fa-solid fa-spinner fa-spin"></i> Submitting...';
-            submitBtn.disabled = true;
-
-            try {
-                // Pushing to the "appointments" collection
-                await addDoc(collection(db, "appointments"), {
-                    fullName: document.getElementById('fb-name').value,
-                    age: document.getElementById('fb-age').value,
-                    mobile: mobileVal,
-                    branch: document.getElementById('fb-branch').value,
-                    preferredDate: document.getElementById('fb-date').value,
-                    preferredTime: document.getElementById('fb-time').value,
-                    notes: document.getElementById('fb-notes').value,
-                    "#TimeStamp": new Date().toISOString() 
-                });
-                
-                alert("Appointment request submitted successfully!");
-                e.target.reset(); // Clear the form
-            } catch (error) {
-                console.error("Error adding document: ", error);
-                alert("There was an error submitting your request. Please try again or contact us directly.");
-            } finally {
-                // Reset button state
-                submitBtn.innerHTML = originalHTML;
-                submitBtn.disabled = false;
-            }
-        });
-    </script>
-
 </body>
 </html>
